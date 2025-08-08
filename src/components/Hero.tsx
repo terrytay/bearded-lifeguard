@@ -1,4 +1,3 @@
-import { hlo } from "@/app/layout";
 import { HeroList } from "@/content/Content";
 import Image from "next/image";
 import { BookNowButton } from "./BookNow";

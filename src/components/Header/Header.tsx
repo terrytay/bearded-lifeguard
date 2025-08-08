@@ -102,7 +102,7 @@ export function Header() {
           {/* Mobile right cluster: CTA + hamburger */}
           <div className="md:hidden flex items-center gap-2">
             {/* Mobile CTA — hidden on home; shown always otherwise */}
-            {!isBooking && (
+            {!isHome && !isBooking && (
               <Link
                 href="/booking"
                 className="inline-flex items-center rounded-full bg-[#FF6633] px-3 py-2 text-white shadow hover:opacity-90"

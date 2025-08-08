@@ -3,17 +3,12 @@ import "./globals.css";
 import { Header } from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
 
-import { Inter, Headland_One } from "next/font/google";
+import { Inter } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
-});
-
-export const hlo = Headland_One({
-  variable: "--font-hlo",
-  weight: "400",
 });
 
 export const metadata: Metadata = {

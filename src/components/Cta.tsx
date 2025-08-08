@@ -20,7 +20,7 @@ export function Cta() {
             href="/courses"
             className="inline-flex items-center rounded-lg bg-white px-4 py-2 text-[#20334F] shadow hover:bg-gray-50"
           >
-            Courses
+            Lifeguard Courses
           </a>
           <a
             href="/water-safety"

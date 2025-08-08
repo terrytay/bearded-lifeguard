@@ -1,27 +1,7 @@
 "use client";
 
+import { logos } from "@/content/Content";
 import { useEffect, useRef } from "react";
-
-const logos = [
-  "/clients/e02710a4-6c7f-40d5-9342-57b46f6fc60c.jpg",
-  "/clients/hollandseclub.png",
-  "/clients/liberty.jpg",
-  "/clients/Logo_of_GEMS_World_Academy_Singapore_an_international_school_in_Singapore.png",
-  "/clients/Logo-Legacy.e0149de7-1.png",
-  "/clients/mandarin-oriental-singapore-1.jpg",
-  "/clients/mbs.jpeg",
-  "/clients/mwr.png",
-  "/clients/rotatary_club.png",
-  "/clients/shangri-la-rasa.png",
-  "/clients/shangrila_hotel.jpg",
-  "/clients/sia_f1.jpg",
-  "/clients/Singapore_Civil_Defence_Force_Logo.png",
-  "/clients/spf.png",
-  "/clients/tanglin_club.jpg",
-  "/clients/UWCSEA_Logo_280.png",
-  "/clients/wildwild-new-logo-.png",
-  "/clients/zo-logo-1.png",
-];
 
 export default function ClientCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);

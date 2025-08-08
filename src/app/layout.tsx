@@ -4,6 +4,8 @@ import { Header } from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
 
 import { Inter } from "next/font/google";
+import PageTransition from "@/components/PageTransition";
+import FloatingEnquiry from "@/components/FloatingEnquiry";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,8 +33,9 @@ export default function RootLayout({
         }
       >
         <Header />
-        {children}
+        <PageTransition>{children}</PageTransition>
         <Footer />
+        <FloatingEnquiry />
       </body>
     </html>
   );

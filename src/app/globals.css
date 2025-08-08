@@ -6,19 +6,20 @@
 
 /* Add custom animation below */
 @layer utilities {
-  /* @keyframes marquee {
-    from {
-      transform: translate3d(0, 0, 0);
+  @keyframes loader {
+    0% {
+      transform: translateX(-100%);
     }
-    to {
-      transform: translate3d(calc(-1 * var(--loop-dist, 0px)), 0, 0);
+    50% {
+      transform: translateX(50%);
+    }
+    100% {
+      transform: translateX(100%);
     }
   }
-  .marquee {
-    animation: marquee var(--speed, 30s) linear infinite;
-    will-change: transform;
-    backface-visibility: hidden;
-  } */
+  .animate-loader {
+    animation: loader 1.2s ease-in-out infinite;
+  }
 }
 ::-webkit-scrollbar {
   display: none;

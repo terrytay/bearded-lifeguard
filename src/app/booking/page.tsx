@@ -256,7 +256,7 @@ export default function BookingPage() {
     }
 
     r.push(
-      `/booking/thank-you?order=${encodeURIComponent(
+      `/thank-you?order=${encodeURIComponent(
         order.orderId
       )}&amount=${order.amount.toFixed(2)}`
     );
@@ -319,7 +319,7 @@ export default function BookingPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight text-[#20334F]">
-            Book Lifeguard Service
+            Book Lifeguard Services
           </h1>
           <p className="mt-2 text-slate-600">
             Pick your start and end time. You’ll get a PayNow QR for payment

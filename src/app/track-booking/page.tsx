@@ -15,6 +15,7 @@ import {
   Home,
   Phone,
   Mail,
+  BookCopy,
 } from "lucide-react";
 
 interface CustomerBooking {
@@ -66,13 +67,13 @@ export default function TrackBooking() {
   };
 
   const getStatusInfo = (status: string, paymentStatus: string) => {
-    if (paymentStatus === "paid") {
-      return {
-        label: "Payment Confirmed",
-        color: "text-green-600 bg-green-100",
-        icon: <CheckCircle className="w-5 h-5" />,
-      };
-    }
+    // if (paymentStatus === "paid") {
+    //   return {
+    //     label: "Payment Confirmed",
+    //     color: "text-green-600 bg-green-100",
+    //     icon: <CheckCircle className="w-5 h-5" />,
+    //   };
+    // }
 
     switch (status) {
       case "confirmed":
@@ -271,7 +272,7 @@ export default function TrackBooking() {
                   {/* Booking Status Card */}
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
                     <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-blue-600" />
+                      <BookCopy className="w-5 h-5 text-blue-600" />
                       Booking Status
                     </h3>
                     <div

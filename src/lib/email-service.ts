@@ -17,6 +17,7 @@ export type BookingEmailData = {
   lifeguards: number;
   serviceType: string;
   customService: string;
+  remarks: string;
 };
 
 export class EmailService {
@@ -589,6 +590,20 @@ export class EmailService {
                                     </tr>
                                 </table>
                             </div>
+                            ${
+                              data.remarks.trim()
+                                ? `<div class="detail-item">
+                                <table class="detail-table">
+                                    <tr>
+                                        <td class="detail-label">Additional Remarks</td>
+                                        <td class="detail-value">${data.remarks
+                                          .trim()
+                                          .replace(/\n/g, "<br>")}</td>
+                                    </tr>
+                                </table>
+                            </div>`
+                                : ""
+                            }
                         </div>
                     </div>
                     
@@ -734,7 +749,9 @@ Duration: ${data.hours} hour${data.hours > 1 ? "s" : ""}
 Lifeguards Required: ${data.lifeguards} professional lifeguard${
       data.lifeguards > 1 ? "s" : ""
     }
-Service Type: ${this.formatServiceType(data.serviceType, data.customService)}
+Service Type: ${this.formatServiceType(data.serviceType, data.customService)}${
+      data.remarks.trim() ? `\nAdditional Remarks: ${data.remarks.trim()}` : ""
+    }
 Rate Applied: ${data.rate}/hr
 Subtotal: ${data.subtotal}
 Booking Notice: ${data.leadTime}

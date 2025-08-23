@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     lifeguards = 1, // number of lifeguards required
     serviceType = "", // service type selection
     customService = "", // custom service description
+    remarks = "", // optional remarks from user
   } = body;
 
   const base = computeAmount(Number(hours));
@@ -76,6 +77,7 @@ export async function POST(req: Request) {
     lifeguards,
     serviceType,
     customService,
+    remarks,
     paynow: { payload, qrDataUrl },
   });
 }

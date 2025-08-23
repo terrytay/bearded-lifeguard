@@ -23,6 +23,7 @@ export async function POST(req: Request) {
       lifeguards,
       serviceType,
       customService,
+      remarks,
     } = body;
 
     if (!customerName || !customerEmail || !orderId || !startDateTime || !endDateTime) {
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
       lifeguards: lifeguards || 1,
       serviceType: serviceType || "",
       customService: customService || "",
+      remarks: remarks || "",
     };
 
     // Send confirmation email

@@ -100,6 +100,7 @@ export default function BookingPage() {
   const [lifeguards, setLifeguards] = useState(1); // number of lifeguards needed
   const [serviceType, setServiceType] = useState(""); // service type selection
   const [customService, setCustomService] = useState(""); // custom service description
+  const [remarks, setRemarks] = useState(""); // optional remarks from user
 
   // ui state
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -253,6 +254,7 @@ export default function BookingPage() {
           lifeguards,
           serviceType,
           customService: serviceType === "others" ? customService.trim() : "",
+          remarks: remarks.trim(),
         }),
       });
     } catch (error) {
@@ -296,6 +298,7 @@ export default function BookingPage() {
         lifeguards,
         serviceType,
         customService: serviceType === "others" ? customService.trim() : "",
+        remarks: remarks.trim(),
       };
 
       const res = await fetch("/api/orders", {
@@ -511,6 +514,22 @@ export default function BookingPage() {
                     max={1000}
                     label={`lifeguard${lifeguards > 1 ? "s" : ""}`}
                     icon={<Users size={16} />}
+                  />
+                </FormField>
+              </div>
+
+              {/* Optional Remarks */}
+              <div className="mb-8">
+                <FormField
+                  label="Additional Remarks (Optional)"
+                  description="Any special requirements or notes for your booking"
+                >
+                  <textarea
+                    value={remarks}
+                    onChange={(e) => setRemarks(e.target.value)}
+                    placeholder="e.g., Special safety requirements, accessibility needs, event details..."
+                    rows={4}
+                    className="w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white placeholder:text-gray-400 resize-y border-gray-200 focus:border-[#FF6633] hover:border-gray-300"
                   />
                 </FormField>
               </div>

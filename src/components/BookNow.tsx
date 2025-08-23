@@ -1,23 +1,38 @@
 import Link from "next/link";
 
-export function BookNowButton({ isBold }: { isBold: boolean }) {
+type BookNowButtonProps = {
+  variant?: "primary" | "secondary" | "hero";
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  children?: React.ReactNode;
+};
+
+export function BookNowButton({ 
+  variant = "primary", 
+  size = "md", 
+  className = "",
+  children = "Book Now" 
+}: BookNowButtonProps) {
+  const baseStyles = "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#FF6633]/20 focus:ring-offset-2";
+  
+  const variantStyles = {
+    primary: "bg-[#FF6633] text-white hover:bg-[#e55a2b] shadow-lg hover:shadow-xl",
+    secondary: "border-2 border-[#FF6633] text-[#FF6633] hover:bg-[#FF6633] hover:text-white",
+    hero: "bg-[#FF6633] text-white hover:bg-[#20334F] shadow-2xl hover:shadow-[#FF6633]/25 transform hover:scale-105"
+  };
+  
+  const sizeStyles = {
+    sm: "px-4 py-2 text-sm",
+    md: "px-6 py-3 text-base",
+    lg: "px-8 py-4 text-lg"
+  };
+
   return (
-    <div className="flex justify-end items-center py-2">
-      {isBold ? (
-        <Link
-          href="/booking"
-          className="border bg-orange-500 border-orange-500 text-white rounded-md px-12 py-4 hover:bg-[#20334F] hover:border-[#20334F] drop-shadow-[0_0_20px_#FF6633] transition"
-        >
-          Book Now
-        </Link>
-      ) : (
-        <Link
-          href="/booking"
-          className="border border-orange-500 rounded-md px-4 py-2"
-        >
-          Book Now
-        </Link>
-      )}
-    </div>
+    <Link
+      href="/booking"
+      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+    >
+      {children}
+    </Link>
   );
 }

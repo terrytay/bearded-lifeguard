@@ -1,5 +1,8 @@
 // app/services/page.tsx
 import Image from "next/image";
+import Link from "next/link";
+import { Cta } from "@/components/Cta";
+import { ArrowRight } from "lucide-react";
 
 export default function LifeguardServicesPage() {
   return (
@@ -50,78 +53,165 @@ export default function LifeguardServicesPage() {
         </div>
       </section>
 
-      {/* Pools / Events / Parties */}
-      <section className="px-4 pb-12">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-center text-2xl md:text-3xl font-semibold text-[#20334F]">
-            Lifeguards for Pools, Events & Pool Parties
-          </h2>
-
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <Image
-                src="/services4.jpg"
-                alt="Lifeguard overseeing pool patrons"
-                width={1600}
-                height={800}
-                className="h-auto w-full object-cover"
-                priority
-              />
-            </div>
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <Image
-                src="/services3.jpg"
-                alt="Professional lifeguards on duty"
-                width={1600}
-                height={800}
-                className="h-auto w-full object-cover"
-              />
-            </div>
-          </div>
-
-          <p className="mt-6 text-[#384152]">
-            We’re engaged on yearly contracts at hotel pools and institutions
-            across Singapore. We also support ad-hoc needs for birthdays,
-            company events, filming, and waterways.
-          </p>
-        </div>
-      </section>
-
-      {/* Open Water */}
+      {/* Service Types */}
       <section className="px-4 pb-20">
         <div className="mx-auto max-w-7xl">
-          <h2 className="text-center text-2xl md:text-3xl font-semibold text-[#20334F]">
-            Open Water Lifeguard Services
+          <h2 className="text-center text-2xl md:text-3xl font-semibold text-[#20334F] mb-12">
+            Our Lifeguard Services
           </h2>
 
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <Image
-                src="/services1.jpg"
-                alt="Open water lifeguards during event"
-                width={1600}
-                height={1200}
-                className="h-auto w-full object-cover"
-              />
-            </div>
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <Image
-                src="/services2.jpg"
-                alt="Rescue craft and lifeguards at open water venue"
-                width={1600}
-                height={1200}
-                className="h-auto w-full object-cover"
-              />
-            </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Pool Services */}
+            <Link href="/services/pools" className="group">
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className="relative">
+                  <Image
+                    src="/services4.jpg"
+                    alt="Pool lifeguard services"
+                    width={600}
+                    height={300}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-xl font-bold text-white mb-2">Pool Lifeguarding</h3>
+                    <p className="text-white/90 text-sm">Professional supervision for residential, commercial, and specialty pools</p>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-2 text-sm text-[#384152] mb-4">
+                    <li>• Residential & commercial pools</li>
+                    <li>• Hotel & resort facilities</li>
+                    <li>• Condominium complexes</li>
+                    <li>• Private clubs & institutions</li>
+                  </ul>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Event Services */}
+            <Link href="/services/events" className="group">
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className="relative">
+                  <Image
+                    src="/services3.jpg"
+                    alt="Event lifeguard services"
+                    width={600}
+                    height={300}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-xl font-bold text-white mb-2">Event Lifeguarding</h3>
+                    <p className="text-white/90 text-sm">Safety coverage for corporate events, community functions, and productions</p>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-2 text-sm text-[#384152] mb-4">
+                    <li>• Corporate team building events</li>
+                    <li>• Community festivals & galas</li>
+                    <li>• Film & TV productions</li>
+                    <li>• Sports competitions</li>
+                  </ul>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Pool Party Services */}
+            <Link href="/services/pool-parties" className="group">
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className="relative">
+                  <Image
+                    src="/services4.jpg"
+                    alt="Pool party lifeguard services"
+                    width={600}
+                    height={300}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-xl font-bold text-white mb-2">Pool Party Lifeguarding</h3>
+                    <p className="text-white/90 text-sm">Fun-friendly safety for birthdays, celebrations, and social gatherings</p>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-2 text-sm text-[#384152] mb-4">
+                    <li>• Birthday celebrations</li>
+                    <li>• Family reunions</li>
+                    <li>• Teen & adult parties</li>
+                    <li>• Special occasion events</li>
+                  </ul>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Open Water Services */}
+            <Link href="/services/open-water" className="group">
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <div className="relative">
+                  <Image
+                    src="/services1.jpg"
+                    alt="Open water lifeguard services"
+                    width={600}
+                    height={300}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-xl font-bold text-white mb-2">Open Water Lifeguarding</h3>
+                    <p className="text-white/90 text-sm">Specialized safety for beaches, reservoirs, and challenging environments</p>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-2 text-sm text-[#384152] mb-4">
+                    <li>• Beach & coastal events</li>
+                    <li>• Reservoir activities</li>
+                    <li>• Swimming competitions</li>
+                    <li>• Film productions</li>
+                  </ul>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </div>
+            </Link>
           </div>
 
-          <p className="mt-6 text-[#384152]">
-            Our teams have supported numerous open water events. A dedicated
-            Safety Manager oversees operations end-to-end so you can have peace
-            of mind.
-          </p>
+          <div className="text-center mt-12">
+            <p className="text-lg text-[#384152] mb-8 max-w-3xl mx-auto">
+              Whether you need pool supervision, event safety coverage, or open water expertise, 
+              our certified lifeguards provide professional, reliable service tailored to your specific needs.
+            </p>
+            <Link 
+              href="/booking"
+              className="inline-flex items-center gap-2 bg-[#FF6633] text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#e55a2b] transition-colors"
+            >
+              Book Lifeguard Service
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </section>
+
+      {/* Call to Action */}
+      <div className="px-4">
+        <div className="mx-auto max-w-7xl">
+          <Cta />
+        </div>
+      </div>
     </main>
   );
 }

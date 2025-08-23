@@ -15,7 +15,7 @@ export function Hero() {
           Your first line of defense in water safety — services, courses &
           certified lifeguards.
         </p>
-        <BookNowButton isBold />
+        <BookNowButton variant="hero" size="lg" />
       </div>
 
       {/* Partners */}

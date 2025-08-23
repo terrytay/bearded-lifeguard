@@ -2,7 +2,23 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import emailjs from "emailjs-com";
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Clock,
+  DollarSign,
+  CheckCircle,
+  AlertCircle,
+  CreditCard,
+  Download,
+  Users,
+} from "lucide-react";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { DateTimePicker } from "@/components/ui/DateTimePicker";
+import { NumberInput } from "@/components/ui/NumberInput";
 
 type OrderResponse = {
   orderId: string;
@@ -10,6 +26,7 @@ type OrderResponse = {
   paynow: { payload: string; qrDataUrl: string };
   name: string;
   email: string;
+  lifeguards: number;
   phone?: string;
   startISO?: string;
   endISO?: string;
@@ -80,6 +97,9 @@ export default function BookingPage() {
   const [email, setEmail] = useState("");
   const [start, setStart] = useState<string>(""); // datetime-local
   const [end, setEnd] = useState<string>(""); // datetime-local
+  const [lifeguards, setLifeguards] = useState(1); // number of lifeguards needed
+  const [serviceType, setServiceType] = useState(""); // service type selection
+  const [customService, setCustomService] = useState(""); // custom service description
 
   // ui state
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -89,18 +109,8 @@ export default function BookingPage() {
   const [error, setError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
 
-  // EmailJS init guard
-  const emailInitRef = useRef(false);
-  useEffect(() => {
-    if (process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY && !emailInitRef.current) {
-      try {
-        emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY);
-        emailInitRef.current = true;
-      } catch {
-        // ignore
-      }
-    }
-  }, []);
+  // Focus management
+  const formRef = useRef<HTMLDivElement>(null);
 
   // validation
   const emailOk = useMemo(() => /^\S+@\S+\.\S+$/.test(email), [email]);
@@ -122,10 +132,15 @@ export default function BookingPage() {
   const startDate = useMemo(() => (start ? new Date(start) : null), [start]);
   const endDate = useMemo(() => (end ? new Date(end) : null), [end]);
 
-  // keep end >= start in UI hints
+  // keep end >= start in UI hints - allow same day but ensure end time is after start time
   const minEnd = useMemo(() => {
-    const base = startDate ?? minStartDate;
-    return toLocalInputValue(new Date(base.getTime() + 15 * 60 * 1000));
+    if (startDate) {
+      // If we have a start date, use the same date as minimum for end date
+      const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      return toLocalInputValue(startDateOnly);
+    }
+    // If no start date selected, use the minimum start date
+    return toLocalInputValue(minStartDate);
   }, [startDate, minStartDate]);
 
   const timeOk =
@@ -145,7 +160,11 @@ export default function BookingPage() {
     [diffHoursRaw]
   );
   const rate = useMemo(() => computeRate(hours), [hours]);
-  const subtotal = useMemo(() => computeBase(hours), [hours]); // before last-minute
+  const baseSubtotal = useMemo(() => computeBase(hours), [hours]); // per lifeguard
+  const subtotal = useMemo(
+    () => baseSubtotal * lifeguards,
+    [baseSubtotal, lifeguards]
+  ); // total for all lifeguards
   const rawHoursText = useMemo(
     () => (!timeOk || !startDate || !endDate ? "-" : diffHoursRaw.toFixed(2)),
     [timeOk, startDate, endDate, diffHoursRaw]
@@ -187,7 +206,8 @@ export default function BookingPage() {
     [noticeDays]
   );
 
-  const formOk = nameOk && phoneOk && emailOk && timeOk && !creating;
+  const serviceOk = serviceType && (serviceType !== "others" || customService.trim().length >= 3);
+  const formOk = nameOk && phoneOk && emailOk && timeOk && serviceOk && !creating;
   const showSummary = timeOk;
 
   function markTouched(k: string) {
@@ -205,54 +225,32 @@ export default function BookingPage() {
     setPaying(true);
 
     try {
-      if (
-        emailInitRef.current &&
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID &&
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
-      ) {
-        await emailjs.send(
-          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-          {
-            // recipient
-            to_email: email,
-            to_name: name || "Customer",
-
-            // booking
-            order_id: order.orderId,
-            start_at: startDate?.toLocaleString("en-SG"),
-            end_at: endDate?.toLocaleString("en-SG"),
-
-            // contact
-            phone: phoneSanitized,
-
-            // pricing (client-estimated)
-            raw_hours: timeOk ? diffHoursRaw.toFixed(2) : "0.00",
-            rounding_note: roundingNote || "N/A",
-            billed_hours: String(hours),
-            tier_label: tierLabel,
-            rate_applied: `${formatCurrency(rate)}/hr`,
-            estimated_subtotal: formatCurrency(subtotal),
-
-            // last-minute
-            notice_days:
-              noticeDays == null
-                ? "N/A"
-                : noticeDays >= 2
-                ? noticeDays.toFixed(2)
-                : (noticeDays * 24).toFixed(1) + " hours",
-            last_minute_label: lmLabel,
-            last_minute_multiplier: lmMult.toFixed(2),
-            last_minute_surcharge: formatCurrency(surcharge),
-            client_est_total: formatCurrency(estTotal),
-
-            // server-confirmed
-            final_amount: formatCurrency(order.amount),
-          }
-        );
-      }
-    } catch {
-      // non-blocking
+      // Send confirmation email using Nodemailer
+      await fetch("/api/send-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerName: name.trim(),
+          customerEmail: email.trim(),
+          customerPhone: phoneSanitized,
+          orderId: order.orderId,
+          startDateTime: startDate?.toLocaleString("en-SG"),
+          endDateTime: endDate?.toLocaleString("en-SG"),
+          hours,
+          rate: formatCurrency(rate),
+          subtotal: formatCurrency(subtotal),
+          surcharge: formatCurrency(surcharge),
+          totalAmount: formatCurrency(order.amount),
+          leadTime: formatLeadTime(noticeDays),
+          lastMinuteLabel: lmLabel,
+          lifeguards,
+          serviceType,
+          customService: serviceType === "others" ? customService.trim() : "",
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to send confirmation email:", error);
+      // Continue anyway - don't block the user flow
     }
 
     r.push(
@@ -270,6 +268,7 @@ export default function BookingPage() {
         email: true,
         start: true,
         end: true,
+        serviceType: true,
       });
       return;
     }
@@ -287,6 +286,9 @@ export default function BookingPage() {
         endISO: endDate!.toISOString(),
         dateISO: startDate!.toISOString(), // server reads dateISO
         noticeDays: noticeDays ?? 14, // server default is 14
+        lifeguards,
+        serviceType,
+        customService: serviceType === "others" ? customService.trim() : "",
       };
 
       const res = await fetch("/api/orders", {
@@ -311,387 +313,510 @@ export default function BookingPage() {
   }
 
   return (
-    <main className="relative">
-      {/* Soft background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 to-white" />
+    <main className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50">
+      {/* Background Pattern */}
+      <div
+        className="absolute inset-0 opacity-50"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FF6633' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      />
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
+      <div className="relative max-w-7xl mx-auto px-4 py-12">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="mt-3 text-3xl md:text-4xl font-bold tracking-tight text-[#20334F]">
-            Book Lifeguard Services
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <Calendar className="w-4 h-4" />
+            Professional Lifeguard Booking
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-[#20334F] mb-4">
+            Book Your Lifeguard
           </h1>
-          <p className="mt-2 text-slate-600">
-            Pick your start and end time. You’ll get a PayNow QR for payment
-            after you have confirmed.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Secure certified lifeguard services with our streamlined booking
+            process. Get instant quotes and pay securely with PayNow.
           </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-12 lg:grid-cols-3">
           {/* Form */}
-          <section className="md:col-span-2">
-            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
-              <div className="grid md:grid-cols-2 gap-5">
+          <section className="lg:col-span-2 relative z-50">
+            <div
+              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8"
+              ref={formRef}
+            >
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-[#20334F] mb-2">
+                  Booking Details
+                </h2>
+                <p className="text-gray-600">
+                  Please fill in your information and select your preferred time
+                  slots.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
                 {/* Name */}
-                <label className="block">
-                  <span className="text-sm font-medium text-[#20334F]">
-                    Full name
-                  </span>
-                  <input
-                    className={`mt-1 w-full rounded-xl border p-2.5 outline-none transition
-                    ${
-                      touched.name && !nameOk
-                        ? "border-red-400 ring-1 ring-red-200"
-                        : "border-slate-300 focus:border-[#FF6633] focus:ring-2 focus:ring-[#FF6633]/20"
-                    }`}
+                <FormField
+                  label="Full Name"
+                  required
+                  error={
+                    touched.name && !nameOk
+                      ? "Please enter your full name (minimum 2 characters)"
+                      : undefined
+                  }
+                >
+                  <Input
+                    icon={<User size={16} />}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     onBlur={() => markTouched("name")}
-                    placeholder="Jane Tan"
-                    required
+                    placeholder="Enter your full name"
+                    error={touched.name && !nameOk}
                     autoComplete="name"
-                    aria-invalid={touched.name && !nameOk}
                   />
-                  {touched.name && !nameOk && (
-                    <p className="mt-1 text-xs text-red-600">
-                      Please enter your name (min 2 characters).
-                    </p>
-                  )}
-                </label>
+                </FormField>
 
                 {/* Phone */}
-                <label className="block">
-                  <span className="text-sm font-medium text-[#20334F]">
-                    Contact number
-                  </span>
-                  <input
-                    className={`mt-1 w-full rounded-xl border p-2.5 outline-none transition
-                    ${
-                      touched.phone && !phoneOk
-                        ? "border-red-400 ring-1 ring-red-200"
-                        : "border-slate-300 focus:border-[#FF6633] focus:ring-2 focus:ring-[#FF6633]/20"
-                    }`}
+                <FormField
+                  label="Contact Number"
+                  required
+                  error={
+                    touched.phone && !phoneOk
+                      ? "Please enter a valid phone number"
+                      : undefined
+                  }
+                >
+                  <Input
+                    icon={<Phone size={16} />}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     onBlur={() => markTouched("phone")}
-                    placeholder="+65 9XXXXXXX"
+                    placeholder="+65 9XXX XXXX"
+                    error={touched.phone && !phoneOk}
                     inputMode="tel"
                     autoComplete="tel"
-                    required
-                    aria-invalid={touched.phone && !phoneOk}
                   />
-                  {touched.phone && !phoneOk && (
-                    <p className="mt-1 text-xs text-red-600">
-                      Enter a valid phone (8–15 digits, “+65” allowed).
-                    </p>
-                  )}
-                </label>
+                </FormField>
+              </div>
 
-                {/* Email */}
-                <label className="block md:col-span-2">
-                  <span className="text-sm font-medium text-[#20334F]">
-                    Email
-                  </span>
-                  <input
+              {/* Email */}
+              <div className="mb-8">
+                <FormField
+                  label="Email Address"
+                  required
+                  description="We'll send your booking confirmation to this email"
+                  error={
+                    touched.email && !emailOk
+                      ? "Please enter a valid email address"
+                      : undefined
+                  }
+                >
+                  <Input
+                    icon={<Mail size={16} />}
                     type="email"
-                    className={`mt-1 w-full rounded-xl border p-2.5 outline-none transition
-                    ${
-                      touched.email && !emailOk
-                        ? "border-red-400 ring-1 ring-red-200"
-                        : "border-slate-300 focus:border-[#FF6633] focus:ring-2 focus:ring-[#FF6633]/20"
-                    }`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={() => markTouched("email")}
-                    placeholder="you@email.com"
-                    required
+                    placeholder="your@email.com"
+                    error={touched.email && !emailOk}
                     autoComplete="email"
-                    aria-invalid={touched.email && !emailOk}
                   />
-                  {touched.email && !emailOk && (
-                    <p className="mt-1 text-xs text-red-600">
-                      Please enter a valid email.
-                    </p>
-                  )}
-                </label>
-
-                {/* Start */}
-                <label className="block">
-                  <span className="text-sm font-medium text-[#20334F]">
-                    Start (date &amp; time)
-                  </span>
-                  <input
-                    type="datetime-local"
-                    className={`mt-1 w-full rounded-xl border p-2.5 outline-none transition
-                    ${
-                      touched.start && !startDate
-                        ? "border-red-400 ring-1 ring-red-200"
-                        : "border-slate-300 focus:border-[#FF6633] focus:ring-2 focus:ring-[#FF6633]/20"
-                    }`}
-                    value={start}
-                    onChange={(e) => setStart(e.target.value)}
-                    onBlur={() => markTouched("start")}
-                    required
-                    min={minStart}
-                    step={900}
-                    aria-invalid={touched.start && !startDate}
-                  />
-                  {touched.start && !startDate && (
-                    <p className="mt-1 text-xs text-red-600">
-                      Please select a start date & time.
-                    </p>
-                  )}
-                </label>
-
-                {/* End */}
-                <label className="block">
-                  <span className="text-sm font-medium text-[#20334F]">
-                    End (date &amp; time)
-                  </span>
-                  <input
-                    type="datetime-local"
-                    className={`mt-1 w-full rounded-xl border p-2.5 outline-none transition
-                    ${
-                      touched.end && (!endDate || !timeOk)
-                        ? "border-red-400 ring-1 ring-red-200"
-                        : "border-slate-300 focus:border-[#FF6633] focus:ring-2 focus:ring-[#FF6633]/20"
-                    }`}
-                    value={end}
-                    onChange={(e) => setEnd(e.target.value)}
-                    onBlur={() => markTouched("end")}
-                    required
-                    min={minEnd}
-                    step={900}
-                    aria-invalid={touched.end && (!endDate || !timeOk)}
-                  />
-                  {touched.end && (!endDate || !timeOk) && (
-                    <p className="mt-1 text-xs text-red-600">
-                      End must be after the start.
-                    </p>
-                  )}
-                </label>
+                </FormField>
               </div>
 
-              <p className="mt-4 text-xs text-slate-500">
-                Billing is rounded up to the next whole hour (min 1 hr).
-              </p>
+              {/* Service Type Selection */}
+              <div className="mb-8">
+                <FormField 
+                  label="Service Type" 
+                  required 
+                  description="What type of lifeguard service do you need?"
+                  error={touched.serviceType && !serviceOk ? "Please select a service type" : undefined}
+                >
+                  <div className="space-y-4">
+                    <select
+                      value={serviceType}
+                      onChange={(e) => setServiceType(e.target.value)}
+                      onBlur={() => markTouched("serviceType")}
+                      className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white ${
+                        touched.serviceType && !serviceOk
+                          ? 'border-red-300 focus:border-red-500'
+                          : 'border-gray-200 focus:border-[#FF6633] hover:border-gray-300'
+                      }`}
+                    >
+                      <option value="">Select service type...</option>
+                      <option value="pools">Pool Lifeguarding</option>
+                      <option value="events">Event Lifeguarding</option>
+                      <option value="pool-parties">Pool Party Lifeguarding</option>
+                      <option value="open-water">Open Water Lifeguarding</option>
+                      <option value="others">Others (Please specify)</option>
+                    </select>
+                    
+                    {serviceType === "others" && (
+                      <div className="mt-4">
+                        <textarea
+                          value={customService}
+                          onChange={(e) => setCustomService(e.target.value)}
+                          onBlur={() => markTouched("serviceType")}
+                          placeholder="Please describe your specific lifeguard service needs..."
+                          rows={3}
+                          className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white placeholder:text-gray-400 resize-y ${
+                            touched.serviceType && serviceType === "others" && customService.trim().length < 3
+                              ? 'border-red-300 focus:border-red-500'
+                              : 'border-gray-200 focus:border-[#FF6633] hover:border-gray-300'
+                          }`}
+                        />
+                        {touched.serviceType && serviceType === "others" && customService.trim().length < 3 && (
+                          <div className="mt-2 text-sm text-red-600">
+                            Please provide at least 3 characters describing your service needs
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </FormField>
+              </div>
+
+              {/* Number of Lifeguards */}
+              <div className="mb-8">
+                <FormField
+                  label="Number of Lifeguards Required"
+                  required
+                  description="Professional certified lifeguards for your event"
+                >
+                  <NumberInput
+                    value={lifeguards}
+                    onChange={setLifeguards}
+                    min={1}
+                    max={10}
+                    label={`lifeguard${lifeguards > 1 ? "s" : ""}`}
+                    icon={<Users size={16} />}
+                  />
+                </FormField>
+              </div>
+
+              {/* Date & Time Selection */}
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                {/* Start */}
+                <FormField
+                  label="Start Date & Time"
+                  required
+                  error={
+                    touched.start && !startDate
+                      ? "Please select a start date and time"
+                      : undefined
+                  }
+                >
+                  <DateTimePicker
+                    value={start}
+                    onChange={setStart}
+                    min={minStart}
+                    label="Start"
+                    error={touched.start && !startDate}
+                    onBlur={() => markTouched("start")}
+                  />
+                </FormField>
+
+                {/* End */}
+                <FormField
+                  label="End Date & Time"
+                  required
+                  error={
+                    touched.end && (!endDate || !timeOk)
+                      ? "End time must be after start time"
+                      : undefined
+                  }
+                >
+                  <DateTimePicker
+                    value={end}
+                    onChange={setEnd}
+                    min={minEnd}
+                    label="End"
+                    error={touched.end && (!endDate || !timeOk)}
+                    onBlur={() => markTouched("end")}
+                  />
+                </FormField>
+              </div>
+
+              {/* Billing Info */}
+              <div className="bg-blue-50 rounded-xl p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-blue-900 mb-1">
+                      Billing Information
+                    </h4>
+                    <p className="text-blue-700 text-sm leading-relaxed">
+                      • Billing rounds up to the next whole hour (minimum 1
+                      hour)
+                      <br />
+                      • Rates: &lt;4hrs $50/hr • 4hrs $30/hr • 5hrs $25/hr •
+                      6+hrs $21/hr
+                      <br />• Last-minute bookings: +20% (&lt;1 week), +40%
+                      (&lt;2 days), +100% (&lt;1 day)
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               {error && (
                 <div
-                  className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+                  className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6"
                   role="alert"
                 >
-                  {error}
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-red-800 mb-1">
+                        Booking Error
+                      </h4>
+                      <p className="text-red-700 text-sm">{error}</p>
+                    </div>
+                  </div>
                 </div>
               )}
 
-              {/* Confirm */}
-              <div className="mt-6">
+              {/* Confirm Button */}
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
                 <button
                   onClick={onConfirm}
                   disabled={!formOk}
                   aria-busy={creating}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#FF6633] px-5 py-3 text-white font-medium shadow hover:opacity-90 disabled:opacity-50"
+                  className={`flex-1 w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform ${
+                    formOk
+                      ? "bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  }`}
                 >
                   {creating ? (
                     <>
-                      <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-                        <circle
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          opacity="0.25"
-                        />
-                        <path
-                          d="M22 12a10 10 0 0 1-10 10"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      Preparing your PayNow QR…
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Preparing PayNow QR
                     </>
                   ) : (
-                    "Confirm & Pay (PayNow QR)"
+                    <>
+                      <CreditCard className="w-5 h-5" />
+                      Confirm & Pay with PayNow
+                    </>
                   )}
                 </button>
-                <p className="mt-2 text-xs text-slate-500">
-                  The PayNow QR will appear after confirmation. You can download
-                  it to save/scan.
-                </p>
-              </div>
-
-              {/* How we charge – always visible (transparent rules) */}
-              <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">
-                <h3 className="font-semibold text-[#20334F]">How we charge</h3>
-                <ul className="mt-3 space-y-2 list-disc pl-5">
-                  <li>
-                    Billing rounds up to the next whole hour (minimum 1 hour).
-                  </li>
-                  <li>
-                    <span className="font-medium">Rates:</span> &lt;4 hrs:{" "}
-                    <span className="font-mono">$50/hr</span>, 4 hrs:{" "}
-                    <span className="font-mono">$30/hr</span>, 5 hrs:{" "}
-                    <span className="font-mono">$25/hr</span>, 6+ hrs:{" "}
-                    <span className="font-mono">$21/hr</span>.
-                  </li>
-                  <li>
-                    <span className="font-medium">Last-minute factor:</span>{" "}
-                    &lt;1 week +20%, &lt;2 days +40%, &lt;1 day +100%.
-                  </li>
-                  <li>
-                    Final amount is server-confirmed on your PayNow QR. No
-                    hidden fees.
-                  </li>
-                </ul>
+                <div className="text-sm text-gray-600 text-center sm:text-left">
+                  <p className="font-medium">Secure Payment</p>
+                  <p>PayNow QR • Instant confirmation</p>
+                </div>
               </div>
             </div>
           </section>
 
           {/* Live Summary – only shows after both dates are valid */}
           {showSummary && (
-            <aside className="md:sticky md:top-24 h-fit">
-              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-base font-semibold text-[#20334F]">
-                    Your Summary
+            <aside className="lg:sticky lg:top-24 h-fit z-10">
+              <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-[#20334F]">
+                    Booking Summary
                   </h2>
                   <span
-                    className={`rounded-full px-2.5 py-1 text-xs ${
+                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
                       lmMult > 1
-                        ? "bg-orange-50 text-orange-700 ring-1 ring-orange-200"
-                        : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+                        ? "bg-orange-100 text-orange-700"
+                        : "bg-green-100 text-green-700"
                     }`}
                   >
-                    {lmMult > 1 ? "Last-minute applied" : "Standard rate"}
+                    {lmMult > 1 ? (
+                      <>
+                        <AlertCircle size={12} />
+                        Last-minute
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle size={12} />
+                        Standard rate
+                      </>
+                    )}
                   </span>
                 </div>
 
-                <dl className="mt-4 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <dt>Start</dt>
-                    <dd>{startDate?.toLocaleString("en-SG")}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>End</dt>
-                    <dd>{endDate?.toLocaleString("en-SG")}</dd>
-                  </div>
-
-                  <div className="border-t my-3" />
-
-                  <div className="flex justify-between">
-                    <dt>Raw duration</dt>
-                    <dd>{rawHoursText} h</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Rounding</dt>
-                    <dd>{roundingNote}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Billable hours</dt>
-                    <dd>{hours}</dd>
-                  </div>
-
-                  <div className="border-t my-3" />
-
-                  <div className="flex justify-between">
-                    <dt>Pricing tier</dt>
-                    <dd>{tierLabel}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Rate applied</dt>
-                    <dd>{formatCurrency(rate)}/hr</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Estimated subtotal</dt>
-                    <dd>{formatCurrency(subtotal)}</dd>
+                <div className="space-y-4">
+                  {/* Date & Time */}
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      Service Period
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Start:</span>
+                        <span className="font-medium">
+                          {startDate?.toLocaleString("en-SG")}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">End:</span>
+                        <span className="font-medium">
+                          {endDate?.toLocaleString("en-SG")}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Duration:</span>
+                        <span className="font-medium">
+                          {rawHoursText} hours
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Billed:</span>
+                        <span className="font-medium">{hours} hours</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="border-t my-3" />
+                  {/* Pricing */}
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <DollarSign className="w-4 h-4" />
+                      Pricing Breakdown
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          Rate ({tierLabel}):
+                        </span>
+                        <span className="font-medium">
+                          {formatCurrency(rate)}/hr
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Hours billed:</span>
+                        <span className="font-medium">{hours} hrs</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          Base cost (1 lifeguard):
+                        </span>
+                        <span className="font-medium">
+                          {formatCurrency(baseSubtotal)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">
+                          Number of lifeguards:
+                        </span>
+                        <span className="font-medium">
+                          {lifeguards} lifeguard{lifeguards > 1 ? "s" : ""}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Subtotal:</span>
+                        <span className="font-medium">
+                          {formatCurrency(subtotal)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Lead time:</span>
+                        <span className="font-medium">{noticeDaysText}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Surcharge:</span>
+                        <span
+                          className={`font-medium ${
+                            surcharge > 0 ? "text-orange-600" : ""
+                          }`}
+                        >
+                          {formatCurrency(surcharge)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
-                  <div className="flex justify-between">
-                    <dt>Lead time</dt>
-                    <dd>{noticeDaysText}</dd>
+                  {/* Total */}
+                  <div className="bg-gradient-to-r from-[#FF6633] to-[#e55a2b] rounded-xl p-4 text-white">
+                    <div className="flex justify-between items-center">
+                      <span className="text-lg font-semibold">
+                        Total Amount:
+                      </span>
+                      <span className="text-2xl font-bold">
+                        {formatCurrency(estTotal)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-white/80 mt-1">
+                      Final amount confirmed on PayNow QR
+                    </p>
                   </div>
-                  <div className="flex justify-between">
-                    <dt>Last-minute factor</dt>
-                    <dd>{lmLabel}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Last-minute surcharge</dt>
-                    <dd>{formatCurrency(surcharge)}</dd>
-                  </div>
-
-                  <div className="border-t pt-3 mt-3 flex justify-between font-semibold text-[#20334F]">
-                    <dt>Estimated total</dt>
-                    <dd>{formatCurrency(estTotal)}</dd>
-                  </div>
-                </dl>
+                </div>
               </div>
             </aside>
           )}
         </div>
       </div>
 
-      {/* QR Modal — scrollable on mobile, sits above navbar */}
+      {/* QR Modal */}
       {showQR && order && (
         <div
-          className="fixed inset-0 z-[9999] h-dvh w-full p-4 pt-20 flex items-start justify-center overflow-y-auto overscroll-contain"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="qr-title"
           onKeyDown={(e) => e.key === "Escape" && setShowQR(false)}
         >
-          <div
-            className="fixed inset-0 bg-black/40"
-            onClick={() => setShowQR(false)}
-            aria-hidden="true"
-          />
-          <div className="relative z-10 w-full max-w-md rounded-2xl bg-white p-5 shadow-lg max-h-[calc(100dvh-6rem)] overflow-auto">
-            <h3 id="qr-title" className="text-lg font-semibold text-[#20334F]">
-              Scan to Pay (PayNow)
-            </h3>
-            <p className="text-sm text-slate-600 mt-1">
-              Order <strong>{order.orderId}</strong> — Amount{" "}
-              <strong>{formatCurrency(order.amount)}</strong>
-            </p>
-            <img
-              src={order.paynow.qrDataUrl}
-              alt={`PayNow QR for order ${order.orderId}`}
-              className="mt-4 mx-auto rounded-lg border max-h-[70svh] w-auto h-auto object-contain"
-            />
-            <div className="mt-4 flex items-center justify-between">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform transition-all">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <h3
+                id="qr-title"
+                className="text-2xl font-bold text-[#20334F] mb-2"
+              >
+                Payment QR Code
+              </h3>
+              <p className="text-gray-600">
+                Order <span className="font-semibold">{order.orderId}</span> •{" "}
+                {formatCurrency(order.amount)}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+              <img
+                src={order.paynow.qrDataUrl}
+                alt={`PayNow QR for order ${order.orderId}`}
+                className="w-full max-w-xs mx-auto rounded-lg"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                ref={closeBtnRef}
+                onClick={() => setShowQR(false)}
+                className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
               <a
                 href={order.paynow.qrDataUrl}
                 download={`PayNow-${order.orderId}.png`}
-                className="text-sm underline"
+                className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors text-center inline-flex items-center justify-center gap-2"
               >
+                <Download className="w-4 h-4" />
                 Download QR
               </a>
-              <div className="space-x-2">
-                <button
-                  ref={closeBtnRef}
-                  onClick={() => setShowQR(false)}
-                  className="rounded-lg border px-3 py-1.5 text-sm"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  onClick={onPaid}
-                  disabled={paying}
-                  aria-busy={paying}
-                  className={`rounded-lg bg-[#FF6633] px-3 py-1.5 text-white text-sm ${
-                    paying ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {paying ? "Processing…" : "I’ve paid"}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={onPaid}
+                disabled={paying}
+                aria-busy={paying}
+                className={`flex-1 px-4 py-3 bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white rounded-xl font-semibold transition-all ${
+                  paying ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
+                }`}
+              >
+                {paying ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block mr-2" />
+                    Processing...
+                  </>
+                ) : (
+                  "I've Paid"
+                )}
+              </button>
             </div>
           </div>
         </div>

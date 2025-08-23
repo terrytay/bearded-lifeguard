@@ -1,4 +1,5 @@
 // src/app/courses/page.tsx
+import { Cta } from "@/components/Cta";
 export default function CoursesPage() {
   // Using <img> for these remote images (avoids Next/Image remote config/mixed-content issues)
   const badges = [
@@ -189,6 +190,13 @@ export default function CoursesPage() {
           </ul>
         </div>
       </section>
+
+      {/* Call to Action */}
+      <div className="px-4">
+        <div className="mx-auto max-w-7xl">
+          <Cta />
+        </div>
+      </div>
     </main>
   );
 }

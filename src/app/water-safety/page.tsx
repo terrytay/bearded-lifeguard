@@ -1,4 +1,5 @@
 // src/app/water-safety/page.tsx
+import { Cta } from "@/components/Cta";
 export default function WaterSafetyPage() {
   const gallery = [
     {
@@ -166,6 +167,13 @@ export default function WaterSafetyPage() {
           </p>
         </div>
       </section>
+
+      {/* Call to Action */}
+      <div className="px-4">
+        <div className="mx-auto max-w-7xl">
+          <Cta />
+        </div>
+      </div>
     </main>
   );
 }

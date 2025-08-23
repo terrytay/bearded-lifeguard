@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import QRCode from "qrcode";
 import { PaynowQR } from "../../../lib/paynow";
+import { EmailService } from "../../../lib/email-service";
 
 function computeAmount(hours: number) {
   if (hours < 4) return hours * 50;
@@ -26,10 +27,14 @@ export async function POST(req: Request) {
     dateISO, // booking date/time string (optional)
     hours, // integer hours
     noticeDays = 14, // int days notice till event
+    lifeguards = 1, // number of lifeguards required
+    serviceType = "", // service type selection
+    customService = "", // custom service description
   } = body;
 
   const base = computeAmount(Number(hours));
-  const total = base * lastMinuteMultiplier(Number(noticeDays));
+  const subtotal = base * lastMinuteMultiplier(Number(noticeDays));
+  const total = subtotal * Number(lifeguards);
 
   const orderId = `BL-${Date.now().toString().slice(-6)}-${randomUUID()
     .slice(0, 4)
@@ -68,6 +73,9 @@ export async function POST(req: Request) {
     phone,
     dateISO,
     hours,
+    lifeguards,
+    serviceType,
+    customService,
     paynow: { payload, qrDataUrl },
   });
 }

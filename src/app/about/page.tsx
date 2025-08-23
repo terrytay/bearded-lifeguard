@@ -1,6 +1,7 @@
 // app/about/page.tsx
 import { logos } from "@/content/Content";
 import Image from "next/image";
+import { Cta } from "@/components/Cta";
 
 export default function AboutUs() {
   return (
@@ -129,6 +130,13 @@ export default function AboutUs() {
           </ul>
         </div>
       </section>
+
+      {/* Call to Action */}
+      <div className="px-4">
+        <div className="mx-auto max-w-7xl">
+          <Cta />
+        </div>
+      </div>
     </main>
   );
 }

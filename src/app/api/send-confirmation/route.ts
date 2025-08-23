@@ -24,6 +24,8 @@ export async function POST(req: Request) {
       serviceType,
       customService,
       remarks,
+      startISO,
+      endISO,
     } = body;
 
     if (!customerName || !customerEmail || !orderId || !startDateTime || !endDateTime) {
@@ -52,6 +54,8 @@ export async function POST(req: Request) {
       serviceType: serviceType || "",
       customService: customService || "",
       remarks: remarks || "",
+      startISO: startISO || "",
+      endISO: endISO || "",
     };
 
     // Send confirmation email

@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { CalendarHelper, type CalendarEvent } from "./calendar";
 
 export type BookingEmailData = {
   customerName: string;
@@ -18,6 +19,8 @@ export type BookingEmailData = {
   serviceType: string;
   customService: string;
   remarks: string;
+  startISO?: string;
+  endISO?: string;
 };
 
 export class EmailService {
@@ -57,6 +60,25 @@ export class EmailService {
     const htmlContent = this.generateBookingEmailHTML(data);
     const textContent = this.generateBookingEmailText(data);
 
+    // Generate calendar attachment if we have dates
+    let attachments: any[] = [];
+    if (data.startISO && data.endISO) {
+      const calendarEvent: CalendarEvent = {
+        title: `Bearded Lifeguard - ${this.formatServiceType(data.serviceType, data.customService)}`,
+        startDate: new Date(data.startISO),
+        endDate: new Date(data.endISO),
+        description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${data.orderId}\nAmount Paid: ${data.totalAmount}\nLifeguards: ${data.lifeguards}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 9123 4567`,
+        location: "To be confirmed by our operations team"
+      };
+      
+      const icsContent = CalendarHelper.generateICSFile(calendarEvent);
+      attachments.push({
+        filename: `lifeguard-booking-${data.orderId}.ics`,
+        content: icsContent,
+        contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+      });
+    }
+
     const mailOptions = {
       from: {
         name: "Bearded Lifeguard",
@@ -68,6 +90,117 @@ export class EmailService {
       to: data.customerEmail,
       cc: "sales@sglifeguardservices.com",
       subject: `🏊‍♀️ Booking Confirmed - Order ${data.orderId} | Bearded Lifeguard`,
+      html: htmlContent,
+      text: textContent,
+      attachments: attachments,
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  }
+
+  async sendPaymentConfirmationEmail(data: {
+    customerName: string;
+    customerEmail: string;
+    orderId: string;
+    startDateTime: string;
+    endDateTime: string;
+    totalAmount: string;
+  }): Promise<void> {
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmed - Bearded Lifeguard</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 40px 30px; text-align: center; }
+        .content { padding: 40px 30px; }
+        .status-badge { background: #10b981; color: white; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: bold; margin: 20px 0; }
+        .footer { background: #f8f8f8; padding: 20px 30px; text-align: center; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Payment Confirmed!</h1>
+            <p>Your lifeguard service is now fully confirmed and ready to go.</p>
+        </div>
+        <div class="content">
+            <p>Dear ${data.customerName},</p>
+            
+            <p>Great news! We've received and confirmed your payment for your lifeguard booking.</p>
+            
+            <div class="status-badge">
+                🎉 PAYMENT CONFIRMED
+            </div>
+            
+            <p><strong>Booking Details:</strong></p>
+            <ul>
+                <li><strong>Order Reference:</strong> ${data.orderId}</li>
+                <li><strong>Service Date & Time:</strong> ${data.startDateTime} - ${data.endDateTime}</li>
+                <li><strong>Amount Paid:</strong> ${data.totalAmount}</li>
+            </ul>
+            
+            <p><strong>What's Next?</strong></p>
+            <p>Our operations team will contact you within 24 hours to confirm all final details for your lifeguard service. Our certified lifeguard will arrive 15 minutes before your scheduled start time.</p>
+            
+            <!-- Track Booking Section -->
+            <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0; color: white;">
+                <h3 style="margin: 0 0 15px 0; font-size: 18px;">📱 Track Your Booking</h3>
+                <p style="margin: 0 0 20px 0; opacity: 0.9; font-size: 14px;">Keep track of your booking status and get updates in real-time.</p>
+                <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}" 
+                   style="display: inline-block; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
+                    🔍 Track Booking Status
+                </a>
+            </div>
+            
+            <p>If you have any questions, feel free to contact us at <a href="mailto:support@sglifeguardservices.com">support@sglifeguardservices.com</a> or +65 9123 4567.</p>
+            
+            <p>Thank you for choosing Bearded Lifeguard!</p>
+        </div>
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+    const textContent = `
+PAYMENT CONFIRMED - BEARDED LIFEGUARD
+
+Dear ${data.customerName},
+
+Great news! We've received and confirmed your payment for your lifeguard booking.
+
+BOOKING DETAILS:
+Order Reference: ${data.orderId}
+Service Date & Time: ${data.startDateTime} - ${data.endDateTime}
+Amount Paid: ${data.totalAmount}
+
+WHAT'S NEXT:
+Our operations team will contact you within 24 hours to confirm all final details for your lifeguard service. Our certified lifeguard will arrive 15 minutes before your scheduled start time.
+
+TRACK YOUR BOOKING:
+${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}
+
+If you have any questions, contact us at support@sglifeguardservices.com or +65 9123 4567.
+
+Thank you for choosing Bearded Lifeguard!
+
+© ${new Date().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority
+`;
+
+    const mailOptions = {
+      from: {
+        name: "Bearded Lifeguard",
+        address: process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@sglifeguardservices.com",
+      },
+      to: data.customerEmail,
+      cc: "sales@sglifeguardservices.com",
+      subject: `✅ Payment Confirmed - Order ${data.orderId} | Bearded Lifeguard`,
       html: htmlContent,
       text: textContent,
     };
@@ -101,21 +234,31 @@ export class EmailService {
         table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
         img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
         
+        /* Force light theme and prevent dark mode overrides */
+        body, .email-container, .content, .booking-card, .card-body, .price-section, .contact-section {
+            background-color: #ffffff !important;
+            color: #1a1a1a !important;
+            -webkit-text-fill-color: #1a1a1a !important;
+        }
+        
         /* Main Styles */
         body {
             margin: 0 !important;
             padding: 0 !important;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #1a1a1a;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1a1a1a !important;
+            background: #f8fafc !important;
             min-height: 100vh;
+            color-scheme: light only; /* Force light mode */
+            supported-color-schemes: light only;
         }
         
         .email-container {
             max-width: 640px;
-            margin: 40px auto;
-            background: #ffffff;
+            width: 100%;
+            margin: 20px auto;
+            background: #ffffff !important;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 8px 25px rgba(0,0,0,0.06);
@@ -462,40 +605,71 @@ export class EmailService {
             opacity: 0.6;
         }
         
-        /* Mobile Responsive */
+        /* Enhanced Mobile Responsive */
         @media only screen and (max-width: 600px) {
             .email-container { 
-                margin: 20px 10px; 
+                margin: 10px !important; 
                 border-radius: 16px;
+                width: calc(100% - 20px) !important;
             }
             .header-content, .content, .contact-section, .footer { 
-                padding: 30px 25px; 
+                padding: 25px 20px !important; 
             }
             .confirmation-title { 
-                font-size: 28px; 
+                font-size: 24px !important; 
+                line-height: 1.2 !important;
             }
             .card-body { 
-                padding: 25px 20px; 
+                padding: 20px 15px !important; 
             }
             .contact-methods { 
-                flex-direction: column; 
-                align-items: center;
+                flex-direction: column !important; 
+                align-items: center !important;
+                gap: 15px !important;
             }
             .total-amount { 
-                font-size: 24px; 
+                font-size: 22px !important; 
+            }
+            .detail-table {
+                font-size: 14px !important;
+            }
+            .greeting {
+                font-size: 16px !important;
             }
         }
         
-        /* Dark Mode Support */
+        @media only screen and (max-width: 480px) {
+            .email-container {
+                margin: 5px !important;
+                width: calc(100% - 10px) !important;
+                border-radius: 12px;
+            }
+            .header-content {
+                padding: 20px 15px !important;
+            }
+            .content {
+                padding: 20px 15px !important;
+            }
+            .confirmation-title {
+                font-size: 20px !important;
+            }
+        }
+        
+        /* Force light theme - disable dark mode completely */
         @media (prefers-color-scheme: dark) {
-            .email-container { background: #1e293b; }
-            .content { color: #e2e8f0; }
-            .greeting { color: #f1f5f9; }
-            .booking-card { background: #334155; border-color: #475569; }
-            .detail-label { color: #94a3b8; }
-            .detail-value { color: #f1f5f9; }
-            .contact-section { background: #334155; border-color: #475569; }
-            .contact-title { color: #f1f5f9; }
+            body, .email-container, .content, .booking-card, .card-body, .price-section, .contact-section {
+                background-color: #ffffff !important;
+                color: #1a1a1a !important;
+                -webkit-text-fill-color: #1a1a1a !important;
+            }
+            .greeting, .detail-label, .detail-value, .contact-title {
+                color: #1a1a1a !important;
+                -webkit-text-fill-color: #1a1a1a !important;
+            }
+            .booking-card {
+                background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+                border-color: #e2e8f0 !important;
+            }
         }
     </style>
 </head>
@@ -704,6 +878,60 @@ export class EmailService {
                 </ul>
             </div>
             
+            ${
+              data.startISO && data.endISO
+                ? `<!-- Calendar Section -->
+            <div class="contact-section" style="margin-bottom: 40px;">
+                <h3 class="contact-title">📅 Add to Calendar</h3>
+                <p style="text-align: center; color: #64748b; margin-bottom: 20px; font-size: 14px;">
+                    Don't forget about your lifeguard service! Add this booking to your calendar.
+                </p>
+                <div class="contact-methods">
+                    <a href="${CalendarHelper.generateGoogleCalendarUrl({
+                      title: `Bearded Lifeguard - ${this.formatServiceType(
+                        data.serviceType,
+                        data.customService
+                      )}`,
+                      startDate: new Date(data.startISO),
+                      endDate: new Date(data.endISO),
+                      description: `Professional lifeguard service. Order: ${data.orderId}. Amount: ${data.totalAmount}`,
+                      location: "To be confirmed by our operations team",
+                    })}" class="contact-item" style="background: linear-gradient(135deg, #4285f4 0%, #356ac3 100%);">
+                        📅 Google Calendar
+                    </a>
+                    <a href="${CalendarHelper.generateOutlookCalendarUrl({
+                      title: `Bearded Lifeguard - ${this.formatServiceType(
+                        data.serviceType,
+                        data.customService
+                      )}`,
+                      startDate: new Date(data.startISO),
+                      endDate: new Date(data.endISO),
+                      description: `Professional lifeguard service. Order: ${data.orderId}. Amount: ${data.totalAmount}`,
+                      location: "To be confirmed by our operations team",
+                    })}" class="contact-item" style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);">
+                        📅 Outlook Calendar
+                    </a>
+                </div>
+                <p style="text-align: center; color: #64748b; margin-top: 15px; font-size: 12px;">
+                    A calendar file (.ics) has also been attached to this email for easy import.
+                </p>
+            </div>`
+                : ""
+            }
+            
+            <!-- Track Booking Section -->
+            <div class="contact-section" style="margin-bottom: 30px;">
+                <h3 class="contact-title">📱 Track Your Booking</h3>
+                <p style="text-align: center; color: #64748b; margin-bottom: 20px; font-size: 14px;">
+                    Keep track of your booking status and get updates in real-time.
+                </p>
+                <div class="contact-methods" style="justify-content: center;">
+                    <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}" class="contact-item" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); max-width: 300px;">
+                        🔍 Track Booking Status
+                    </a>
+                </div>
+            </div>
+            
             <!-- Contact Section -->
             <div class="contact-section">
                 <h3 class="contact-title">Need Assistance?</h3>
@@ -764,6 +992,9 @@ WHAT HAPPENS NEXT:
 2. We'll coordinate the exact logistics and any special requirements for your venue
 3. Our certified lifeguard will arrive 15 minutes before your scheduled start time
 4. You'll receive a follow-up call 24 hours before your booking for final confirmation
+
+TRACK YOUR BOOKING:
+${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}
 
 NEED ASSISTANCE?
 Email: sales@sglifeguardservices.com

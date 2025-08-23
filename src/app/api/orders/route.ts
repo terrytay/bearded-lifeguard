@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import QRCode from "qrcode";
 import { PaynowQR } from "../../../lib/paynow";
 import { EmailService } from "../../../lib/email-service";
+import { BookingService } from "../../../lib/booking-service";
 
 function computeAmount(hours: number) {
   if (hours < 4) return hours * 50;
@@ -31,6 +32,8 @@ export async function POST(req: Request) {
     serviceType = "", // service type selection
     customService = "", // custom service description
     remarks = "", // optional remarks from user
+    startISO,
+    endISO
   } = body;
 
   const base = computeAmount(Number(hours));
@@ -65,6 +68,30 @@ export async function POST(req: Request) {
     margin: 1,
     scale: 8,
   });
+
+  try {
+    // Save booking to Supabase
+    await BookingService.createBooking({
+      order_id: orderId,
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone,
+      start_datetime: startISO || dateISO,
+      end_datetime: endISO || dateISO,
+      hours: Number(hours),
+      lifeguards: Number(lifeguards),
+      service_type: serviceType,
+      custom_service: customService || null,
+      remarks: remarks || null,
+      amount: total,
+      status: 'pending',
+      payment_status: 'pending',
+      viewed_by_admin: false
+    });
+  } catch (error) {
+    console.error('Failed to save booking to Supabase:', error);
+    // Continue with the response even if Supabase fails
+  }
 
   return NextResponse.json({
     orderId,

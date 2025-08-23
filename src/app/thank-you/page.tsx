@@ -11,12 +11,34 @@ import {
   Calendar,
   Home,
   MessageSquare,
+  CalendarPlus,
+  Download,
 } from "lucide-react";
+import { CalendarHelper, type CalendarEvent } from "@/lib/calendar";
 
 export default function ThankYou() {
   const searchParams = useSearchParams();
   const order = searchParams.get("order") ?? "-";
   const amount = searchParams.get("amount") ?? "-";
+  const startDate = searchParams.get("start");
+  const endDate = searchParams.get("end");
+  const serviceType = searchParams.get("service") ?? "Lifeguard Service";
+  const location = searchParams.get("location") ?? "";
+  
+  // Create calendar event if we have dates
+  const calendarEvent: CalendarEvent | null = startDate && endDate ? {
+    title: `Bearded Lifeguard - ${serviceType}`,
+    startDate: new Date(startDate),
+    endDate: new Date(endDate),
+    description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${order}\nAmount Paid: $${amount}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 9123 4567`,
+    location: location || "To be confirmed by our operations team"
+  } : null;
+  
+  const handleCalendarDownload = () => {
+    if (calendarEvent) {
+      CalendarHelper.downloadICSFile(calendarEvent, `lifeguard-booking-${order}.ics`);
+    }
+  };
 
   return (
     <main className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50">
@@ -104,6 +126,83 @@ export default function ThankYou() {
               </div>
             </div>
           </div>
+
+          {/* Calendar Integration */}
+          {calendarEvent && (
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+              <div className="bg-gradient-to-r from-green-600 to-green-700 px-8 py-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                  <CalendarPlus className="w-6 h-6" />
+                  Add to Calendar
+                </h2>
+              </div>
+
+              <div className="p-8">
+                <p className="text-gray-600 mb-6">
+                  Don't forget about your lifeguard service! Add this booking to your calendar so you never miss it.
+                </p>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <a
+                      href={CalendarHelper.generateGoogleCalendarUrl(calendarEvent)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-3 w-full bg-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                      <Calendar className="w-5 h-5" />
+                      Google Calendar
+                    </a>
+                    
+                    <a
+                      href={CalendarHelper.generateOutlookCalendarUrl(calendarEvent)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-3 w-full bg-blue-500 text-white py-3 px-6 rounded-xl font-semibold hover:bg-blue-600 transition-colors"
+                    >
+                      <Calendar className="w-5 h-5" />
+                      Outlook Calendar
+                    </a>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <a
+                      href={CalendarHelper.generateYahooCalendarUrl(calendarEvent)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-3 w-full bg-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-purple-700 transition-colors"
+                    >
+                      <Calendar className="w-5 h-5" />
+                      Yahoo Calendar
+                    </a>
+                    
+                    <button
+                      onClick={handleCalendarDownload}
+                      className="flex items-center justify-center gap-3 w-full bg-gray-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-gray-700 transition-colors"
+                    >
+                      <Download className="w-5 h-5" />
+                      Download (.ics)
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mt-6 p-4 bg-green-50 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-green-800 mb-1">Event Details</h4>
+                      <div className="text-sm text-green-700 space-y-1">
+                        <p><strong>Service:</strong> {calendarEvent.title}</p>
+                        <p><strong>Start:</strong> {calendarEvent.startDate.toLocaleString('en-SG')}</p>
+                        <p><strong>End:</strong> {calendarEvent.endDate.toLocaleString('en-SG')}</p>
+                        <p><strong>Location:</strong> {calendarEvent.location}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* What Happens Next */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">

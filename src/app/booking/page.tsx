@@ -255,6 +255,8 @@ export default function BookingPage() {
           serviceType,
           customService: serviceType === "others" ? customService.trim() : "",
           remarks: remarks.trim(),
+          startISO: startDate?.toISOString(),
+          endISO: endDate?.toISOString(),
         }),
       });
     } catch (error) {
@@ -262,11 +264,15 @@ export default function BookingPage() {
       // Continue anyway - don't block the user flow
     }
 
-    r.push(
-      `/thank-you?order=${encodeURIComponent(
-        order.orderId
-      )}&amount=${order.amount.toFixed(2)}`
-    );
+    const thankYouParams = new URLSearchParams({
+      order: order.orderId,
+      amount: order.amount.toFixed(2),
+      start: startDate?.toISOString() || "",
+      end: endDate?.toISOString() || "",
+      service: serviceType === "others" ? customService.trim() : serviceType,
+    });
+
+    r.push(`/thank-you?${thankYouParams.toString()}`);
   }
 
   async function onConfirm() {

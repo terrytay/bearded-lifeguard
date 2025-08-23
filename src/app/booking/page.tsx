@@ -136,7 +136,11 @@ export default function BookingPage() {
   const minEnd = useMemo(() => {
     if (startDate) {
       // If we have a start date, use the same date as minimum for end date
-      const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const startDateOnly = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate()
+      );
       return toLocalInputValue(startDateOnly);
     }
     // If no start date selected, use the minimum start date
@@ -206,8 +210,11 @@ export default function BookingPage() {
     [noticeDays]
   );
 
-  const serviceOk = serviceType && (serviceType !== "others" || customService.trim().length >= 3);
-  const formOk = nameOk && phoneOk && emailOk && timeOk && serviceOk && !creating;
+  const serviceOk =
+    serviceType &&
+    (serviceType !== "others" || customService.trim().length >= 3);
+  const formOk =
+    nameOk && phoneOk && emailOk && timeOk && serviceOk && !creating;
   const showSummary = timeOk;
 
   function markTouched(k: string) {
@@ -427,11 +434,15 @@ export default function BookingPage() {
 
               {/* Service Type Selection */}
               <div className="mb-8">
-                <FormField 
-                  label="Service Type" 
-                  required 
+                <FormField
+                  label="Service Type"
+                  required
                   description="What type of lifeguard service do you need?"
-                  error={touched.serviceType && !serviceOk ? "Please select a service type" : undefined}
+                  error={
+                    touched.serviceType && !serviceOk
+                      ? "Please select a service type"
+                      : undefined
+                  }
                 >
                   <div className="space-y-4">
                     <select
@@ -440,18 +451,22 @@ export default function BookingPage() {
                       onBlur={() => markTouched("serviceType")}
                       className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white ${
                         touched.serviceType && !serviceOk
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-200 focus:border-[#FF6633] hover:border-gray-300'
+                          ? "border-red-300 focus:border-red-500"
+                          : "border-gray-200 focus:border-[#FF6633] hover:border-gray-300"
                       }`}
                     >
                       <option value="">Select service type...</option>
                       <option value="pools">Pool Lifeguarding</option>
                       <option value="events">Event Lifeguarding</option>
-                      <option value="pool-parties">Pool Party Lifeguarding</option>
-                      <option value="open-water">Open Water Lifeguarding</option>
+                      <option value="pool-parties">
+                        Pool Party Lifeguarding
+                      </option>
+                      <option value="open-water">
+                        Open Water Lifeguarding
+                      </option>
                       <option value="others">Others (Please specify)</option>
                     </select>
-                    
+
                     {serviceType === "others" && (
                       <div className="mt-4">
                         <textarea
@@ -461,16 +476,21 @@ export default function BookingPage() {
                           placeholder="Please describe your specific lifeguard service needs..."
                           rows={3}
                           className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white placeholder:text-gray-400 resize-y ${
-                            touched.serviceType && serviceType === "others" && customService.trim().length < 3
-                              ? 'border-red-300 focus:border-red-500'
-                              : 'border-gray-200 focus:border-[#FF6633] hover:border-gray-300'
+                            touched.serviceType &&
+                            serviceType === "others" &&
+                            customService.trim().length < 3
+                              ? "border-red-300 focus:border-red-500"
+                              : "border-gray-200 focus:border-[#FF6633] hover:border-gray-300"
                           }`}
                         />
-                        {touched.serviceType && serviceType === "others" && customService.trim().length < 3 && (
-                          <div className="mt-2 text-sm text-red-600">
-                            Please provide at least 3 characters describing your service needs
-                          </div>
-                        )}
+                        {touched.serviceType &&
+                          serviceType === "others" &&
+                          customService.trim().length < 3 && (
+                            <div className="mt-2 text-sm text-red-600">
+                              Please provide at least 3 characters describing
+                              your service needs
+                            </div>
+                          )}
                       </div>
                     )}
                   </div>
@@ -488,7 +508,7 @@ export default function BookingPage() {
                     value={lifeguards}
                     onChange={setLifeguards}
                     min={1}
-                    max={10}
+                    max={1000}
                     label={`lifeguard${lifeguards > 1 ? "s" : ""}`}
                     icon={<Users size={16} />}
                   />

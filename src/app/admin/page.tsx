@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   Search,
@@ -30,6 +30,12 @@ import {
   Zap,
   User,
   FolderOpen,
+  Bell,
+  Settings,
+  Download,
+  Copy,
+  Edit3,
+  Shield,
 } from "lucide-react";
 
 interface Booking {
@@ -62,6 +68,13 @@ export default function AdminPage() {
   const [unviewedCount, setUnviewedCount] = useState(0);
   const [showPaymentConfirm, setShowPaymentConfirm] = useState(false);
   const [confirmingPayment, setConfirmingPayment] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    booking: Booking;
+    x: number;
+    y: number;
+  } | null>(null);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'details' | 'actions'>('overview');
 
   useEffect(() => {
     checkAuth();
@@ -288,84 +301,137 @@ export default function AdminPage() {
       : baseName;
   };
 
+  // Context menu handlers
+  const handleContextMenu = useCallback((e: React.MouseEvent, booking: Booking) => {
+    e.preventDefault();
+    setContextMenu({
+      booking,
+      x: e.clientX,
+      y: e.clientY,
+    });
+  }, []);
+
+  const closeContextMenu = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
+  // Close context menu on outside click
+  useEffect(() => {
+    const handleClickOutside = () => closeContextMenu();
+    if (contextMenu) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [contextMenu, closeContextMenu]);
+
   if (!user) {
     return (
-      <div className="page-container min-h-screen flex items-center justify-center">
-        <div className="modern-card p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF6633] mx-auto"></div>
-          <p className="mt-2 text-modern-light">Checking authentication...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900">
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 text-center">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
+            <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2"></div>
+          </div>
+          <p className="mt-4 text-white/80 font-medium">Authenticating admin access...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="page-container">
-      {/* Modern Header */}
-      <div className="sticky top-0 z-40 modern-nav">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white">
+      {/* Modern Admin Header */}
+      <div className="sticky top-0 z-40 bg-black/20 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#FF6633] to-[#e55a2b] rounded-xl flex items-center justify-center shadow-lg">
-                  <Zap className="w-5 h-5 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
+                  <Shield className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-[#20334F] to-[#FF6633] bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                     Admin Dashboard
                   </h1>
-                  <p className="text-gray-500 text-sm hidden sm:block">
-                    Manage bookings & communications
+                  <p className="text-white/60 text-sm">
+                    Bearded Lifeguard Management Portal
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              {/* Unviewed Count */}
               {unviewedCount > 0 && (
                 <div className="relative">
-                  <div className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-pulse">
-                    <AlertCircle className="w-4 h-4" />
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg">
+                    <Bell className="w-4 h-4 animate-bounce" />
                     <span className="hidden sm:inline">
-                      {unviewedCount} unviewed
+                      {unviewedCount} new booking{unviewedCount > 1 ? 's' : ''}
                     </span>
                     <span className="sm:hidden">{unviewedCount}</span>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-bounce"></div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
                 </div>
               )}
 
-              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white/50 rounded-lg border border-white/20">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-600">Online</span>
+              {/* View Toggle */}
+              <div className="hidden sm:flex bg-white/10 backdrop-blur-sm rounded-xl p-1">
+                <button
+                  onClick={() => setViewMode('cards')}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    viewMode === 'cards'
+                      ? 'bg-blue-500 text-white shadow-lg'
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Cards
+                </button>
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                    viewMode === 'table'
+                      ? 'bg-blue-500 text-white shadow-lg'
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Table
+                </button>
               </div>
 
+              {/* Status Indicator */}
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-green-500/20 border border-green-500/30 rounded-xl">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-sm text-green-300 font-medium">Online</span>
+              </div>
+
+              {/* Logout */}
               <button
                 onClick={logout}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-white/50 rounded-lg transition-all duration-200"
+                className="flex items-center gap-2 px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 group"
               >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <LogOut className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                <span className="hidden sm:inline font-medium">Logout</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Modern Search and Filters */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 mb-8">
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-6 mb-8">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Search Bar */}
             <div className="flex-1">
               <div className="relative group">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-[#FF6633] transition-colors" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 w-5 h-5 group-focus-within:text-blue-400 transition-colors" />
                 <input
                   type="text"
                   placeholder="Search bookings by name, email, or order ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white/80 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FF6633]/20 focus:border-[#FF6633] transition-all duration-200 text-gray-700 placeholder-gray-400"
+                  className="w-full pl-12 pr-4 py-4 bg-white/10 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-white placeholder-white/50 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -373,11 +439,11 @@ export default function AdminPage() {
             {/* Filter and Actions */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="pl-10 pr-8 py-4 bg-white/80 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FF6633]/20 focus:border-[#FF6633] transition-all duration-200 text-gray-700 min-w-[200px] appearance-none"
+                  className="pl-10 pr-8 py-4 bg-white/10 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-white min-w-[200px] appearance-none backdrop-blur-sm"
                 >
                   <option value="all">All Bookings</option>
                   <option value="unviewed">🔴 Unviewed</option>
@@ -393,7 +459,7 @@ export default function AdminPage() {
               <button
                 onClick={fetchBookings}
                 disabled={loading}
-                className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white rounded-xl hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 <RefreshCw
                   className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
@@ -403,62 +469,185 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-[#FF6633]">
-                {bookings.length}
+          {/* Enhanced Quick Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-8 pt-6 border-t border-white/20">
+            <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-blue-500/30">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-400 mb-1">
+                  {bookings.length}
+                </div>
+                <div className="text-sm text-white/70 font-medium">Total Bookings</div>
               </div>
-              <div className="text-sm text-gray-500">Total Bookings</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {bookings.filter((b) => b.payment_status === "paid").length}
+            <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl p-4 border border-green-500/30">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-400 mb-1">
+                  {bookings.filter((b) => b.payment_status === "paid").length}
+                </div>
+                <div className="text-sm text-white/70 font-medium">Paid</div>
               </div>
-              <div className="text-sm text-gray-500">Paid</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">
-                {bookings.filter((b) => b.payment_status === "pending").length}
+            <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-500/30">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-yellow-400 mb-1">
+                  {bookings.filter((b) => b.payment_status === "pending").length}
+                </div>
+                <div className="text-sm text-white/70 font-medium">Pending Payment</div>
               </div>
-              <div className="text-sm text-gray-500">Pending Payment</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">
-                {unviewedCount}
+            <div className="bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-xl p-4 border border-red-500/30">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-red-400 mb-1">
+                  {unviewedCount}
+                </div>
+                <div className="text-sm text-white/70 font-medium">Unviewed</div>
               </div>
-              <div className="text-sm text-gray-500">Unviewed</div>
             </div>
           </div>
         </div>
 
-        {/* Modern Bookings Grid */}
+        {/* Modern Bookings Display */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16">
+          <div className="flex flex-col items-center justify-center py-20">
             <div className="relative">
-              <div className="w-16 h-16 border-4 border-[#FF6633]/20 border-t-[#FF6633] rounded-full animate-spin"></div>
-              <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin absolute top-3 left-3"></div>
+              <div className="w-20 h-20 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+              <div className="w-14 h-14 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin absolute top-3 left-3 animate-pulse"></div>
+              <div className="w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin absolute top-6 left-6"></div>
             </div>
-            <p className="mt-4 text-gray-600 font-medium">
+            <p className="mt-6 text-white/80 font-semibold text-lg">
               Loading bookings...
+            </p>
+            <p className="text-white/50 text-sm">
+              Fetching the latest data
             </p>
           </div>
         ) : bookings.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-8 h-8 text-gray-400" />
+          <div className="text-center py-20">
+            <div className="w-24 h-24 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/20">
+              <FileText className="w-12 h-12 text-white/50" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-bold text-white mb-3">
               No bookings found
             </h3>
-            <p className="text-gray-600">
+            <p className="text-white/70">
               Try adjusting your search or filter criteria.
             </p>
+            <div className="mt-6">
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('all');
+                  fetchBookings();
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all font-medium"
+              >
+                Reset Filters
+              </button>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Desktop Table View */}
-            <div className="hidden lg:block bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+            {/* Cards View */}
+            {viewMode === 'cards' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {bookings.map((booking) => (
+                  <div
+                    key={booking.id}
+                    className={`group relative bg-white/10 backdrop-blur-lg border rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl ${
+                      !booking.viewed_by_admin
+                        ? "border-red-500/50 bg-red-500/10 shadow-red-500/20"
+                        : "border-white/20 hover:border-blue-500/50"
+                    }`}
+                    onClick={() => setSelectedBooking(booking)}
+                    onContextMenu={(e) => handleContextMenu(e, booking)}
+                  >
+                    {/* New Badge */}
+                    {!booking.viewed_by_admin && (
+                      <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                        NEW
+                      </div>
+                    )}
+
+                    {/* Customer Header */}
+                    <div className="flex items-center space-x-4 mb-4">
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg ${
+                          booking.payment_status === 'paid'
+                            ? 'bg-gradient-to-br from-green-500 to-emerald-600'
+                            : 'bg-gradient-to-br from-blue-500 to-purple-600'
+                        }`}
+                      >
+                        {booking.customer_name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-white font-semibold text-lg group-hover:text-blue-300 transition-colors">
+                          {booking.customer_name}
+                        </h3>
+                        <p className="text-white/60 text-sm">
+                          {booking.customer_email}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Service Info */}
+                    <div className="mb-4">
+                      <div className="text-white/90 font-medium mb-2">
+                        {formatServiceType(booking.service_type, booking.custom_service)}
+                      </div>
+                      <div className="text-white/70 text-sm mb-3">
+                        📅 {new Date(booking.start_datetime).toLocaleString('en-SG')}
+                      </div>
+                      
+                      {/* Quick Stats */}
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-white/10 rounded-lg p-2 text-center">
+                          <div className="text-white font-semibold">{booking.hours}h</div>
+                          <div className="text-white/60 text-xs">Duration</div>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-2 text-center">
+                          <div className="text-white font-semibold">{booking.lifeguards}</div>
+                          <div className="text-white/60 text-xs">Guards</div>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-2 text-center">
+                          <div className="text-white font-semibold">${booking.amount.toFixed(2)}</div>
+                          <div className="text-white/60 text-xs">Amount</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status and Actions */}
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          booking.payment_status === 'paid'
+                            ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                            : booking.status === 'cancelled'
+                            ? 'bg-red-500/20 text-red-300 border border-red-500/30'
+                            : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                        }`}
+                      >
+                        {getStatusLabel(booking.status, booking.payment_status)}
+                      </span>
+                      
+                      <div className="text-white/40 text-xs font-mono">
+                        #{booking.order_id}
+                      </div>
+                    </div>
+
+                    {/* Hover Actions */}
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="p-2 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition-colors">
+                        <Eye className="w-4 h-4 text-white" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Table View */}
+            {viewMode === 'table' && (
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gradient-to-r from-gray-50 to-gray-100">

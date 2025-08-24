@@ -552,7 +552,7 @@ export default function TrackBooking() {
               </p>
               <div className="space-y-4">
                 <a
-                  href="tel:+6591234567"
+                  href="https://wa.me/6582006021"
                   className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#FF6633]/10 to-[#e55a2b]/10 rounded-xl hover:from-[#FF6633]/20 hover:to-[#e55a2b]/20 transition-all duration-200 group border border-[#FF6633]/20"
                 >
                   <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -560,9 +560,11 @@ export default function TrackBooking() {
                   </div>
                   <div>
                     <p className="font-semibold text-[#20334F] group-hover:text-[#FF6633] transition-colors">
-                      +65 9123 4567
+                      +65 8200 6021
                     </p>
-                    <p className="text-sm text-gray-500">Call us anytime</p>
+                    <p className="text-sm text-gray-500">
+                      WhatsApp or call us anytime
+                    </p>
                   </div>
                 </a>
                 <a

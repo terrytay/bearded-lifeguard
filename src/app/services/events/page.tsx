@@ -412,10 +412,7 @@ export default function EventsPage() {
           </div>
 
           <div className="mt-8 text-white/80 text-sm">
-            <p>
-              • Free consultation included • Same-day availability •
-              Comprehensive insurance coverage
-            </p>
+            <p>• Free consultation included • Same-day availability</p>
           </div>
         </div>
       </section>

@@ -24,19 +24,25 @@ export default function ThankYou() {
   const endDate = searchParams.get("end");
   const serviceType = searchParams.get("service") ?? "Lifeguard Service";
   const location = searchParams.get("location") ?? "";
-  
+
   // Create calendar event if we have dates
-  const calendarEvent: CalendarEvent | null = startDate && endDate ? {
-    title: `Bearded Lifeguard - ${serviceType}`,
-    startDate: new Date(startDate),
-    endDate: new Date(endDate),
-    description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${order}\nAmount Paid: $${amount}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 9123 4567`,
-    location: location || "To be confirmed by our operations team"
-  } : null;
-  
+  const calendarEvent: CalendarEvent | null =
+    startDate && endDate
+      ? {
+          title: `Bearded Lifeguard - ${serviceType}`,
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
+          description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${order}\nAmount Paid: $${amount}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 9123 4567`,
+          location: location || "To be confirmed by our operations team",
+        }
+      : null;
+
   const handleCalendarDownload = () => {
     if (calendarEvent) {
-      CalendarHelper.downloadICSFile(calendarEvent, `lifeguard-booking-${order}.ics`);
+      CalendarHelper.downloadICSFile(
+        calendarEvent,
+        `lifeguard-booking-${order}.ics`
+      );
     }
   };
 
@@ -139,13 +145,16 @@ export default function ThankYou() {
 
               <div className="p-8">
                 <p className="text-gray-600 mb-6">
-                  Don't forget about your lifeguard service! Add this booking to your calendar so you never miss it.
+                  Don't forget about your lifeguard service! Add this booking to
+                  your calendar so you never miss it.
                 </p>
-                
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <a
-                      href={CalendarHelper.generateGoogleCalendarUrl(calendarEvent)}
+                      href={CalendarHelper.generateGoogleCalendarUrl(
+                        calendarEvent
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-3 w-full bg-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
@@ -153,9 +162,11 @@ export default function ThankYou() {
                       <Calendar className="w-5 h-5" />
                       Google Calendar
                     </a>
-                    
+
                     <a
-                      href={CalendarHelper.generateOutlookCalendarUrl(calendarEvent)}
+                      href={CalendarHelper.generateOutlookCalendarUrl(
+                        calendarEvent
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-3 w-full bg-blue-500 text-white py-3 px-6 rounded-xl font-semibold hover:bg-blue-600 transition-colors"
@@ -164,10 +175,12 @@ export default function ThankYou() {
                       Outlook Calendar
                     </a>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <a
-                      href={CalendarHelper.generateYahooCalendarUrl(calendarEvent)}
+                      href={CalendarHelper.generateYahooCalendarUrl(
+                        calendarEvent
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-3 w-full bg-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-purple-700 transition-colors"
@@ -175,7 +188,7 @@ export default function ThankYou() {
                       <Calendar className="w-5 h-5" />
                       Yahoo Calendar
                     </a>
-                    
+
                     <button
                       onClick={handleCalendarDownload}
                       className="flex items-center justify-center gap-3 w-full bg-gray-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-gray-700 transition-colors"
@@ -185,17 +198,29 @@ export default function ThankYou() {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="mt-6 p-4 bg-green-50 rounded-xl">
                   <div className="flex items-start gap-3">
                     <Calendar className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-semibold text-green-800 mb-1">Event Details</h4>
+                      <h4 className="font-semibold text-green-800 mb-1">
+                        Event Details
+                      </h4>
                       <div className="text-sm text-green-700 space-y-1">
-                        <p><strong>Service:</strong> {calendarEvent.title}</p>
-                        <p><strong>Start:</strong> {calendarEvent.startDate.toLocaleString('en-SG')}</p>
-                        <p><strong>End:</strong> {calendarEvent.endDate.toLocaleString('en-SG')}</p>
-                        <p><strong>Location:</strong> {calendarEvent.location}</p>
+                        <p>
+                          <strong>Service:</strong> {calendarEvent.title}
+                        </p>
+                        <p>
+                          <strong>Start:</strong>{" "}
+                          {calendarEvent.startDate.toLocaleString("en-SG")}
+                        </p>
+                        <p>
+                          <strong>End:</strong>{" "}
+                          {calendarEvent.endDate.toLocaleString("en-SG")}
+                        </p>
+                        <p>
+                          <strong>Location:</strong> {calendarEvent.location}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -300,11 +325,11 @@ export default function ThankYou() {
 
               <div className="space-y-4">
                 <a
-                  href="tel:+6591234567"
+                  href="tel:+6582006021"
                   className="flex items-center gap-3 text-[#FF6633] hover:text-[#e55a2b] transition-colors"
                 >
                   <Phone className="w-5 h-5" />
-                  <span className="font-semibold">+65 9123 4567</span>
+                  <span className="font-semibold">+65 8200 6021</span>
                 </a>
 
                 <a
@@ -313,7 +338,7 @@ export default function ThankYou() {
                 >
                   <Mail className="w-5 h-5" />
                   <span className="font-semibold">
-                    support@sglifeguardservices.com
+                    sales@sglifeguardservices.com
                   </span>
                 </a>
               </div>

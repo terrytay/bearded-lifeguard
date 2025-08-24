@@ -29,6 +29,9 @@ export default function RootLayout({
         name="google-site-verification"
         content="39pOh18bzvxnzwwTb8jR9mFa0Axcsd4xjO2iZj2WAio"
       />
+      <link rel="icon" href="/favicon.ico" sizes="any" />
+      <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       <body
         className={
           "flex flex-col justify-between bg-gradient-to-br from-slate-50 to-blue-50 relative select-none " +

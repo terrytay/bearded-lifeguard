@@ -73,8 +73,10 @@ export default function AdminPage() {
     x: number;
     y: number;
   } | null>(null);
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'details' | 'actions'>('overview');
+  const [viewMode, setViewMode] = useState<"table" | "cards">("cards");
+  const [selectedTab, setSelectedTab] = useState<
+    "overview" | "details" | "actions"
+  >("overview");
 
   useEffect(() => {
     checkAuth();
@@ -302,14 +304,17 @@ export default function AdminPage() {
   };
 
   // Context menu handlers
-  const handleContextMenu = useCallback((e: React.MouseEvent, booking: Booking) => {
-    e.preventDefault();
-    setContextMenu({
-      booking,
-      x: e.clientX,
-      y: e.clientY,
-    });
-  }, []);
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent, booking: Booking) => {
+      e.preventDefault();
+      setContextMenu({
+        booking,
+        x: e.clientX,
+        y: e.clientY,
+      });
+    },
+    []
+  );
 
   const closeContextMenu = useCallback(() => {
     setContextMenu(null);
@@ -319,8 +324,8 @@ export default function AdminPage() {
   useEffect(() => {
     const handleClickOutside = () => closeContextMenu();
     if (contextMenu) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [contextMenu, closeContextMenu]);
 
@@ -332,7 +337,9 @@ export default function AdminPage() {
             <div className="w-12 h-12 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin mx-auto"></div>
             <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin absolute top-2 left-1/2 transform -translate-x-1/2"></div>
           </div>
-          <p className="mt-4 text-white/80 font-medium">Authenticating admin access...</p>
+          <p className="mt-4 text-white/80 font-medium">
+            Authenticating admin access...
+          </p>
         </div>
       </div>
     );
@@ -367,7 +374,7 @@ export default function AdminPage() {
                   <div className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg">
                     <Bell className="w-4 h-4 animate-bounce" />
                     <span className="hidden sm:inline">
-                      {unviewedCount} new booking{unviewedCount > 1 ? 's' : ''}
+                      {unviewedCount} new booking{unviewedCount > 1 ? "s" : ""}
                     </span>
                     <span className="sm:hidden">{unviewedCount}</span>
                   </div>
@@ -375,24 +382,24 @@ export default function AdminPage() {
                 </div>
               )}
 
-              {/* View Toggle */}
-              <div className="hidden sm:flex bg-white/10 backdrop-blur-sm rounded-xl p-1">
+              {/* View Toggle - Show on mobile too */}
+              <div className="flex bg-white/10 backdrop-blur-sm rounded-xl p-1 order-first sm:order-none mb-3 sm:mb-0">
                 <button
-                  onClick={() => setViewMode('cards')}
+                  onClick={() => setViewMode("cards")}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                    viewMode === 'cards'
-                      ? 'bg-blue-500 text-white shadow-lg'
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                    viewMode === "cards"
+                      ? "bg-blue-500 text-white shadow-lg"
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   Cards
                 </button>
                 <button
-                  onClick={() => setViewMode('table')}
+                  onClick={() => setViewMode("table")}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                    viewMode === 'table'
-                      ? 'bg-blue-500 text-white shadow-lg'
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                    viewMode === "table"
+                      ? "bg-blue-500 text-white shadow-lg"
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   Table
@@ -402,7 +409,9 @@ export default function AdminPage() {
               {/* Status Indicator */}
               <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-green-500/20 border border-green-500/30 rounded-xl">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm text-green-300 font-medium">Online</span>
+                <span className="text-sm text-green-300 font-medium">
+                  Online
+                </span>
               </div>
 
               {/* Logout */}
@@ -443,7 +452,7 @@ export default function AdminPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="pl-10 pr-8 py-4 bg-white/10 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-white min-w-[200px] appearance-none backdrop-blur-sm"
+                  className="pl-10 pr-8 py-4 bg-white/10 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-white w-full sm:min-w-[200px] appearance-none backdrop-blur-sm"
                 >
                   <option value="all">All Bookings</option>
                   <option value="unviewed">🔴 Unviewed</option>
@@ -476,7 +485,9 @@ export default function AdminPage() {
                 <div className="text-3xl font-bold text-blue-400 mb-1">
                   {bookings.length}
                 </div>
-                <div className="text-sm text-white/70 font-medium">Total Bookings</div>
+                <div className="text-sm text-white/70 font-medium">
+                  Total Bookings
+                </div>
               </div>
             </div>
             <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl p-4 border border-green-500/30">
@@ -490,9 +501,14 @@ export default function AdminPage() {
             <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-500/30">
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-400 mb-1">
-                  {bookings.filter((b) => b.payment_status === "pending").length}
+                  {
+                    bookings.filter((b) => b.payment_status === "pending")
+                      .length
+                  }
                 </div>
-                <div className="text-sm text-white/70 font-medium">Pending Payment</div>
+                <div className="text-sm text-white/70 font-medium">
+                  Pending Payment
+                </div>
               </div>
             </div>
             <div className="bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-xl p-4 border border-red-500/30">
@@ -500,7 +516,9 @@ export default function AdminPage() {
                 <div className="text-3xl font-bold text-red-400 mb-1">
                   {unviewedCount}
                 </div>
-                <div className="text-sm text-white/70 font-medium">Unviewed</div>
+                <div className="text-sm text-white/70 font-medium">
+                  Unviewed
+                </div>
               </div>
             </div>
           </div>
@@ -517,9 +535,7 @@ export default function AdminPage() {
             <p className="mt-6 text-white/80 font-semibold text-lg">
               Loading bookings...
             </p>
-            <p className="text-white/50 text-sm">
-              Fetching the latest data
-            </p>
+            <p className="text-white/50 text-sm">Fetching the latest data</p>
           </div>
         ) : bookings.length === 0 ? (
           <div className="text-center py-20">
@@ -535,8 +551,8 @@ export default function AdminPage() {
             <div className="mt-6">
               <button
                 onClick={() => {
-                  setSearchTerm('');
-                  setStatusFilter('all');
+                  setSearchTerm("");
+                  setStatusFilter("all");
                   fetchBookings();
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all font-medium"
@@ -548,7 +564,7 @@ export default function AdminPage() {
         ) : (
           <div className="space-y-4">
             {/* Cards View */}
-            {viewMode === 'cards' && (
+            {viewMode === "cards" && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bookings.map((booking) => (
                   <div
@@ -572,9 +588,9 @@ export default function AdminPage() {
                     <div className="flex items-center space-x-4 mb-4">
                       <div
                         className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg ${
-                          booking.payment_status === 'paid'
-                            ? 'bg-gradient-to-br from-green-500 to-emerald-600'
-                            : 'bg-gradient-to-br from-blue-500 to-purple-600'
+                          booking.payment_status === "paid"
+                            ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                            : "bg-gradient-to-br from-blue-500 to-purple-600"
                         }`}
                       >
                         {booking.customer_name.charAt(0).toUpperCase()}
@@ -592,24 +608,36 @@ export default function AdminPage() {
                     {/* Service Info */}
                     <div className="mb-4">
                       <div className="text-white/90 font-medium mb-2">
-                        {formatServiceType(booking.service_type, booking.custom_service)}
+                        {formatServiceType(
+                          booking.service_type,
+                          booking.custom_service
+                        )}
                       </div>
                       <div className="text-white/70 text-sm mb-3">
-                        📅 {new Date(booking.start_datetime).toLocaleString('en-SG')}
+                        📅{" "}
+                        {new Date(booking.start_datetime).toLocaleString(
+                          "en-SG"
+                        )}
                       </div>
-                      
+
                       {/* Quick Stats */}
                       <div className="grid grid-cols-3 gap-3">
                         <div className="bg-white/10 rounded-lg p-2 text-center">
-                          <div className="text-white font-semibold">{booking.hours}h</div>
+                          <div className="text-white font-semibold">
+                            {booking.hours}h
+                          </div>
                           <div className="text-white/60 text-xs">Duration</div>
                         </div>
                         <div className="bg-white/10 rounded-lg p-2 text-center">
-                          <div className="text-white font-semibold">{booking.lifeguards}</div>
+                          <div className="text-white font-semibold">
+                            {booking.lifeguards}
+                          </div>
                           <div className="text-white/60 text-xs">Guards</div>
                         </div>
                         <div className="bg-white/10 rounded-lg p-2 text-center">
-                          <div className="text-white font-semibold">${booking.amount.toFixed(2)}</div>
+                          <div className="text-white font-semibold">
+                            ${booking.amount.toFixed(2)}
+                          </div>
                           <div className="text-white/60 text-xs">Amount</div>
                         </div>
                       </div>
@@ -619,16 +647,16 @@ export default function AdminPage() {
                     <div className="flex items-center justify-between">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          booking.payment_status === 'paid'
-                            ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                            : booking.status === 'cancelled'
-                            ? 'bg-red-500/20 text-red-300 border border-red-500/30'
-                            : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                          booking.payment_status === "paid"
+                            ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                            : booking.status === "cancelled"
+                            ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                            : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
                         }`}
                       >
                         {getStatusLabel(booking.status, booking.payment_status)}
                       </span>
-                      
+
                       <div className="text-white/40 text-xs font-mono">
                         #{booking.order_id}
                       </div>
@@ -646,288 +674,407 @@ export default function AdminPage() {
             )}
 
             {/* Table View */}
-            {viewMode === 'table' && (
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Customer & Order
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Service Details
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Status & Payment
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white/50 divide-y divide-gray-100">
-                    {bookings.map((booking) => (
-                      <tr
-                        key={booking.id}
-                        className={`hover:bg-white/70 transition-colors duration-200 ${
-                          !booking.viewed_by_admin
-                            ? "bg-blue-50/50 border-l-4 border-l-blue-500"
-                            : ""
-                        }`}
-                      >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0">
-                              <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${getStatusColor(
-                                  booking.status,
-                                  booking.payment_status
-                                )
-                                  .replace("text-", "bg-")
-                                  .replace("bg-", "bg-")
-                                  .replace("-100", "-500")}`}
-                              >
-                                {booking.customer_name.charAt(0).toUpperCase()}
+            {viewMode === "table" && (
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-white/20">
+                    <thead className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+                          Customer & Order
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+                          Service Details
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+                          Status & Payment
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-white/90 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white/5 divide-y divide-white/10">
+                      {bookings.map((booking) => (
+                        <tr
+                          key={booking.id}
+                          className={`hover:bg-white/20 transition-all duration-300 cursor-pointer group ${
+                            !booking.viewed_by_admin
+                              ? "bg-red-500/10 border-l-4 border-l-red-500 shadow-red-500/20"
+                              : "hover:shadow-lg"
+                          }`}
+                          onClick={() => setSelectedBooking(booking)}
+                          onContextMenu={(e) => handleContextMenu(e, booking)}
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0">
+                                <div
+                                  className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg ${
+                                    booking.payment_status === "paid"
+                                      ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                                      : "bg-gradient-to-br from-blue-500 to-purple-600"
+                                  }`}
+                                >
+                                  {booking.customer_name
+                                    .charAt(0)
+                                    .toUpperCase()}
+                                </div>
+                              </div>
+                              <div className="ml-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors">
+                                    {booking.customer_name}
+                                  </div>
+                                  {!booking.viewed_by_admin && (
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-red-500 to-pink-500 text-white animate-pulse shadow-lg">
+                                      NEW
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-sm text-white/70">
+                                  {booking.customer_email}
+                                </div>
+                                <div className="text-xs text-white/50 mt-1 font-mono">
+                                  #{booking.order_id} •{" "}
+                                  {new Date(
+                                    booking.created_at
+                                  ).toLocaleDateString("en-SG")}
+                                </div>
                               </div>
                             </div>
-                            <div className="ml-4">
-                              <div className="flex items-center gap-2">
-                                <div className="text-sm font-semibold text-gray-900">
-                                  {booking.customer_name}
-                                </div>
-                                {!booking.viewed_by_admin && (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500 text-white animate-pulse">
-                                    NEW
-                                  </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div>
+                              <div className="text-sm font-medium text-white/90 mb-1">
+                                {formatServiceType(
+                                  booking.service_type,
+                                  booking.custom_service
                                 )}
                               </div>
-                              <div className="text-sm text-gray-600">
-                                {booking.customer_email}
-                              </div>
-                              <div className="text-xs text-gray-400 mt-1">
-                                #{booking.order_id} •{" "}
+                              <div className="text-sm text-white/70 mb-2">
+                                📅{" "}
                                 {new Date(
-                                  booking.created_at
-                                ).toLocaleDateString("en-SG")}
+                                  booking.start_datetime
+                                ).toLocaleString("en-SG")}
+                              </div>
+                              <div className="flex items-center gap-4 text-xs text-white/60">
+                                <span className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg">
+                                  <Clock className="w-3 h-3" />
+                                  {booking.hours}h
+                                </span>
+                                <span className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg">
+                                  <Users className="w-3 h-3" />
+                                  {booking.lifeguards}
+                                </span>
+                                <span className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg">
+                                  <DollarSign className="w-3 h-3" />$
+                                  {booking.amount.toFixed(2)}
+                                </span>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 mb-1">
-                              {formatServiceType(
-                                booking.service_type,
-                                booking.custom_service
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-600 mb-1">
-                              📅{" "}
-                              {new Date(booking.start_datetime).toLocaleString(
-                                "en-SG"
-                              )}
-                            </div>
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {booking.hours}h
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Users className="w-3 h-3" />
-                                {booking.lifeguards}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <DollarSign className="w-3 h-3" />$
-                                {booking.amount.toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="space-y-2">
+                              <span
+                                className={`inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg ${
+                                  booking.payment_status === "paid"
+                                    ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30"
+                                    : booking.status === "cancelled"
+                                    ? "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30"
+                                    : "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30"
+                                }`}
+                              >
+                                {getStatusLabel(
+                                  booking.status,
+                                  booking.payment_status
+                                )}
                               </span>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="space-y-2">
-                            <span
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                booking.status,
-                                booking.payment_status
-                              )}`}
-                            >
-                              {getStatusLabel(
-                                booking.status,
-                                booking.payment_status
-                              )}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => setSelectedBooking(booking)}
-                              className="p-2 text-gray-600 hover:text-[#FF6633] hover:bg-[#FF6633]/10 rounded-lg transition-all duration-200"
-                              title="View Details"
-                            >
-                              <FolderOpen className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                updateBooking(booking.id, {
-                                  action: booking.viewed_by_admin
-                                    ? "mark_unviewed"
-                                    : "mark_viewed",
-                                })
-                              }
-                              className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                              title={
-                                booking.viewed_by_admin
-                                  ? "Mark as Unviewed"
-                                  : "Mark as Viewed"
-                              }
-                            >
-                              {booking.viewed_by_admin ? (
-                                <EyeOff className="w-4 h-4" />
-                              ) : (
-                                <Eye className="w-4 h-4" />
-                              )}
-                            </button>
-                            <button
-                              onClick={() => deleteBooking(booking.id)}
-                              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
-                              title="Delete Booking"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedBooking(booking);
+                                }}
+                                className="p-2 text-white/70 hover:text-blue-400 hover:bg-blue-500/20 rounded-xl transition-all duration-200 hover:scale-110 hover:shadow-lg backdrop-blur-sm"
+                                title="View Details"
+                              >
+                                <FolderOpen className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateBooking(booking.id, {
+                                    action: booking.viewed_by_admin
+                                      ? "mark_unviewed"
+                                      : "mark_viewed",
+                                  });
+                                }}
+                                className="p-2 text-white/70 hover:text-green-400 hover:bg-green-500/20 rounded-xl transition-all duration-200 hover:scale-110 hover:shadow-lg backdrop-blur-sm"
+                                title={
+                                  booking.viewed_by_admin
+                                    ? "Mark as Unviewed"
+                                    : "Mark as Viewed"
+                                }
+                              >
+                                {booking.viewed_by_admin ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteBooking(booking.id);
+                                }}
+                                className="p-2 text-white/70 hover:text-red-400 hover:bg-red-500/20 rounded-xl transition-all duration-200 hover:scale-110 hover:shadow-lg backdrop-blur-sm"
+                                title="Delete Booking"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Mobile Card View */}
-            <div className="lg:hidden space-y-4">
+            {/* Mobile-Optimized Card View */}
+            <div className="md:hidden space-y-4">
               {bookings.map((booking) => (
                 <div
                   key={booking.id}
-                  className={`bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border transition-all duration-200 hover:shadow-xl ${
+                  className={`group relative bg-white/10 backdrop-blur-lg border rounded-2xl p-4 hover:bg-white/15 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:shadow-2xl ${
                     !booking.viewed_by_admin
-                      ? "border-l-4 border-l-blue-500 bg-blue-50/50"
-                      : "border-gray-200"
+                      ? "border-red-500/50 bg-red-500/10 shadow-red-500/20"
+                      : "border-white/20 hover:border-blue-500/50"
                   }`}
+                  onClick={() => setSelectedBooking(booking)}
+                  onContextMenu={(e) => handleContextMenu(e, booking)}
                 >
-                  <div className="p-4">
-                    {/* Customer Info Header */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-3">
-                        <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${getStatusColor(
-                            booking.status,
-                            booking.payment_status
-                          )
-                            .replace("text-", "bg-")
-                            .replace("-100", "-500")}`}
-                        >
-                          {booking.customer_name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-gray-900 text-sm">
-                              {booking.customer_name}
-                            </h3>
-                            {!booking.viewed_by_admin && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500 text-white">
-                                NEW
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-600">
-                            {booking.customer_email}
-                          </p>
-                        </div>
+                  {/* New Badge */}
+                  {!booking.viewed_by_admin && (
+                    <div className="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                      NEW
+                    </div>
+                  )}
+
+                  {/* Customer Info Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg ${
+                          booking.payment_status === "paid"
+                            ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                            : "bg-gradient-to-br from-blue-500 to-purple-600"
+                        }`}
+                      >
+                        {booking.customer_name.charAt(0).toUpperCase()}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setSelectedBooking(booking)}
-                          className="p-2 text-gray-600 hover:text-[#FF6633] hover:bg-[#FF6633]/10 rounded-lg"
-                        >
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-white text-sm group-hover:text-blue-300 transition-colors">
+                          {booking.customer_name}
+                        </h3>
+                        <p className="text-white/60 text-xs">
+                          {booking.customer_email}
+                        </p>
+                        <p className="text-white/40 text-xs font-mono mt-1">
+                          #{booking.order_id}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedBooking(booking);
+                        }}
+                        className="p-2 text-white/70 hover:text-blue-400 hover:bg-blue-500/20 rounded-xl transition-all duration-200"
+                      >
+                        <FolderOpen className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateBooking(booking.id, {
+                            action: booking.viewed_by_admin
+                              ? "mark_unviewed"
+                              : "mark_viewed",
+                          });
+                        }}
+                        className="p-2 text-white/70 hover:text-green-400 hover:bg-green-500/20 rounded-xl transition-all duration-200"
+                      >
+                        {booking.viewed_by_admin ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
                           <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            updateBooking(booking.id, {
-                              action: booking.viewed_by_admin
-                                ? "mark_unviewed"
-                                : "mark_viewed",
-                            })
-                          }
-                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
-                        >
-                          {booking.viewed_by_admin ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Service Info */}
+                  <div className="mb-4">
+                    <div className="text-white/90 font-medium text-sm mb-2">
+                      {formatServiceType(
+                        booking.service_type,
+                        booking.custom_service
+                      )}
+                    </div>
+                    <div className="text-white/70 text-sm mb-3">
+                      📅{" "}
+                      {new Date(booking.start_datetime).toLocaleString("en-SG")}
                     </div>
 
-                    {/* Service Details */}
-                    <div className="space-y-2 mb-3">
-                      <div className="text-sm font-medium text-gray-900">
-                        {formatServiceType(
-                          booking.service_type,
-                          booking.custom_service
-                        )}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        📅{" "}
-                        {new Date(booking.start_datetime).toLocaleString(
-                          "en-SG"
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Quick Stats */}
-                    <div className="grid grid-cols-3 gap-4 mb-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="text-center">
-                        <div className="text-sm font-semibold text-gray-900">
+                    {/* Quick Stats Grid */}
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      <div className="bg-white/10 rounded-xl p-3 text-center">
+                        <div className="text-white font-bold text-sm">
                           {booking.hours}h
                         </div>
-                        <div className="text-xs text-gray-500">Duration</div>
+                        <div className="text-white/60 text-xs">Duration</div>
                       </div>
-                      <div className="text-center">
-                        <div className="text-sm font-semibold text-gray-900">
+                      <div className="bg-white/10 rounded-xl p-3 text-center">
+                        <div className="text-white font-bold text-sm">
                           {booking.lifeguards}
                         </div>
-                        <div className="text-xs text-gray-500">Lifeguards</div>
+                        <div className="text-white/60 text-xs">Guards</div>
                       </div>
-                      <div className="text-center">
-                        <div className="text-sm font-semibold text-gray-900">
+                      <div className="bg-white/10 rounded-xl p-3 text-center">
+                        <div className="text-white font-bold text-sm">
                           ${booking.amount.toFixed(2)}
                         </div>
-                        <div className="text-xs text-gray-500">Amount</div>
+                        <div className="text-white/60 text-xs">Amount</div>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Status and Order Info */}
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          booking.status,
-                          booking.payment_status
-                        )}`}
-                      >
-                        {getStatusLabel(booking.status, booking.payment_status)}
-                      </span>
-                      <div className="text-xs text-gray-400">
-                        #{booking.order_id}
-                      </div>
+                  {/* Status Badge */}
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg ${
+                        booking.payment_status === "paid"
+                          ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30"
+                          : booking.status === "cancelled"
+                          ? "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30"
+                          : "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30"
+                      }`}
+                    >
+                      {getStatusLabel(booking.status, booking.payment_status)}
+                    </span>
+
+                    <div className="text-white/50 text-xs">
+                      {new Date(booking.created_at).toLocaleDateString("en-SG")}
+                    </div>
+                  </div>
+
+                  {/* Tap to view indicator */}
+                  <div className="absolute bottom-2 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="text-white/40 text-xs flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      Tap to view
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Right-click Context Menu */}
+        {contextMenu && (
+          <div
+            className="fixed z-[70] bg-white/95 backdrop-blur-lg border border-white/20 rounded-xl shadow-2xl py-2 min-w-[200px]"
+            style={{
+              left: contextMenu.x,
+              top: contextMenu.y,
+            }}
+          >
+            <button
+              onClick={() => {
+                setSelectedBooking(contextMenu.booking);
+                closeContextMenu();
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-blue-500/20 hover:text-blue-600 flex items-center gap-3 transition-colors"
+            >
+              <FolderOpen className="w-4 h-4" />
+              View Details
+            </button>
+            <button
+              onClick={() => {
+                updateBooking(contextMenu.booking.id, {
+                  action: contextMenu.booking.viewed_by_admin
+                    ? "mark_unviewed"
+                    : "mark_viewed",
+                });
+                closeContextMenu();
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-green-500/20 hover:text-green-600 flex items-center gap-3 transition-colors"
+            >
+              {contextMenu.booking.viewed_by_admin ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+              Mark as{" "}
+              {contextMenu.booking.viewed_by_admin ? "Unviewed" : "Viewed"}
+            </button>
+            {contextMenu.booking.payment_status !== "paid" && (
+              <button
+                onClick={() => {
+                  setSelectedBooking(contextMenu.booking);
+                  setShowPaymentConfirm(true);
+                  closeContextMenu();
+                }}
+                className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-green-500/20 hover:text-green-600 flex items-center gap-3 transition-colors"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Confirm Payment
+              </button>
+            )}
+            <div className="border-t border-gray-200 my-1"></div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  contextMenu.booking.customer_email
+                );
+                closeContextMenu();
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-blue-500/20 hover:text-blue-600 flex items-center gap-3 transition-colors"
+            >
+              <Copy className="w-4 h-4" />
+              Copy Email
+            </button>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(contextMenu.booking.order_id);
+                closeContextMenu();
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-blue-500/20 hover:text-blue-600 flex items-center gap-3 transition-colors"
+            >
+              <Copy className="w-4 h-4" />
+              Copy Order ID
+            </button>
+            <div className="border-t border-gray-200 my-1"></div>
+            <button
+              onClick={() => {
+                deleteBooking(contextMenu.booking.id);
+                closeContextMenu();
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-500/20 hover:text-red-700 flex items-center gap-3 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete Booking
+            </button>
           </div>
         )}
       </div>
@@ -997,35 +1144,50 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* Booking Detail Modal */}
+      {/* Enhanced Booking Detail Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white/95 backdrop-blur-lg rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/20">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-[#20334F] to-[#FF6633] bg-clip-text text-transparent">
-                    Booking Details
-                  </h2>
-                  <p className="text-gray-600 text-sm mt-1">
-                    #{selectedBooking.order_id}
-                  </p>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-lg flex items-center justify-center p-4 z-50">
+          <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-indigo-900/95 backdrop-blur-xl rounded-3xl max-w-4xl w-full max-h-[95vh] overflow-hidden shadow-2xl border border-white/20">
+            {/* Modal Header */}
+            <div className="bg-white/10 backdrop-blur-sm border-b border-white/20 p-6">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-xl ${
+                      selectedBooking.payment_status === "paid"
+                        ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                        : "bg-gradient-to-br from-blue-500 to-purple-600"
+                    }`}
+                  >
+                    {selectedBooking.customer_name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                      Booking Details
+                    </h2>
+                    <p className="text-white/60 text-sm mt-1 font-mono">
+                      #{selectedBooking.order_id}
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={() => setSelectedBooking(null)}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200"
+                  className="p-3 text-white/60 hover:text-white hover:bg-white/10 rounded-2xl transition-all duration-200 hover:scale-110"
                 >
                   <XCircle className="w-6 h-6" />
                 </button>
               </div>
 
               {/* Status Badge */}
-              <div className="mb-6">
+              <div className="mt-4">
                 <span
-                  className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
-                    selectedBooking.status,
-                    selectedBooking.payment_status
-                  )}`}
+                  className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold shadow-lg ${
+                    selectedBooking.payment_status === "paid"
+                      ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30"
+                      : selectedBooking.status === "cancelled"
+                      ? "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30"
+                      : "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border border-yellow-500/30"
+                  }`}
                 >
                   {getStatusLabel(
                     selectedBooking.status,
@@ -1033,165 +1195,423 @@ export default function AdminPage() {
                   )}
                 </span>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
-                  <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    {/* TODO: Check if this icon is correct */}
-                    <User className="w-4 h-4 text-blue-600" />
-                    Customer Information
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500 min-w-[60px]">Name:</span>
-                      <span className="font-medium">
-                        {selectedBooking.customer_name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-3 h-3 text-gray-400" />
-                      <span className="text-blue-600">
-                        {selectedBooking.customer_email}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-3 h-3 text-gray-400" />
-                      <span className="text-gray-700">
-                        {selectedBooking.customer_phone}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
-                  <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-green-600" />
-                    Service Details
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-gray-500">Service:</span>
-                      <p className="font-medium">
-                        {formatServiceType(
-                          selectedBooking.service_type,
-                          selectedBooking.custom_service
-                        )}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Schedule:</span>
-                      <p className="font-medium">
-                        {new Date(
-                          selectedBooking.start_datetime
-                        ).toLocaleString("en-SG")}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        to{" "}
-                        {new Date(selectedBooking.end_datetime).toLocaleString(
-                          "en-SG"
-                        )}
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 mt-3">
-                      <div className="text-center p-2 bg-white rounded-lg">
-                        <div className="text-lg font-bold text-gray-900">
-                          {selectedBooking.hours}
-                        </div>
-                        <div className="text-xs text-gray-500">Hours</div>
-                      </div>
-                      <div className="text-center p-2 bg-white rounded-lg">
-                        <div className="text-lg font-bold text-gray-900">
-                          {selectedBooking.lifeguards}
-                        </div>
-                        <div className="text-xs text-gray-500">Guards</div>
-                      </div>
-                      <div className="text-center p-2 bg-white rounded-lg">
-                        <div className="text-lg font-bold text-green-600">
-                          ${selectedBooking.amount.toFixed(2)}
-                        </div>
-                        <div className="text-xs text-gray-500">Amount</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {selectedBooking.remarks && (
-                  <div className="md:col-span-2 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl p-4 border border-yellow-100">
-                    <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-yellow-600" />
-                      Customer Remarks
-                    </h3>
-                    <p className="text-sm text-gray-700 italic">
-                      {selectedBooking.remarks}
-                    </p>
-                  </div>
-                )}
+            {/* Tab Navigation */}
+            <div className="bg-white/5 border-b border-white/10">
+              <div className="flex">
+                {[
+                  { id: "overview", label: "Overview", icon: User },
+                  { id: "details", label: "Details", icon: Calendar },
+                  { id: "actions", label: "Actions", icon: Settings },
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() =>
+                        setSelectedTab(
+                          tab.id as "overview" | "details" | "actions"
+                        )
+                      }
+                      className={`flex items-center gap-2 px-6 py-4 font-medium transition-all duration-200 ${
+                        selectedTab === tab.id
+                          ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 border-b-2 border-blue-400"
+                          : "text-white/70 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {tab.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => {
-                  if (selectedBooking.payment_status !== "paid") {
-                    setShowPaymentConfirm(true);
-                  }
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={selectedBooking.payment_status === "paid"}
-              >
-                <CheckCircle className="w-4 h-4" />
-                {selectedBooking.payment_status === "paid"
-                  ? "Payment Confirmed"
-                  : "Confirm Payment & Email"}
-              </button>
+            {/* Tab Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {/* Overview Tab */}
+              {selectedTab === "overview" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Customer Information */}
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                      <h3 className="font-bold text-white mb-4 flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                          <User className="w-4 h-4 text-blue-400" />
+                        </div>
+                        Customer Information
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-white/60 text-sm min-w-[80px]">
+                            Name:
+                          </span>
+                          <span className="font-semibold text-white">
+                            {selectedBooking.customer_name}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Mail className="w-4 h-4 text-blue-400" />
+                          <span className="text-blue-300 hover:text-blue-200 cursor-pointer transition-colors">
+                            {selectedBooking.customer_email}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Phone className="w-4 h-4 text-green-400" />
+                          <span className="text-white font-mono">
+                            {selectedBooking.customer_phone}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
-              <button
-                onClick={() =>
-                  updateBooking(selectedBooking.id, {
-                    action: selectedBooking.viewed_by_admin
-                      ? "mark_unviewed"
-                      : "mark_viewed",
-                  })
-                }
-                className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all font-medium"
-              >
-                {selectedBooking.viewed_by_admin ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-                Mark as{" "}
-                {selectedBooking.viewed_by_admin ? "Unviewed" : "Viewed"}
-              </button>
+                    {/* Service Information */}
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                      <h3 className="font-bold text-white mb-4 flex items-center gap-3">
+                        <div className="w-8 h-8 bg-green-500/20 rounded-xl flex items-center justify-center">
+                          <Calendar className="w-4 h-4 text-green-400" />
+                        </div>
+                        Service Details
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <span className="text-white/60 text-sm">
+                            Service Type:
+                          </span>
+                          <p className="font-semibold text-white mt-1">
+                            {formatServiceType(
+                              selectedBooking.service_type,
+                              selectedBooking.custom_service
+                            )}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-white/60 text-sm">
+                            Schedule:
+                          </span>
+                          <p className="font-semibold text-white mt-1">
+                            {new Date(
+                              selectedBooking.start_datetime
+                            ).toLocaleString("en-SG")}
+                          </p>
+                          <p className="text-white/70 text-sm">
+                            to{" "}
+                            {new Date(
+                              selectedBooking.end_datetime
+                            ).toLocaleString("en-SG")}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="relative">
-                <select
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      updateBooking(selectedBooking.id, {
-                        status: e.target.value,
-                      });
-                    }
-                  }}
-                  defaultValue=""
-                  className="appearance-none px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#FF6633]/20 focus:border-[#FF6633] transition-all font-medium text-gray-700 min-w-[160px]"
-                >
-                  <option value="">Change Status</option>
-                  <option value="pending">📋 Pending</option>
-                  <option value="confirmed">✅ Confirmed</option>
-                  <option value="completed">🎉 Completed</option>
-                  <option value="cancelled">❌ Cancelled</option>
-                </select>
-                <ArrowUpDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div>
+                  {/* Key Metrics */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl p-6 text-center border border-blue-500/30">
+                      <div className="text-3xl font-bold text-blue-300 mb-2">
+                        {selectedBooking.hours}h
+                      </div>
+                      <div className="text-white/70 text-sm font-medium">
+                        Duration
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl p-6 text-center border border-green-500/30">
+                      <div className="text-3xl font-bold text-green-300 mb-2">
+                        {selectedBooking.lifeguards}
+                      </div>
+                      <div className="text-white/70 text-sm font-medium">
+                        Lifeguards
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl p-6 text-center border border-yellow-500/30">
+                      <div className="text-3xl font-bold text-yellow-300 mb-2">
+                        ${selectedBooking.amount.toFixed(2)}
+                      </div>
+                      <div className="text-white/70 text-sm font-medium">
+                        Total Amount
+                      </div>
+                    </div>
+                  </div>
 
-              <button
-                onClick={() => deleteBooking(selectedBooking.id)}
-                className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all font-medium"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete Booking
-              </button>
+                  {/* Customer Remarks */}
+                  {selectedBooking.remarks && (
+                    <div className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-2xl p-6 border border-amber-500/30">
+                      <h3 className="font-bold text-white mb-3 flex items-center gap-3">
+                        <MessageSquare className="w-5 h-5 text-amber-400" />
+                        Customer Remarks
+                      </h3>
+                      <p className="text-white/90 italic leading-relaxed">
+                        "{selectedBooking.remarks}"
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Details Tab */}
+              {selectedTab === "details" && (
+                <div className="space-y-6">
+                  {/* Booking Timeline */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="font-bold text-white mb-6 flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-blue-400" />
+                      Booking Timeline
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl">
+                        <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+                        <div>
+                          <div className="text-white font-medium">
+                            Booking Created
+                          </div>
+                          <div className="text-white/60 text-sm">
+                            {new Date(
+                              selectedBooking.created_at
+                            ).toLocaleString("en-SG")}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl">
+                        <div
+                          className={`w-3 h-3 rounded-full ${
+                            selectedBooking.payment_status === "paid"
+                              ? "bg-green-400"
+                              : "bg-yellow-400"
+                          }`}
+                        ></div>
+                        <div>
+                          <div className="text-white font-medium">
+                            Payment{" "}
+                            {selectedBooking.payment_status === "paid"
+                              ? "Confirmed"
+                              : "Pending"}
+                          </div>
+                          <div className="text-white/60 text-sm">
+                            Status: {selectedBooking.payment_status}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Technical Details */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="font-bold text-white mb-4 flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-purple-400" />
+                      Technical Details
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-white/60">Booking ID:</span>
+                          <span className="font-mono text-white">
+                            {selectedBooking.id}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-white/60">Order ID:</span>
+                          <span className="font-mono text-white">
+                            #{selectedBooking.order_id}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-white/60">Status:</span>
+                          <span className="text-white capitalize">
+                            {selectedBooking.status}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-white/60">Payment Status:</span>
+                          <span className="text-white capitalize">
+                            {selectedBooking.payment_status}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-white/60">Admin Viewed:</span>
+                          <span
+                            className={`${
+                              selectedBooking.viewed_by_admin
+                                ? "text-green-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            {selectedBooking.viewed_by_admin ? "Yes" : "No"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-white/60">Created:</span>
+                          <span className="text-white text-sm">
+                            {new Date(
+                              selectedBooking.created_at
+                            ).toLocaleDateString("en-SG")}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions Tab */}
+              {selectedTab === "actions" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Payment Actions */}
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                      <h3 className="font-bold text-white mb-4 flex items-center gap-3">
+                        <CreditCard className="w-5 h-5 text-green-400" />
+                        Payment Actions
+                      </h3>
+                      <div className="space-y-3">
+                        <button
+                          onClick={() => {
+                            if (selectedBooking.payment_status !== "paid") {
+                              setShowPaymentConfirm(true);
+                            }
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
+                            selectedBooking.payment_status === "paid"
+                              ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
+                              : "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border border-green-500/30 hover:from-green-500/30 hover:to-emerald-500/30 hover:scale-105"
+                          }`}
+                          disabled={selectedBooking.payment_status === "paid"}
+                        >
+                          <CheckCircle className="w-5 h-5" />
+                          {selectedBooking.payment_status === "paid"
+                            ? "Payment Confirmed"
+                            : "Confirm Payment & Send Email"}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Status Actions */}
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                      <h3 className="font-bold text-white mb-4 flex items-center gap-3">
+                        <Settings className="w-5 h-5 text-blue-400" />
+                        Status Management
+                      </h3>
+                      <div className="space-y-3">
+                        <button
+                          onClick={() =>
+                            updateBooking(selectedBooking.id, {
+                              action: selectedBooking.viewed_by_admin
+                                ? "mark_unviewed"
+                                : "mark_viewed",
+                            })
+                          }
+                          className="w-full flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 border border-blue-500/30 rounded-xl hover:from-blue-500/30 hover:to-purple-500/30 transition-all hover:scale-105 font-medium"
+                        >
+                          {selectedBooking.viewed_by_admin ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5" />
+                          )}
+                          Mark as{" "}
+                          {selectedBooking.viewed_by_admin
+                            ? "Unviewed"
+                            : "Viewed"}
+                        </button>
+
+                        <div className="relative">
+                          <select
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                updateBooking(selectedBooking.id, {
+                                  status: e.target.value,
+                                });
+                              }
+                            }}
+                            defaultValue=""
+                            className="w-full appearance-none px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all font-medium text-white backdrop-blur-sm"
+                          >
+                            <option value="" className="bg-slate-800">
+                              Change Booking Status
+                            </option>
+                            <option value="pending" className="bg-slate-800">
+                              📋 Pending Review
+                            </option>
+                            <option value="confirmed" className="bg-slate-800">
+                              ✅ Confirmed
+                            </option>
+                            <option value="completed" className="bg-slate-800">
+                              🎉 Completed
+                            </option>
+                            <option value="cancelled" className="bg-slate-800">
+                              ❌ Cancelled
+                            </option>
+                          </select>
+                          <ArrowUpDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="font-bold text-white mb-4 flex items-center gap-3">
+                      <Zap className="w-5 h-5 text-yellow-400" />
+                      Quick Actions
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            selectedBooking.customer_email
+                          );
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-xl hover:bg-blue-500/30 transition-all hover:scale-105 font-medium"
+                      >
+                        <Copy className="w-4 h-4" />
+                        Copy Email
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            selectedBooking.order_id
+                          );
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-xl hover:bg-purple-500/30 transition-all hover:scale-105 font-medium"
+                      >
+                        <Copy className="w-4 h-4" />
+                        Copy Order ID
+                      </button>
+                      <button
+                        onClick={() => {
+                          window.open(
+                            `mailto:${selectedBooking.customer_email}`
+                          );
+                        }}
+                        className="flex items-center gap-3 px-4 py-3 bg-green-500/20 text-green-300 border border-green-500/30 rounded-xl hover:bg-green-500/30 transition-all hover:scale-105 font-medium"
+                      >
+                        <Send className="w-4 h-4" />
+                        Send Email
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Danger Zone */}
+                  <div className="bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-2xl p-6 border border-red-500/30">
+                    <h3 className="font-bold text-white mb-4 flex items-center gap-3">
+                      <Ban className="w-5 h-5 text-red-400" />
+                      Danger Zone
+                    </h3>
+                    <button
+                      onClick={() => deleteBooking(selectedBooking.id)}
+                      className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all hover:scale-105 font-semibold shadow-lg"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                      Delete Booking Forever
+                    </button>
+                    <p className="text-red-300/80 text-sm mt-2">
+                      This action cannot be undone. The booking will be
+                      permanently removed.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

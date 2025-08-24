@@ -2,7 +2,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Book Lifeguards Now - Bearded Lifeguard",
-  description: "Book professional certified lifeguards in Singapore instantly. Real-time pricing, PayNow payment, and immediate confirmation. Pool, event, party, and open water lifeguard services available 24/7.",
+  description:
+    "Book professional certified lifeguards in Singapore instantly. Real-time pricing, PayNow payment, and immediate confirmation. Pool, event, party, and open water lifeguard services available 24/7.",
   keywords: [
     "book lifeguards singapore",
     "hire lifeguards online",
@@ -13,9 +14,10 @@ export const metadata: Metadata = {
     "pool lifeguard hire",
     "event lifeguard booking",
     "professional lifeguard services",
-    "certified lifeguards singapore"
+    "certified lifeguards singapore",
   ],
   authors: [{ name: "Bearded Lifeguard" }],
+  metadataBase: new URL("https://sglifeguardservices.com"),
   creator: "Bearded Lifeguard",
   publisher: "Bearded Lifeguard",
   robots: {
@@ -34,7 +36,8 @@ export const metadata: Metadata = {
     locale: "en_SG",
     url: "https://sglifeguardservices.com/booking",
     title: "Book Professional Lifeguards Singapore - Bearded Lifeguard",
-    description: "Book certified lifeguards instantly with real-time pricing and PayNow payment. Pool, event, party, and open water lifeguard services available now.",
+    description:
+      "Book certified lifeguards instantly with real-time pricing and PayNow payment. Pool, event, party, and open water lifeguard services available now.",
     siteName: "Bearded Lifeguard",
     images: [
       {
@@ -48,7 +51,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Book Lifeguards Now - Bearded Lifeguard",
-    description: "Book professional certified lifeguards instantly. Real-time pricing, PayNow payment, immediate confirmation. Available 24/7.",
+    description:
+      "Book professional certified lifeguards instantly. Real-time pricing, PayNow payment, immediate confirmation. Available 24/7.",
     images: ["/og-image-booking.jpg"],
   },
   alternates: {
@@ -58,7 +62,7 @@ export const metadata: Metadata = {
     "geo.region": "SG",
     "geo.placename": "Singapore",
     "geo.position": "1.3521;103.8198",
-    "ICBM": "1.3521, 103.8198",
+    ICBM: "1.3521, 103.8198",
   },
 };
 

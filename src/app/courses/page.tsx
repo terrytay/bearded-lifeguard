@@ -3,7 +3,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Lifesaving Courses - Bearded Lifeguard",
-  description: "SLSS certified lifesaving courses in Singapore. Learn lifeguarding, CPR, and water safety skills. From Lifesaving 1 to Bronze Medallion, Pool Lifeguard certification, and Open Water awards. Become a certified lifeguard.",
+  description:
+    "SLSS certified lifesaving courses in Singapore. Learn lifeguarding, CPR, and water safety skills. From Lifesaving 1 to Bronze Medallion, Pool Lifeguard certification, and Open Water awards. Become a certified lifeguard.",
   keywords: [
     "lifesaving courses singapore",
     "SLSS lifeguard training",
@@ -14,17 +15,19 @@ export const metadata: Metadata = {
     "pool lifeguard training",
     "open water lifeguard course",
     "water safety courses",
-    "lifeguard instructor singapore"
+    "lifeguard instructor singapore",
   ],
   authors: [{ name: "Bearded Lifeguard" }],
   creator: "Bearded Lifeguard",
   publisher: "Bearded Lifeguard",
+  metadataBase: new URL("https://sglifeguardservices.com"),
   openGraph: {
     type: "website",
     locale: "en_SG",
     url: "https://sglifeguardservices.com/courses",
     title: "SLSS Lifesaving Courses Singapore - Bearded Lifeguard",
-    description: "SLSS certified lifesaving courses - from Lifesaving 1 to Bronze Medallion and Pool Lifeguard certification. Learn lifeguarding and water safety skills in Singapore.",
+    description:
+      "SLSS certified lifesaving courses - from Lifesaving 1 to Bronze Medallion and Pool Lifeguard certification. Learn lifeguarding and water safety skills in Singapore.",
     siteName: "Bearded Lifeguard",
     images: [
       {
@@ -38,7 +41,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Lifesaving Courses - Bearded Lifeguard",
-    description: "SLSS certified lifesaving courses in Singapore. Learn lifeguarding, CPR, and water safety skills. Become a certified lifeguard.",
+    description:
+      "SLSS certified lifesaving courses in Singapore. Learn lifeguarding, CPR, and water safety skills. Become a certified lifeguard.",
     images: ["/og-image-courses.jpg"],
   },
   alternates: {
@@ -112,12 +116,12 @@ export default function CoursesPage() {
             <div className="mt-6 max-w-3xl space-y-4 text-modern-secondary text-lg">
               <p>
                 As part of our initiative to reduce the number of drownings, we
-                conduct lifesaving courses as well. We have a certified lifesaving
-                teacher who is able to conduct these courses.
+                conduct lifesaving courses as well. We have a certified
+                lifesaving teacher who is able to conduct these courses.
               </p>
               <p>
-                All the lifesaving courses conducted are according to the syllabus
-                provided by the{" "}
+                All the lifesaving courses conducted are according to the
+                syllabus provided by the{" "}
                 <strong>Singapore Lifesaving Society (SLSS)</strong>. Hence, all
                 certifications are also awarded by SLSS.
               </p>
@@ -238,7 +242,6 @@ export default function CoursesPage() {
           </ul>
         </div>
       </section>
-
     </main>
   );
 }

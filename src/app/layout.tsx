@@ -25,6 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta
+        name="google-site-verification"
+        content="39pOh18bzvxnzwwTb8jR9mFa0Axcsd4xjO2iZj2WAio"
+      />
       <body
         className={
           "flex flex-col justify-between bg-gradient-to-br from-slate-50 to-blue-50 relative select-none " +

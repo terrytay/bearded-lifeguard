@@ -3,7 +3,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Professional Lifeguard Services Singapore - Bearded Lifeguard",
-  description: "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards, water safety courses, and expert consultation. Book now for reliable water safety solutions.",
+  description:
+    "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards, water safety courses, and expert consultation. Book now for reliable water safety solutions.",
   keywords: [
     "lifeguard services Singapore",
     "professional lifeguards",
@@ -14,8 +15,9 @@ export const metadata: Metadata = {
     "swimming pool safety",
     "certified lifeguards",
     "aquatic safety",
-    "open water lifeguards"
+    "open water lifeguards",
   ],
+  metadataBase: new URL("https://sglifeguardservices.com"),
   authors: [{ name: "Bearded Lifeguard" }],
   creator: "Bearded Lifeguard",
   publisher: "Bearded Lifeguard",
@@ -35,7 +37,8 @@ export const metadata: Metadata = {
     locale: "en_SG",
     url: "https://sglifeguardservices.com",
     title: "Professional Lifeguard Services Singapore - Bearded Lifeguard",
-    description: "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards, water safety courses, and expert consultation.",
+    description:
+      "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards, water safety courses, and expert consultation.",
     siteName: "Bearded Lifeguard",
     images: [
       {
@@ -49,7 +52,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Professional Lifeguard Services Singapore - Bearded Lifeguard",
-    description: "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards available now.",
+    description:
+      "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards available now.",
     images: ["/og-image-home.jpg"],
   },
   alternates: {
@@ -59,7 +63,7 @@ export const metadata: Metadata = {
     "geo.region": "SG",
     "geo.placename": "Singapore",
     "geo.position": "1.3521;103.8198",
-    "ICBM": "1.3521, 103.8198",
+    ICBM: "1.3521, 103.8198",
   },
 };
 

@@ -5,7 +5,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About Us - Bearded Lifeguard",
-  description: "Learn about Bearded Lifeguard, Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching. Reducing drowning deaths through education and professional lifeguard services.",
+  description:
+    "Learn about Bearded Lifeguard, Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching. Reducing drowning deaths through education and professional lifeguard services.",
   keywords: [
     "about bearded lifeguard",
     "singapore lifeguard company",
@@ -15,9 +16,10 @@ export const metadata: Metadata = {
     "swimming safety education",
     "professional lifeguard team",
     "water safety mission",
-    "lifeguard training singapore"
+    "lifeguard training singapore",
   ],
   authors: [{ name: "Bearded Lifeguard" }],
+  metadataBase: new URL("https://sglifeguardservices.com"),
   creator: "Bearded Lifeguard",
   publisher: "Bearded Lifeguard",
   openGraph: {
@@ -25,7 +27,8 @@ export const metadata: Metadata = {
     locale: "en_SG",
     url: "https://sglifeguardservices.com/about",
     title: "About Us - Bearded Lifeguard",
-    description: "Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching.",
+    description:
+      "Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching.",
     siteName: "Bearded Lifeguard",
     images: [
       {
@@ -39,7 +42,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "About Us - Bearded Lifeguard",
-    description: "Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching.",
+    description:
+      "Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching.",
     images: ["/og-image-about.jpg"],
   },
   alternates: {
@@ -63,9 +67,10 @@ export default function AboutUs() {
             </h1>
 
             <p className="mt-6 max-w-3xl text-modern-secondary text-lg">
-              Drowning is the 3<sup>rd</sup> leading cause of unintentional injury
-              death worldwide (WHO, 2018). There are an estimated 360,000 annual
-              drowning deaths. Children, males, and individuals are most at risk.
+              Drowning is the 3<sup>rd</sup> leading cause of unintentional
+              injury death worldwide (WHO, 2018). There are an estimated 360,000
+              annual drowning deaths. Children, males, and individuals are most
+              at risk.
             </p>
 
             <p className="mt-4 font-bold text-modern-primary text-xl">
@@ -176,7 +181,6 @@ export default function AboutUs() {
           </ul>
         </div>
       </section>
-
     </main>
   );
 }

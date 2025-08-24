@@ -3,7 +3,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Water Safety Consultation - Bearded Lifeguard",
-  description: "Professional water safety consultation services in Singapore. Expert advice for pools, open water events, and aquatic facilities. Risk assessment, safety management, and emergency planning by certified water safety specialists.",
+  description:
+    "Professional water safety consultation services in Singapore. Expert advice for pools, open water events, and aquatic facilities. Risk assessment, safety management, and emergency planning by certified water safety specialists.",
   keywords: [
     "water safety consultation singapore",
     "pool safety consultation",
@@ -14,17 +15,19 @@ export const metadata: Metadata = {
     "event water safety planning",
     "emergency action plan review",
     "water safety specialist singapore",
-    "junior lifesaving singapore"
+    "junior lifesaving singapore",
   ],
   authors: [{ name: "Bearded Lifeguard" }],
   creator: "Bearded Lifeguard",
   publisher: "Bearded Lifeguard",
+  metadataBase: new URL("https://sglifeguardservices.com"),
   openGraph: {
     type: "website",
     locale: "en_SG",
     url: "https://sglifeguardservices.com/water-safety",
     title: "Water Safety Consultation Singapore - Bearded Lifeguard",
-    description: "Professional water safety consultation for pools, open water events, and aquatic facilities. Risk assessment and safety management by certified specialists.",
+    description:
+      "Professional water safety consultation for pools, open water events, and aquatic facilities. Risk assessment and safety management by certified specialists.",
     siteName: "Bearded Lifeguard",
     images: [
       {
@@ -38,7 +41,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Water Safety Consultation - Bearded Lifeguard",
-    description: "Professional water safety consultation for pools, open water events, and aquatic facilities. Expert risk assessment and safety management.",
+    description:
+      "Professional water safety consultation for pools, open water events, and aquatic facilities. Expert risk assessment and safety management.",
     images: ["/og-image-water-safety.jpg"],
   },
   alternates: {
@@ -73,12 +77,13 @@ export default function WaterSafetyPage() {
             </h1>
 
             <p className="mt-6 max-w-3xl text-modern-secondary text-lg">
-              With years of experience under our belt, we have the right people to
-              assist you in any questions that you may have. Bearded Lifeguard
-              provides consultation service for your events in or near the water,
-              your swimming pool or any other water related activities. Our safety
-              manager has been put in charge of water safety for events such as
-              swim marathon in the open water and night beach parties.
+              With years of experience under our belt, we have the right people
+              to assist you in any questions that you may have. Bearded
+              Lifeguard provides consultation service for your events in or near
+              the water, your swimming pool or any other water related
+              activities. Our safety manager has been put in charge of water
+              safety for events such as swim marathon in the open water and
+              night beach parties.
             </p>
           </div>
         </div>
@@ -113,10 +118,7 @@ export default function WaterSafetyPage() {
               ],
             },
           ].map((card) => (
-            <article
-              key={card.title}
-              className="modern-card-hover p-8"
-            >
+            <article key={card.title} className="modern-card-hover p-8">
               <h2 className="text-lg font-semibold text-modern-primary">
                 {card.title}
               </h2>
@@ -215,7 +217,6 @@ export default function WaterSafetyPage() {
           </p>
         </div>
       </section>
-
     </main>
   );
 }

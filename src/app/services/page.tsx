@@ -6,7 +6,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Lifeguard Services - Bearded Lifeguard",
-  description: "Professional lifeguard services in Singapore for pools, events, parties, and open water. Certified lifeguards available for residential, commercial, and event coverage. Book reliable water safety supervision now.",
+  description:
+    "Professional lifeguard services in Singapore for pools, events, parties, and open water. Certified lifeguards available for residential, commercial, and event coverage. Book reliable water safety supervision now.",
   keywords: [
     "lifeguard services singapore",
     "pool lifeguards",
@@ -17,17 +18,19 @@ export const metadata: Metadata = {
     "commercial lifeguards",
     "hotel lifeguards",
     "professional water safety",
-    "lifeguard hire singapore"
+    "lifeguard hire singapore",
   ],
   authors: [{ name: "Bearded Lifeguard" }],
   creator: "Bearded Lifeguard",
   publisher: "Bearded Lifeguard",
+  metadataBase: new URL("https://sglifeguardservices.com"),
   openGraph: {
     type: "website",
     locale: "en_SG",
     url: "https://sglifeguardservices.com/services",
     title: "Professional Lifeguard Services Singapore - Bearded Lifeguard",
-    description: "Professional lifeguard services for pools, events, parties, and open water. Certified lifeguards available for all types of aquatic supervision.",
+    description:
+      "Professional lifeguard services for pools, events, parties, and open water. Certified lifeguards available for all types of aquatic supervision.",
     siteName: "Bearded Lifeguard",
     images: [
       {
@@ -41,7 +44,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Lifeguard Services - Bearded Lifeguard",
-    description: "Professional lifeguard services for pools, events, parties, and open water. Certified lifeguards available now.",
+    description:
+      "Professional lifeguard services for pools, events, parties, and open water. Certified lifeguards available now.",
     images: ["/og-image-services.jpg"],
   },
   alternates: {
@@ -90,8 +94,8 @@ export default function LifeguardServicesPage() {
                 <li className="flex items-start gap-3">
                   <span className="mt-2 h-2 w-2 rounded-full bg-[#FF6633]" />
                   <span>
-                    Provide emergency care and treatment until emergency services
-                    arrive.
+                    Provide emergency care and treatment until emergency
+                    services arrive.
                   </span>
                 </li>
               </ul>
@@ -121,8 +125,13 @@ export default function LifeguardServicesPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-bold text-white mb-2">Pool Lifeguarding</h3>
-                    <p className="text-white/90 text-sm">Professional supervision for residential, commercial, and specialty pools</p>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      Pool Lifeguarding
+                    </h3>
+                    <p className="text-white/90 text-sm">
+                      Professional supervision for residential, commercial, and
+                      specialty pools
+                    </p>
                   </div>
                 </div>
                 <div className="p-6">
@@ -133,7 +142,9 @@ export default function LifeguardServicesPage() {
                     <li>• Private clubs & institutions</li>
                   </ul>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <span className="text-[#FF6633] font-semibold">
+                      Learn More
+                    </span>
                     <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -153,8 +164,13 @@ export default function LifeguardServicesPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-bold text-white mb-2">Event Lifeguarding</h3>
-                    <p className="text-white/90 text-sm">Safety coverage for corporate events, community functions, and productions</p>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      Event Lifeguarding
+                    </h3>
+                    <p className="text-white/90 text-sm">
+                      Safety coverage for corporate events, community functions,
+                      and productions
+                    </p>
                   </div>
                 </div>
                 <div className="p-6">
@@ -165,7 +181,9 @@ export default function LifeguardServicesPage() {
                     <li>• Sports competitions</li>
                   </ul>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <span className="text-[#FF6633] font-semibold">
+                      Learn More
+                    </span>
                     <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -185,8 +203,13 @@ export default function LifeguardServicesPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-bold text-white mb-2">Pool Party Lifeguarding</h3>
-                    <p className="text-white/90 text-sm">Fun-friendly safety for birthdays, celebrations, and social gatherings</p>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      Pool Party Lifeguarding
+                    </h3>
+                    <p className="text-white/90 text-sm">
+                      Fun-friendly safety for birthdays, celebrations, and
+                      social gatherings
+                    </p>
                   </div>
                 </div>
                 <div className="p-6">
@@ -197,7 +220,9 @@ export default function LifeguardServicesPage() {
                     <li>• Special occasion events</li>
                   </ul>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <span className="text-[#FF6633] font-semibold">
+                      Learn More
+                    </span>
                     <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -217,8 +242,13 @@ export default function LifeguardServicesPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-bold text-white mb-2">Open Water Lifeguarding</h3>
-                    <p className="text-white/90 text-sm">Specialized safety for beaches, reservoirs, and challenging environments</p>
+                    <h3 className="text-xl font-bold text-white mb-2">
+                      Open Water Lifeguarding
+                    </h3>
+                    <p className="text-white/90 text-sm">
+                      Specialized safety for beaches, reservoirs, and
+                      challenging environments
+                    </p>
                   </div>
                 </div>
                 <div className="p-6">
@@ -229,7 +259,9 @@ export default function LifeguardServicesPage() {
                     <li>• Film productions</li>
                   </ul>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#FF6633] font-semibold">Learn More</span>
+                    <span className="text-[#FF6633] font-semibold">
+                      Learn More
+                    </span>
                     <ArrowRight className="w-4 h-4 text-[#FF6633] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -239,10 +271,11 @@ export default function LifeguardServicesPage() {
 
           <div className="text-center mt-12">
             <p className="text-lg text-[#384152] mb-8 max-w-3xl mx-auto">
-              Whether you need pool supervision, event safety coverage, or open water expertise, 
-              our certified lifeguards provide professional, reliable service tailored to your specific needs.
+              Whether you need pool supervision, event safety coverage, or open
+              water expertise, our certified lifeguards provide professional,
+              reliable service tailored to your specific needs.
             </p>
-            <Link 
+            <Link
               href="/booking"
               className="inline-flex items-center gap-2 bg-[#FF6633] text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#e55a2b] transition-colors"
             >
@@ -252,7 +285,6 @@ export default function LifeguardServicesPage() {
           </div>
         </div>
       </section>
-
     </main>
   );
 }

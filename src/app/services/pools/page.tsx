@@ -1,11 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle, Shield, Clock, Users, Star, ArrowRight } from "lucide-react";
+import {
+  CheckCircle,
+  Shield,
+  Clock,
+  Users,
+  Star,
+  ArrowRight,
+} from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Pool Lifeguard Services - Bearded Lifeguard",
-  description: "Professional pool lifeguard services in Singapore for residential, commercial, and specialty pools. Certified pool lifeguards for condos, hotels, schools, and private facilities. Book reliable pool safety supervision.",
+  description:
+    "Professional pool lifeguard services in Singapore for residential, commercial, and specialty pools. Certified pool lifeguards for condos, hotels, schools, and private facilities. Book reliable pool safety supervision.",
   keywords: [
     "pool lifeguards singapore",
     "residential pool lifeguards",
@@ -16,17 +24,19 @@ export const metadata: Metadata = {
     "private pool lifeguards",
     "swimming pool safety",
     "pool supervision services",
-    "certified pool lifeguards"
+    "certified pool lifeguards",
   ],
   authors: [{ name: "Bearded Lifeguard" }],
   creator: "Bearded Lifeguard",
   publisher: "Bearded Lifeguard",
+  metadataBase: new URL("https://sglifeguardservices.com"),
   openGraph: {
     type: "website",
     locale: "en_SG",
     url: "https://sglifeguardservices.com/services/pools",
     title: "Pool Lifeguard Services Singapore - Bearded Lifeguard",
-    description: "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards for all types of swimming facilities.",
+    description:
+      "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards for all types of swimming facilities.",
     siteName: "Bearded Lifeguard",
     images: [
       {
@@ -40,7 +50,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Pool Lifeguard Services - Bearded Lifeguard",
-    description: "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards available now.",
+    description:
+      "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards available now.",
     images: ["/og-image-pools.jpg"],
   },
   alternates: {
@@ -60,18 +71,18 @@ export default function PoolsPage() {
             </span>
 
             <h1 className="text-4xl md:text-6xl font-bold text-modern-primary mb-6">
-              Professional Pool <br/>
+              Professional Pool <br />
               <span className="text-[#FF6633]">Lifeguard Services</span>
             </h1>
 
             <p className="text-xl text-modern-secondary max-w-3xl mx-auto mb-8">
-              Ensure the safety of your pool facility with our certified lifeguards. 
-              From residential pools to commercial aquatic centers, we provide reliable 
-              and professional water safety supervision.
+              Ensure the safety of your pool facility with our certified
+              lifeguards. From residential pools to commercial aquatic centers,
+              we provide reliable and professional water safety supervision.
             </p>
 
             <div className="text-center">
-              <Link 
+              <Link
                 href="/booking"
                 className="modern-btn-primary inline-flex items-center gap-2 px-8 py-4 text-lg"
               >
@@ -91,8 +102,8 @@ export default function PoolsPage() {
               Why Choose Our Pool Lifeguards?
             </h2>
             <p className="text-lg text-[#384152] max-w-2xl mx-auto">
-              Our pool lifeguards are trained to the highest standards and equipped 
-              with the skills to handle any aquatic emergency.
+              Our pool lifeguards are trained to the highest standards and
+              equipped with the skills to handle any aquatic emergency.
             </p>
           </div>
 
@@ -101,32 +112,52 @@ export default function PoolsPage() {
               <div className="w-16 h-16 bg-[#FF6633] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-[#20334F] mb-2">Certified Professionals</h3>
-              <p className="text-[#384152]">All lifeguards hold current CPR, First Aid, and Pool Lifeguard certifications.</p>
+              <h3 className="text-xl font-bold text-[#20334F] mb-2">
+                Certified Professionals
+              </h3>
+              <p className="text-[#384152]">
+                All lifeguards hold current CPR, First Aid, and Pool Lifeguard
+                certifications.
+              </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-[#FF6633] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Clock className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-[#20334F] mb-2">Flexible Scheduling</h3>
-              <p className="text-[#384152]">Available for hourly, daily, or long-term contracts to fit your needs.</p>
+              <h3 className="text-xl font-bold text-[#20334F] mb-2">
+                Flexible Scheduling
+              </h3>
+              <p className="text-[#384152]">
+                Available for hourly, daily, or long-term contracts to fit your
+                needs.
+              </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-[#FF6633] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-[#20334F] mb-2">Team Coverage</h3>
-              <p className="text-[#384152]">Multiple lifeguards available for large facilities and high-capacity pools.</p>
+              <h3 className="text-xl font-bold text-[#20334F] mb-2">
+                Team Coverage
+              </h3>
+              <p className="text-[#384152]">
+                Multiple lifeguards available for large facilities and
+                high-capacity pools.
+              </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-[#FF6633] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Star className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-[#20334F] mb-2">Proven Experience</h3>
-              <p className="text-[#384152]">Years of experience protecting swimmers at pools across Singapore.</p>
+              <h3 className="text-xl font-bold text-[#20334F] mb-2">
+                Proven Experience
+              </h3>
+              <p className="text-[#384152]">
+                Years of experience protecting swimmers at pools across
+                Singapore.
+              </p>
             </div>
           </div>
         </div>
@@ -141,7 +172,9 @@ export default function PoolsPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-8 border border-gray-100">
-              <h3 className="text-2xl font-bold text-[#20334F] mb-4">Residential Pools</h3>
+              <h3 className="text-2xl font-bold text-[#20334F] mb-4">
+                Residential Pools
+              </h3>
               <ul className="space-y-3 text-[#384152] mb-6">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-[#FF6633] mt-0.5 flex-shrink-0" />
@@ -163,7 +196,9 @@ export default function PoolsPage() {
             </div>
 
             <div className="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-gray-100">
-              <h3 className="text-2xl font-bold text-[#20334F] mb-4">Commercial Pools</h3>
+              <h3 className="text-2xl font-bold text-[#20334F] mb-4">
+                Commercial Pools
+              </h3>
               <ul className="space-y-3 text-[#384152] mb-6">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-[#FF6633] mt-0.5 flex-shrink-0" />
@@ -185,7 +220,9 @@ export default function PoolsPage() {
             </div>
 
             <div className="bg-gradient-to-br from-green-50 to-white rounded-2xl p-8 border border-gray-100">
-              <h3 className="text-2xl font-bold text-[#20334F] mb-4">Specialty Pools</h3>
+              <h3 className="text-2xl font-bold text-[#20334F] mb-4">
+                Specialty Pools
+              </h3>
               <ul className="space-y-3 text-[#384152] mb-6">
                 <li className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-[#FF6633] mt-0.5 flex-shrink-0" />
@@ -217,15 +254,20 @@ export default function PoolsPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-[#20334F] mb-6">
                 Our Pool Lifeguard Responsibilities
               </h2>
-              
+
               <div className="space-y-6">
                 <div className="flex gap-4">
                   <div className="w-8 h-8 bg-[#FF6633] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <span className="text-white font-bold text-sm">1</span>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">Continuous Pool Surveillance</h3>
-                    <p className="text-[#384152]">Maintain constant visual contact with all swimmers and pool areas, ensuring immediate response capability.</p>
+                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">
+                      Continuous Pool Surveillance
+                    </h3>
+                    <p className="text-[#384152]">
+                      Maintain constant visual contact with all swimmers and
+                      pool areas, ensuring immediate response capability.
+                    </p>
                   </div>
                 </div>
 
@@ -234,8 +276,13 @@ export default function PoolsPage() {
                     <span className="text-white font-bold text-sm">2</span>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">Emergency Response</h3>
-                    <p className="text-[#384152]">Immediate water rescue and emergency medical care until professional medical services arrive.</p>
+                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">
+                      Emergency Response
+                    </h3>
+                    <p className="text-[#384152]">
+                      Immediate water rescue and emergency medical care until
+                      professional medical services arrive.
+                    </p>
                   </div>
                 </div>
 
@@ -244,8 +291,13 @@ export default function PoolsPage() {
                     <span className="text-white font-bold text-sm">3</span>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">Safety Rule Enforcement</h3>
-                    <p className="text-[#384152]">Enforce pool rules and regulations to prevent accidents and maintain a safe swimming environment.</p>
+                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">
+                      Safety Rule Enforcement
+                    </h3>
+                    <p className="text-[#384152]">
+                      Enforce pool rules and regulations to prevent accidents
+                      and maintain a safe swimming environment.
+                    </p>
                   </div>
                 </div>
 
@@ -254,8 +306,13 @@ export default function PoolsPage() {
                     <span className="text-white font-bold text-sm">4</span>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">Equipment Management</h3>
-                    <p className="text-[#384152]">Maintain and operate safety equipment including rescue tubes, first aid kits, and communication devices.</p>
+                    <h3 className="text-xl font-semibold text-[#20334F] mb-2">
+                      Equipment Management
+                    </h3>
+                    <p className="text-[#384152]">
+                      Maintain and operate safety equipment including rescue
+                      tubes, first aid kits, and communication devices.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -283,20 +340,20 @@ export default function PoolsPage() {
             Ready to Secure Your Pool?
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Get instant quotes and book certified pool lifeguards for your facility. 
-            Flexible scheduling and competitive rates available.
+            Get instant quotes and book certified pool lifeguards for your
+            facility. Flexible scheduling and competitive rates available.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
+            <Link
               href="/booking"
               className="inline-flex items-center justify-center gap-2 bg-white text-[#FF6633] px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors"
             >
               Book Pool Lifeguards Now
               <ArrowRight className="w-5 h-5" />
             </Link>
-            
-            <Link 
+
+            <Link
               href="/services"
               className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-[#FF6633] transition-colors"
             >
@@ -305,7 +362,10 @@ export default function PoolsPage() {
           </div>
 
           <div className="mt-8 text-white/80 text-sm">
-            <p>• Hourly rates from $21/hour • Same-day availability • Professional certified lifeguards</p>
+            <p>
+              • Hourly rates from $21/hour • Same-day availability •
+              Professional certified lifeguards
+            </p>
           </div>
         </div>
       </section>

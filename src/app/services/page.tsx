@@ -102,7 +102,7 @@ export default function LifeguardServicesPage() {
               <div className="modern-card-hover overflow-hidden">
                 <div className="relative">
                   <Image
-                    src="/gallery/pool/pool.JPG"
+                    src="/gallery/pool/pool.jpg"
                     alt="Pool lifeguard services"
                     width={600}
                     height={300}

@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Header } from "@/components/Header/Header";
-import { Footer } from "@/components/Footer/Footer";
 
 import { Inter } from "next/font/google";
-import PageTransition from "@/components/PageTransition";
+import ConditionalLayout from "@/components/ConditionalLayout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,9 +11,30 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Bearded Lifeguard - Singapore Lifeguard Services",
+  title: {
+    template: "%s | Bearded Lifeguard",
+    default: "Bearded Lifeguard - Singapore Lifeguard Services",
+  },
   description:
-    "Concerned with the water safety at your aquatic premises or events? We provide professional water safety advice for swimming pools / beaches and events.",
+    "Professional lifeguard services in Singapore for swimming pools, events, pool parties and open water activities. Expert water safety management, certified lifeguards, and comprehensive aquatic safety solutions for your peace of mind.",
+  keywords: [
+    "lifeguard",
+    "singapore",
+    "water safety",
+    "swimming pool",
+    "event safety",
+    "open water",
+    "sg",
+    "lifeguards",
+    "services",
+    "service",
+  ],
+  authors: [{ name: "Bearded Lifeguard" }],
+  openGraph: {
+    title: "Bearded Lifeguard - Singapore Lifeguard Services",
+    description: "Professional water safety services in Singapore",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -38,9 +57,7 @@ export default function RootLayout({
           inter.className
         }
       >
-        <Header />
-        <PageTransition>{children}</PageTransition>
-        <Footer />
+        <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>
   );

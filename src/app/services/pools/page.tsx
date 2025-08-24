@@ -38,21 +38,6 @@ export const metadata: Metadata = {
     description:
       "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards for all types of swimming facilities.",
     siteName: "Bearded Lifeguard",
-    images: [
-      {
-        url: "/og-image-pools.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Pool Lifeguard Services Singapore - Bearded Lifeguard",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Pool Lifeguard Services - Bearded Lifeguard",
-    description:
-      "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards available now.",
-    images: ["/og-image-pools.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com/services/pools",
@@ -321,7 +306,7 @@ export default function PoolsPage() {
             <div className="relative">
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
                 <Image
-                  src="/services4.jpg"
+                  src="/gallery/pool/pool.jpg"
                   alt="Professional lifeguard monitoring pool safety"
                   width={600}
                   height={400}

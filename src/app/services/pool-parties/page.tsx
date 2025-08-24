@@ -40,21 +40,6 @@ export const metadata: Metadata = {
     description:
       "Professional lifeguard services for pool parties - birthdays, reunions, and celebrations. Safe, fun, party-friendly lifeguards for all types of pool parties.",
     siteName: "Bearded Lifeguard",
-    images: [
-      {
-        url: "/og-image-pool-parties.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Pool Party Lifeguards Singapore - Bearded Lifeguard",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Pool Party Lifeguards - Bearded Lifeguard",
-    description:
-      "Professional lifeguard services for safe, fun pool parties. Certified party-friendly lifeguards available now.",
-    images: ["/og-image-pool-parties.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com/services/pool-parties",
@@ -308,7 +293,7 @@ export default function PoolPartiesPage() {
             <div className="relative">
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
                 <Image
-                  src="/services4.jpg"
+                  src="/gallery/party/party3.jpg"
                   alt="Lifeguard monitoring pool party safely"
                   width={600}
                   height={400}

@@ -30,21 +30,6 @@ export const metadata: Metadata = {
     description:
       "Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching.",
     siteName: "Bearded Lifeguard",
-    images: [
-      {
-        url: "/og-image-about.jpg",
-        width: 1200,
-        height: 630,
-        alt: "About Bearded Lifeguard - Water Safety Experts Singapore",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "About Us - Bearded Lifeguard",
-    description:
-      "Singapore's trusted water safety experts since 2017. 43 years of combined experience in lifesaving and swim teaching.",
-    images: ["/og-image-about.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com/about",

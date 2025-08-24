@@ -29,21 +29,6 @@ export const metadata: Metadata = {
     description:
       "SLSS certified lifesaving courses - from Lifesaving 1 to Bronze Medallion and Pool Lifeguard certification. Learn lifeguarding and water safety skills in Singapore.",
     siteName: "Bearded Lifeguard",
-    images: [
-      {
-        url: "/og-image-courses.jpg",
-        width: 1200,
-        height: 630,
-        alt: "SLSS Lifesaving Courses Singapore - Bearded Lifeguard",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Lifesaving Courses - Bearded Lifeguard",
-    description:
-      "SLSS certified lifesaving courses in Singapore. Learn lifeguarding, CPR, and water safety skills. Become a certified lifeguard.",
-    images: ["/og-image-courses.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com/courses",

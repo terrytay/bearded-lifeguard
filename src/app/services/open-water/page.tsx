@@ -41,21 +41,6 @@ export const metadata: Metadata = {
     description:
       "Expert open water lifeguard services for beaches, reservoirs, sporting events and productions. Professional Safety Managers and rescue equipment for challenging aquatic environments.",
     siteName: "Bearded Lifeguard",
-    images: [
-      {
-        url: "/og-image-open-water.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Open Water Lifeguards Singapore - Bearded Lifeguard",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Open Water Lifeguards - Bearded Lifeguard",
-    description:
-      "Expert open water lifeguard services for beaches, reservoirs, and sporting events. Professional Safety Managers available now.",
-    images: ["/og-image-open-water.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com/services/open-water",
@@ -419,7 +404,7 @@ export default function OpenWaterPage() {
             <div className="relative">
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
                 <Image
-                  src="/services1.jpg"
+                  src="/gallery/open-water/open-water12.jpg"
                   alt="Professional open water lifeguards with rescue equipment"
                   width={600}
                   height={400}

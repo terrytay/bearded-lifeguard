@@ -32,21 +32,6 @@ export const metadata: Metadata = {
     description:
       "Professional lifeguard services for pools, events, parties, and open water. Certified lifeguards available for all types of aquatic supervision.",
     siteName: "Bearded Lifeguard",
-    images: [
-      {
-        url: "/og-image-services.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Professional Lifeguard Services Singapore - Bearded Lifeguard",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Lifeguard Services - Bearded Lifeguard",
-    description:
-      "Professional lifeguard services for pools, events, parties, and open water. Certified lifeguards available now.",
-    images: ["/og-image-services.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com/services",
@@ -117,7 +102,7 @@ export default function LifeguardServicesPage() {
               <div className="modern-card-hover overflow-hidden">
                 <div className="relative">
                   <Image
-                    src="/services4.jpg"
+                    src="/gallery/pool/pool.JPG"
                     alt="Pool lifeguard services"
                     width={600}
                     height={300}
@@ -156,7 +141,7 @@ export default function LifeguardServicesPage() {
               <div className="modern-card-hover overflow-hidden">
                 <div className="relative">
                   <Image
-                    src="/services3.jpg"
+                    src="/gallery/event/event2.jpg"
                     alt="Event lifeguard services"
                     width={600}
                     height={300}
@@ -195,7 +180,7 @@ export default function LifeguardServicesPage() {
               <div className="modern-card-hover overflow-hidden">
                 <div className="relative">
                   <Image
-                    src="/services4.jpg"
+                    src="/gallery/party/party1.jpg"
                     alt="Pool party lifeguard services"
                     width={600}
                     height={300}
@@ -234,7 +219,7 @@ export default function LifeguardServicesPage() {
               <div className="modern-card-hover overflow-hidden">
                 <div className="relative">
                   <Image
-                    src="/services1.jpg"
+                    src="/gallery/open-water/open-water9.jpg"
                     alt="Open water lifeguard services"
                     width={600}
                     height={300}

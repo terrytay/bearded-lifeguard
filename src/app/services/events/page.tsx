@@ -39,21 +39,6 @@ export const metadata: Metadata = {
     description:
       "Professional event lifeguard services for corporate events, festivals, sports competitions, and productions. Expert aquatic safety management.",
     siteName: "Bearded Lifeguard",
-    images: [
-      {
-        url: "/og-image-events.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Event Lifeguard Services Singapore - Bearded Lifeguard",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Event Lifeguard Services - Bearded Lifeguard",
-    description:
-      "Professional event lifeguard services for corporate events, festivals, and competitions. Expert water safety management.",
-    images: ["/og-image-events.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com/services/events",
@@ -355,7 +340,7 @@ export default function EventsPage() {
             <div className="relative">
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
                 <Image
-                  src="/services3.jpg"
+                  src="/gallery/event/event3.jpg"
                   alt="Professional lifeguards at corporate event"
                   width={600}
                   height={400}

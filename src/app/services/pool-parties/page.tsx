@@ -1,6 +1,52 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, PartyPopper, Users, Heart, Clock, ArrowRight, Star, Shield } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pool Party Lifeguards - Bearded Lifeguard",
+  description: "Professional lifeguard services for pool parties in Singapore. Safe, fun celebrations for birthdays, reunions, and social gatherings. Certified party-friendly lifeguards available for all types of pool parties.",
+  keywords: [
+    "pool party lifeguards singapore",
+    "birthday pool party lifeguards",
+    "pool party safety singapore",
+    "celebration pool lifeguards",
+    "party lifeguard services",
+    "family reunion pool lifeguards",
+    "teen pool party lifeguards",
+    "social gathering lifeguards",
+    "pool party supervision",
+    "private party lifeguards"
+  ],
+  authors: [{ name: "Bearded Lifeguard" }],
+  creator: "Bearded Lifeguard",
+  publisher: "Bearded Lifeguard",
+  openGraph: {
+    type: "website",
+    locale: "en_SG",
+    url: "https://sglifeguardservices.com/services/pool-parties",
+    title: "Pool Party Lifeguards Singapore - Bearded Lifeguard",
+    description: "Professional lifeguard services for pool parties - birthdays, reunions, and celebrations. Safe, fun, party-friendly lifeguards for all types of pool parties.",
+    siteName: "Bearded Lifeguard",
+    images: [
+      {
+        url: "/og-image-pool-parties.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Pool Party Lifeguards Singapore - Bearded Lifeguard",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pool Party Lifeguards - Bearded Lifeguard",
+    description: "Professional lifeguard services for safe, fun pool parties. Certified party-friendly lifeguards available now.",
+    images: ["/og-image-pool-parties.jpg"],
+  },
+  alternates: {
+    canonical: "https://sglifeguardservices.com/services/pool-parties",
+  },
+};
 
 export default function PoolPartiesPage() {
   return (

@@ -1,5 +1,51 @@
 // src/app/courses/page.tsx
-import { Cta } from "@/components/Cta";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Lifesaving Courses - Bearded Lifeguard",
+  description: "SLSS certified lifesaving courses in Singapore. Learn lifeguarding, CPR, and water safety skills. From Lifesaving 1 to Bronze Medallion, Pool Lifeguard certification, and Open Water awards. Become a certified lifeguard.",
+  keywords: [
+    "lifesaving courses singapore",
+    "SLSS lifeguard training",
+    "lifeguard certification singapore",
+    "CPR courses singapore",
+    "swimming lifesaving training",
+    "bronze medallion course",
+    "pool lifeguard training",
+    "open water lifeguard course",
+    "water safety courses",
+    "lifeguard instructor singapore"
+  ],
+  authors: [{ name: "Bearded Lifeguard" }],
+  creator: "Bearded Lifeguard",
+  publisher: "Bearded Lifeguard",
+  openGraph: {
+    type: "website",
+    locale: "en_SG",
+    url: "https://sglifeguardservices.com/courses",
+    title: "SLSS Lifesaving Courses Singapore - Bearded Lifeguard",
+    description: "SLSS certified lifesaving courses - from Lifesaving 1 to Bronze Medallion and Pool Lifeguard certification. Learn lifeguarding and water safety skills in Singapore.",
+    siteName: "Bearded Lifeguard",
+    images: [
+      {
+        url: "/og-image-courses.jpg",
+        width: 1200,
+        height: 630,
+        alt: "SLSS Lifesaving Courses Singapore - Bearded Lifeguard",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lifesaving Courses - Bearded Lifeguard",
+    description: "SLSS certified lifesaving courses in Singapore. Learn lifeguarding, CPR, and water safety skills. Become a certified lifeguard.",
+    images: ["/og-image-courses.jpg"],
+  },
+  alternates: {
+    canonical: "https://sglifeguardservices.com/courses",
+  },
+};
+
 export default function CoursesPage() {
   // Using <img> for these remote images (avoids Next/Image remote config/mixed-content issues)
   const badges = [
@@ -50,91 +96,93 @@ export default function CoursesPage() {
   ];
 
   return (
-    <main className="bg-[#fafafa]">
+    <main className="page-container">
       {/* Header */}
-      <section className="px-4 py-16 md:py-20">
-        <div className="mx-auto max-w-7xl">
-          <span className="inline-flex items-center rounded-full bg-[#FFEDD5] px-3 py-1 text-xs font-semibold text-[#FF6633]">
-            COURSES
-          </span>
+      <section className="page-content">
+        <div className="content-wrapper">
+          <div className="modern-hero">
+            <span className="inline-flex items-center rounded-full bg-orange-100 px-4 py-2 text-sm font-semibold text-[#FF6633] border border-orange-200">
+              COURSES
+            </span>
 
-          <h1 className="mt-4 text-3xl md:text-5xl font-bold text-[#20334F]">
-            Lifesaving Courses
-          </h1>
+            <h1 className="mt-6 text-3xl md:text-5xl font-bold text-modern-primary">
+              Lifesaving Courses
+            </h1>
 
-          <div className="mt-4 max-w-3xl space-y-3 text-[#384152]">
-            <p>
-              As part of our initiative to reduce the number of drownings, we
-              conduct lifesaving courses as well. We have a certified lifesaving
-              teacher who is able to conduct these courses.
-            </p>
-            <p>
-              All the lifesaving courses conducted are according to the syllabus
-              provided by the{" "}
-              <strong>Singapore Lifesaving Society (SLSS)</strong>. Hence, all
-              certifications are also awarded by SLSS.
-            </p>
+            <div className="mt-6 max-w-3xl space-y-4 text-modern-secondary text-lg">
+              <p>
+                As part of our initiative to reduce the number of drownings, we
+                conduct lifesaving courses as well. We have a certified lifesaving
+                teacher who is able to conduct these courses.
+              </p>
+              <p>
+                All the lifesaving courses conducted are according to the syllabus
+                provided by the{" "}
+                <strong>Singapore Lifesaving Society (SLSS)</strong>. Hence, all
+                certifications are also awarded by SLSS.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Pathways */}
-      <section className="px-4 pb-8">
-        <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="page-content">
+        <div className="content-wrapper feature-grid">
           {/* Become a certified lifeguard */}
-          <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-[#20334F]">
+          <article className="modern-card-hover p-8">
+            <h2 className="text-xl font-semibold text-modern-primary">
               To become a certified lifeguard
             </h2>
-            <ul className="mt-4 space-y-2 text-sm text-[#384152]">
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+            <ul className="mt-4 space-y-3 text-sm text-modern-light">
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>Lifesaving 1, Lifesaving 2, Lifesaving 3 award</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>Bronze Medallion &amp; CPR award</span>
               </li>
             </ul>
           </article>
 
           {/* Other awards */}
-          <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-[#20334F]">
+          <article className="modern-card-hover p-8">
+            <h2 className="text-xl font-semibold text-modern-primary">
               Other Awards
             </h2>
-            <ul className="mt-4 space-y-2 text-sm text-[#384152]">
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+            <ul className="mt-4 space-y-3 text-sm text-modern-light">
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>Pool Lifeguard Award</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>SLSS International Pool Lifeguard award</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>Award of Merit (AM), Senior Resuscitation award</span>
               </li>
             </ul>
           </article>
 
           {/* Open Water */}
-          <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-[#20334F]">
+          <article className="modern-card-hover p-8">
+            <h2 className="text-xl font-semibold text-modern-primary">
               Open Water Awards
             </h2>
-            <ul className="mt-4 space-y-2 text-sm text-[#384152]">
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+            <ul className="mt-4 space-y-3 text-sm text-modern-light">
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>Bronze Cross award</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>Silver Cross award</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                 <span>Patrol Lifeguard award</span>
               </li>
             </ul>
@@ -191,12 +239,6 @@ export default function CoursesPage() {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <div className="px-4">
-        <div className="mx-auto max-w-7xl">
-          <Cta />
-        </div>
-      </div>
     </main>
   );
 }

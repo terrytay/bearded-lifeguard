@@ -80,16 +80,16 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+    <div className="page-container min-h-screen flex items-center justify-center p-4">
+      <div className="modern-card w-full max-w-md p-8">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-[#FF6633] rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-[#20334F] mb-2">
+          <h1 className="text-2xl font-bold text-modern-primary mb-2">
             Admin Login
           </h1>
-          <p className="text-gray-600">
+          <p className="text-modern-secondary">
             Access the Bearded Lifeguard admin panel
           </p>
         </div>

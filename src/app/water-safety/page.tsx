@@ -1,5 +1,51 @@
 // src/app/water-safety/page.tsx
-import { Cta } from "@/components/Cta";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Water Safety Consultation - Bearded Lifeguard",
+  description: "Professional water safety consultation services in Singapore. Expert advice for pools, open water events, and aquatic facilities. Risk assessment, safety management, and emergency planning by certified water safety specialists.",
+  keywords: [
+    "water safety consultation singapore",
+    "pool safety consultation",
+    "open water safety planning",
+    "aquatic facility safety audit",
+    "water safety management",
+    "swimming pool safety assessment",
+    "event water safety planning",
+    "emergency action plan review",
+    "water safety specialist singapore",
+    "junior lifesaving singapore"
+  ],
+  authors: [{ name: "Bearded Lifeguard" }],
+  creator: "Bearded Lifeguard",
+  publisher: "Bearded Lifeguard",
+  openGraph: {
+    type: "website",
+    locale: "en_SG",
+    url: "https://sglifeguardservices.com/water-safety",
+    title: "Water Safety Consultation Singapore - Bearded Lifeguard",
+    description: "Professional water safety consultation for pools, open water events, and aquatic facilities. Risk assessment and safety management by certified specialists.",
+    siteName: "Bearded Lifeguard",
+    images: [
+      {
+        url: "/og-image-water-safety.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Water Safety Consultation Singapore - Bearded Lifeguard",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Water Safety Consultation - Bearded Lifeguard",
+    description: "Professional water safety consultation for pools, open water events, and aquatic facilities. Expert risk assessment and safety management.",
+    images: ["/og-image-water-safety.jpg"],
+  },
+  alternates: {
+    canonical: "https://sglifeguardservices.com/water-safety",
+  },
+};
+
 export default function WaterSafetyPage() {
   const gallery = [
     {
@@ -13,32 +59,34 @@ export default function WaterSafetyPage() {
   ];
 
   return (
-    <main className="bg-[#fafafa]">
+    <main className="page-container">
       {/* Header */}
-      <section className="px-4 pt-14 md:pt-20 pb-10">
-        <div className="mx-auto max-w-7xl">
-          <span className="inline-flex items-center rounded-full bg-[#FFEDD5] px-3 py-1 text-xs font-semibold text-[#FF6633]">
-            WATER SAFETY
-          </span>
+      <section className="page-content">
+        <div className="content-wrapper">
+          <div className="modern-hero">
+            <span className="inline-flex items-center rounded-full bg-orange-100 px-4 py-2 text-sm font-semibold text-[#FF6633] border border-orange-200">
+              WATER SAFETY
+            </span>
 
-          <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-[#20334F]">
-            Water Safety
-          </h1>
+            <h1 className="mt-6 text-3xl md:text-5xl font-bold tracking-tight text-modern-primary">
+              Water Safety
+            </h1>
 
-          <p className="mt-4 max-w-3xl text-[#384152]">
-            With years of experience under our belt, we have the right people to
-            assist you in any questions that you may have. Bearded Lifeguard
-            provides consultation service for your events in or near the water,
-            your swimming pool or any other water related activities. Our safety
-            manager has been put in charge of water safety for events such as
-            swim marathon in the open water and night beach parties.
-          </p>
+            <p className="mt-6 max-w-3xl text-modern-secondary text-lg">
+              With years of experience under our belt, we have the right people to
+              assist you in any questions that you may have. Bearded Lifeguard
+              provides consultation service for your events in or near the water,
+              your swimming pool or any other water related activities. Our safety
+              manager has been put in charge of water safety for events such as
+              swim marathon in the open water and night beach parties.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* What we help with */}
-      <section className="px-4 pb-8">
-        <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="page-content">
+        <div className="content-wrapper feature-grid">
           {[
             {
               title: "Pools & Facilities",
@@ -67,15 +115,15 @@ export default function WaterSafetyPage() {
           ].map((card) => (
             <article
               key={card.title}
-              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+              className="modern-card-hover p-8"
             >
-              <h2 className="text-lg font-semibold text-[#20334F]">
+              <h2 className="text-lg font-semibold text-modern-primary">
                 {card.title}
               </h2>
-              <ul className="mt-4 space-y-2 text-sm text-[#384152]">
+              <ul className="mt-4 space-y-3 text-sm text-modern-light">
                 {card.items.map((it) => (
-                  <li key={it} className="flex items-start gap-2">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#FF6633]" />
+                  <li key={it} className="flex items-start gap-3">
+                    <span className="mt-1 h-2 w-2 rounded-full bg-[#FF6633]" />
                     <span>{it}</span>
                   </li>
                 ))}
@@ -168,12 +216,6 @@ export default function WaterSafetyPage() {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <div className="px-4">
-        <div className="mx-auto max-w-7xl">
-          <Cta />
-        </div>
-      </div>
     </main>
   );
 }

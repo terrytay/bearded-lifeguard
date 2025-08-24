@@ -1,0 +1,25 @@
+# robots.txt for Bearded Lifeguard - Professional Lifeguard Services Singapore
+# Last updated: 2024-08-24
+
+# Allow all search engines to crawl public content
+User-agent: *
+Allow: /
+
+# Block admin areas from search engines
+Disallow: /admin/
+Disallow: /admin
+
+# Block API endpoints from being indexed
+Disallow: /api/
+
+# Block temporary/development files
+Disallow: /_next/
+Disallow: /temp/
+Disallow: /.well-known/
+
+# Sitemap location
+Sitemap: https://sglifeguardservices.com/sitemap.xml
+
+# Crawl delay for aggressive bots (optional)
+# User-agent: *
+# Crawl-delay: 1

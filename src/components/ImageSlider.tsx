@@ -73,7 +73,7 @@ export default function ClientCarousel() {
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden -mt-8 py-4 bg-orange-50 flex">
+    <div className="relative w-full overflow-hidden -mt-8 py-4flex">
       <div className="pointer-events-none absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-[#fafafa] to-transparent z-10" />
       <div className="pointer-events-none absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-[#fafafa] to-transparent z-10" />
 

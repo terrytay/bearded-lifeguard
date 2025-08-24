@@ -1,6 +1,52 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, Calendar, Users, Shield, Star, ArrowRight, Clock } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Event Lifeguard Services - Bearded Lifeguard",
+  description: "Professional event lifeguard services in Singapore for corporate events, community festivals, sports competitions, and film productions. Experienced event safety management and aquatic supervision.",
+  keywords: [
+    "event lifeguards singapore",
+    "corporate event lifeguards",
+    "festival lifeguards",
+    "sports event lifeguards",
+    "film production lifeguards",
+    "community event safety",
+    "aquatic event management",
+    "event water safety",
+    "singapore event lifeguards",
+    "professional event supervision"
+  ],
+  authors: [{ name: "Bearded Lifeguard" }],
+  creator: "Bearded Lifeguard",
+  publisher: "Bearded Lifeguard",
+  openGraph: {
+    type: "website",
+    locale: "en_SG",
+    url: "https://sglifeguardservices.com/services/events",
+    title: "Event Lifeguard Services Singapore - Bearded Lifeguard",
+    description: "Professional event lifeguard services for corporate events, festivals, sports competitions, and productions. Expert aquatic safety management.",
+    siteName: "Bearded Lifeguard",
+    images: [
+      {
+        url: "/og-image-events.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Event Lifeguard Services Singapore - Bearded Lifeguard",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Event Lifeguard Services - Bearded Lifeguard",
+    description: "Professional event lifeguard services for corporate events, festivals, and competitions. Expert water safety management.",
+    images: ["/og-image-events.jpg"],
+  },
+  alternates: {
+    canonical: "https://sglifeguardservices.com/services/events",
+  },
+};
 
 export default function EventsPage() {
   return (

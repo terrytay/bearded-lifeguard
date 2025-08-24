@@ -5,13 +5,13 @@ import { BookNowButton } from "./BookNow";
 
 export function Hero() {
   return (
-    <section className="flex flex-col w-full gap-10 text-[#20334F]">
+    <section className="flex flex-col w-full gap-10">
       {/* Headline */}
-      <div className="flex flex-col items-center text-center gap-4">
-        <h1 className="whitespace-nowrap text-2xl sm:text-3xl md:text-5xl leading-tight font-bold">
+      <div className="flex flex-col items-center text-center gap-6">
+        <h1 className="whitespace-nowrap text-2xl sm:text-3xl md:text-5xl leading-tight font-bold text-modern-primary">
           Your Safety, Our Priority
         </h1>
-        <p className="max-w-2xl text-[#384152] pb-2">
+        <p className="max-w-2xl text-modern-secondary pb-2 text-lg">
           Your first line of defense in water safety — services, courses &
           certified lifeguards.
         </p>
@@ -34,17 +34,11 @@ export function Hero() {
       </div>
 
       {/* Feature cards */}
-      <ul
-        role="list"
-        className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8"
-      >
+      <div className="feature-grid">
         {HeroList.map((item) => (
-          <li
-            key={item.name}
-            className="group h-full flex flex-col rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md"
-          >
+          <div key={item.name} className="modern-card-hover p-6 text-center">
             {/* icon */}
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-orange-50 ring-1 ring-orange-100">
+            <div className="modern-icon-container mx-auto">
               <Image
                 src={item.image}
                 alt={item.name}
@@ -56,15 +50,17 @@ export function Hero() {
             </div>
 
             {/* title */}
-            <h3 className="mt-4 text-lg font-semibold">{item.name}</h3>
+            <h3 className="mt-4 text-lg font-semibold text-modern-primary">
+              {item.name}
+            </h3>
 
             {/* body */}
-            <div className="mt-2 text-sm text-[#384152]">
+            <div className="mt-2 text-sm text-modern-secondary">
               <p className="text-balance">{item.description}</p>
               {Array.isArray(item.sublist) && item.sublist.length > 0 && (
                 <ul
                   role="list"
-                  className="mt-4 space-y-1 text-left inline-block text-xs text-gray-600"
+                  className="mt-4 space-y-1 text-left inline-block text-xs text-modern-light"
                 >
                   {item.sublist.map((sub, i) => (
                     <li
@@ -84,7 +80,7 @@ export function Hero() {
               {item.name === "Lifeguard Services" && (
                 <a
                   href="/services"
-                  className="text-sm font-medium text-[#FF6633] hover:underline"
+                  className="text-sm font-medium text-[#FF6633] hover:text-[#e55a2b] transition-colors duration-300"
                 >
                   Explore Services →
                 </a>
@@ -92,7 +88,7 @@ export function Hero() {
               {item.name === "Lifeguard Courses" && (
                 <a
                   href="/courses"
-                  className="text-sm font-medium text-[#FF6633] hover:underline"
+                  className="text-sm font-medium text-[#FF6633] hover:text-[#e55a2b] transition-colors duration-300"
                 >
                   Explore Courses →
                 </a>
@@ -100,15 +96,15 @@ export function Hero() {
               {item.name === "Water Safety" && (
                 <a
                   href="/water-safety"
-                  className="text-sm font-medium text-[#FF6633] hover:underline"
+                  className="text-sm font-medium text-[#FF6633] hover:text-[#e55a2b] transition-colors duration-300"
                 >
                   Explore Water Safety →
                 </a>
               )}
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </section>
   );
 }

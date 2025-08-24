@@ -1,38 +1,84 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, Shield, Clock, Users, Star, ArrowRight } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pool Lifeguard Services - Bearded Lifeguard",
+  description: "Professional pool lifeguard services in Singapore for residential, commercial, and specialty pools. Certified pool lifeguards for condos, hotels, schools, and private facilities. Book reliable pool safety supervision.",
+  keywords: [
+    "pool lifeguards singapore",
+    "residential pool lifeguards",
+    "commercial pool lifeguards",
+    "hotel pool lifeguards",
+    "condo pool lifeguards",
+    "school pool lifeguards",
+    "private pool lifeguards",
+    "swimming pool safety",
+    "pool supervision services",
+    "certified pool lifeguards"
+  ],
+  authors: [{ name: "Bearded Lifeguard" }],
+  creator: "Bearded Lifeguard",
+  publisher: "Bearded Lifeguard",
+  openGraph: {
+    type: "website",
+    locale: "en_SG",
+    url: "https://sglifeguardservices.com/services/pools",
+    title: "Pool Lifeguard Services Singapore - Bearded Lifeguard",
+    description: "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards for all types of swimming facilities.",
+    siteName: "Bearded Lifeguard",
+    images: [
+      {
+        url: "/og-image-pools.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Pool Lifeguard Services Singapore - Bearded Lifeguard",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pool Lifeguard Services - Bearded Lifeguard",
+    description: "Professional pool lifeguard services for residential, commercial, and specialty pools. Certified lifeguards available now.",
+    images: ["/og-image-pools.jpg"],
+  },
+  alternates: {
+    canonical: "https://sglifeguardservices.com/services/pools",
+  },
+};
 
 export default function PoolsPage() {
   return (
-    <main className="bg-[#fafafa]">
+    <main className="page-container">
       {/* Hero Section */}
-      <section className="px-4 pt-16 md:pt-20 pb-12 bg-gradient-to-br from-blue-50 to-white">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-8">
-            <span className="inline-flex items-center rounded-full bg-[#FFEDD5] px-4 py-2 text-sm font-semibold text-[#FF6633]">
+      <section className="page-content">
+        <div className="content-wrapper">
+          <div className="modern-hero text-center">
+            <span className="inline-flex items-center rounded-full bg-orange-100 px-4 py-2 text-sm font-semibold text-[#FF6633] border border-orange-200 mb-6">
               POOL SERVICES
             </span>
-          </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-[#20334F] text-center mb-6">
-            Professional Pool <br/>
-            <span className="text-[#FF6633]">Lifeguard Services</span>
-          </h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-modern-primary mb-6">
+              Professional Pool <br/>
+              <span className="text-[#FF6633]">Lifeguard Services</span>
+            </h1>
 
-          <p className="text-xl text-[#384152] text-center max-w-3xl mx-auto mb-8">
-            Ensure the safety of your pool facility with our certified lifeguards. 
-            From residential pools to commercial aquatic centers, we provide reliable 
-            and professional water safety supervision.
-          </p>
+            <p className="text-xl text-modern-secondary max-w-3xl mx-auto mb-8">
+              Ensure the safety of your pool facility with our certified lifeguards. 
+              From residential pools to commercial aquatic centers, we provide reliable 
+              and professional water safety supervision.
+            </p>
 
-          <div className="text-center">
-            <Link 
-              href="/booking"
-              className="inline-flex items-center gap-2 bg-[#FF6633] text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-[#e55a2b] transition-colors"
-            >
-              Book Pool Lifeguards
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+            <div className="text-center">
+              <Link 
+                href="/booking"
+                className="modern-btn-primary inline-flex items-center gap-2 px-8 py-4 text-lg"
+              >
+                Book Pool Lifeguards
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

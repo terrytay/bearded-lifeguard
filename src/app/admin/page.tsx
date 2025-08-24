@@ -290,19 +290,19 @@ export default function AdminPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center">
+      <div className="page-container min-h-screen flex items-center justify-center">
+        <div className="modern-card p-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF6633] mx-auto"></div>
-          <p className="mt-2 text-gray-600">Checking authentication...</p>
+          <p className="mt-2 text-modern-light">Checking authentication...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Modern Header with Glassmorphism */}
-      <div className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg">
+    <div className="page-container">
+      {/* Modern Header */}
+      <div className="sticky top-0 z-40 modern-nav">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">

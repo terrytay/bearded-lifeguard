@@ -32,10 +32,10 @@ export function Header() {
   return (
     <header
       role="banner"
-      className={`sticky top-0 inset-x-0 z-50 transition-colors duration-300
+      className={`sticky top-0 inset-x-0 z-50 transition-all duration-300
         ${
           scrolled || isOpen
-            ? "bg-white/90 backdrop-blur-sm border-b border-gray-200/60"
+            ? "modern-nav"
             : "bg-transparent"
         }`}
     >

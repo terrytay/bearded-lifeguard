@@ -1,6 +1,52 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, Waves, Shield, MapPin, Users, Clock, ArrowRight, Star, AlertTriangle } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Open Water Lifeguards - Bearded Lifeguard",
+  description: "Expert open water lifeguard services in Singapore for beaches, reservoirs, sporting events and film productions. Specialized open water safety management with professional rescue equipment and certified Safety Managers.",
+  keywords: [
+    "open water lifeguards singapore",
+    "beach lifeguards singapore",
+    "reservoir lifeguards",
+    "open water safety singapore",
+    "triathlon lifeguards",
+    "swimming competition safety",
+    "film production lifeguards",
+    "marine safety specialists",
+    "open water rescue teams",
+    "coastal event safety"
+  ],
+  authors: [{ name: "Bearded Lifeguard" }],
+  creator: "Bearded Lifeguard",
+  publisher: "Bearded Lifeguard",
+  openGraph: {
+    type: "website",
+    locale: "en_SG",
+    url: "https://sglifeguardservices.com/services/open-water",
+    title: "Open Water Lifeguards Singapore - Bearded Lifeguard",
+    description: "Expert open water lifeguard services for beaches, reservoirs, sporting events and productions. Professional Safety Managers and rescue equipment for challenging aquatic environments.",
+    siteName: "Bearded Lifeguard",
+    images: [
+      {
+        url: "/og-image-open-water.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Open Water Lifeguards Singapore - Bearded Lifeguard",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Open Water Lifeguards - Bearded Lifeguard",
+    description: "Expert open water lifeguard services for beaches, reservoirs, and sporting events. Professional Safety Managers available now.",
+    images: ["/og-image-open-water.jpg"],
+  },
+  alternates: {
+    canonical: "https://sglifeguardservices.com/services/open-water",
+  },
+};
 
 export default function OpenWaterPage() {
   return (

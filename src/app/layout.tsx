@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={
-          "flex flex-col justify-between relative bg-neutral-50 select-none " +
+          "flex flex-col justify-between bg-gradient-to-br from-slate-50 to-blue-50 relative select-none " +
           inter.className
         }
       >

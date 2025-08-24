@@ -4,6 +4,82 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Modern Design System */
+@layer components {
+  /* Page Layout System */
+  .page-container {
+    @apply min-h-screen bg-gradient-to-br from-slate-50 to-blue-50;
+  }
+  
+  .page-content {
+    @apply px-6 py-12 md:px-12 md:py-20;
+  }
+  
+  .content-wrapper {
+    @apply mx-auto max-w-7xl;
+  }
+  
+  /* Modern Card System */
+  .modern-card {
+    @apply bg-white rounded-2xl shadow-lg border border-gray-100/50 hover:shadow-xl transition-all duration-300;
+  }
+  
+  .modern-card-hover {
+    @apply bg-white rounded-2xl shadow-lg border border-gray-100/50 hover:shadow-xl hover:-translate-y-2 transition-all duration-300;
+  }
+  
+  /* Hero Sections */
+  .modern-hero {
+    @apply bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/50 rounded-3xl shadow-xl border border-white/80 p-8 md:p-12;
+  }
+  
+  /* Section Backgrounds */
+  .modern-section-light {
+    @apply bg-white/50 backdrop-blur-sm rounded-2xl border border-white/80;
+  }
+  
+  .modern-section-accent {
+    @apply bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100/50;
+  }
+  
+  /* Navigation */
+  .modern-nav {
+    @apply backdrop-blur-xl bg-white/90 border-b border-gray-200/50 shadow-sm;
+  }
+  
+  /* Button System */
+  .modern-btn {
+    @apply bg-white border border-gray-200 rounded-xl px-6 py-3 font-semibold hover:bg-gray-50 hover:scale-105 transition-all duration-300 shadow-sm;
+  }
+  
+  .modern-btn-primary {
+    @apply bg-gradient-to-r from-[#FF6633] to-[#e55a2b] rounded-xl px-6 py-3 text-white font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300;
+  }
+  
+  /* Text Colors for better readability */
+  .text-modern-primary {
+    @apply text-[#20334F];
+  }
+  
+  .text-modern-secondary {
+    @apply text-[#384152];
+  }
+  
+  .text-modern-light {
+    @apply text-gray-600;
+  }
+  
+  /* Feature Grid */
+  .feature-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+  
+  /* Icon Containers */
+  .modern-icon-container {
+    @apply w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-50 rounded-full flex items-center justify-center border border-orange-200/50 shadow-sm;
+  }
+}
+
 /* Add custom animation below */
 @layer utilities {
   @keyframes loader {
@@ -20,7 +96,37 @@
   .animate-loader {
     animation: loader 1.2s ease-in-out infinite;
   }
+  
+  /* Glassmorphism Utility Classes */
+  .backdrop-blur-xs {
+    backdrop-filter: blur(2px);
+  }
+  
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+  
+  .backdrop-blur-base {
+    backdrop-filter: blur(8px);
+  }
+  
+  .backdrop-blur-md {
+    backdrop-filter: blur(12px);
+  }
+  
+  .backdrop-blur-lg {
+    backdrop-filter: blur(16px);
+  }
+  
+  .backdrop-blur-xl {
+    backdrop-filter: blur(24px);
+  }
+  
+  .backdrop-blur-2xl {
+    backdrop-filter: blur(40px);
+  }
 }
+
 ::-webkit-scrollbar {
   display: none;
 }

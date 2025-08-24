@@ -77,6 +77,12 @@ export default function AdminPage() {
   const [selectedTab, setSelectedTab] = useState<
     "overview" | "details" | "actions"
   >("overview");
+  const [operationProgress, setOperationProgress] = useState<{
+    isActive: boolean;
+    message: string;
+    progress: number;
+  }>({ isActive: false, message: '', progress: 0 });
+  const [optimisticBookings, setOptimisticBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
     checkAuth();
@@ -87,6 +93,27 @@ export default function AdminPage() {
       fetchBookings();
     }
   }, [user, searchTerm, statusFilter]);
+
+  // Use optimistic bookings when available, fallback to regular bookings
+  const displayBookings = optimisticBookings.length > 0 ? optimisticBookings : bookings;
+
+  // Progress bar animation helper
+  const showProgress = (message: string, duration: number = 2000) => {
+    setOperationProgress({ isActive: true, message, progress: 0 });
+    
+    const interval = setInterval(() => {
+      setOperationProgress(prev => {
+        if (prev.progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setOperationProgress({ isActive: false, message: '', progress: 0 });
+          }, 500);
+          return prev;
+        }
+        return { ...prev, progress: prev.progress + (100 / (duration / 50)) };
+      });
+    }, 50);
+  };
 
   const checkAuth = async () => {
     const supabase = createClient();
@@ -174,6 +201,34 @@ export default function AdminPage() {
   };
 
   const updateBooking = async (id: string, updates: any) => {
+    const targetBooking = bookings.find(b => b.id === id);
+    if (!targetBooking) return;
+
+    // Show progress
+    showProgress('Updating booking...', 1500);
+
+    // Optimistic update
+    const optimisticUpdate = { ...targetBooking, ...updates };
+    if (updates.action === 'mark_viewed') {
+      optimisticUpdate.viewed_by_admin = true;
+    } else if (updates.action === 'mark_unviewed') {
+      optimisticUpdate.viewed_by_admin = false;
+    } else if (updates.payment_status === 'paid') {
+      optimisticUpdate.payment_status = 'paid';
+      optimisticUpdate.status = 'confirmed';
+    }
+
+    const optimisticBookings = bookings.map(b => 
+      b.id === id ? optimisticUpdate : b
+    );
+    setOptimisticBookings(optimisticBookings);
+    setBookings(optimisticBookings);
+
+    // Update selected booking if it's the one being updated
+    if (selectedBooking?.id === id) {
+      setSelectedBooking(optimisticUpdate);
+    }
+
     try {
       const supabase = createClient();
       const {
@@ -189,13 +244,27 @@ export default function AdminPage() {
         body: JSON.stringify(updates),
       });
 
-      if (response.ok) {
-        await fetchBookings();
-        setSelectedBooking(null);
-      } else {
+      if (!response.ok) {
+        // Rollback on failure
+        setOptimisticBookings([]);
+        setBookings(bookings);
+        if (selectedBooking?.id === id) {
+          setSelectedBooking(targetBooking);
+        }
         alert("Failed to update booking");
+      } else {
+        // Success - fetch fresh data to ensure consistency
+        setTimeout(() => {
+          fetchBookings();
+        }, 500);
       }
     } catch (error) {
+      // Rollback on error
+      setOptimisticBookings([]);
+      setBookings(bookings);
+      if (selectedBooking?.id === id) {
+        setSelectedBooking(targetBooking);
+      }
       console.error("Error updating booking:", error);
       alert("Failed to update booking");
     }
@@ -203,6 +272,22 @@ export default function AdminPage() {
 
   const deleteBooking = async (id: string) => {
     if (!confirm("Are you sure you want to delete this booking?")) return;
+
+    const targetBooking = bookings.find(b => b.id === id);
+    if (!targetBooking) return;
+
+    // Show progress
+    showProgress('Deleting booking...', 2000);
+
+    // Optimistic delete - remove from list immediately
+    const optimisticBookings = bookings.filter(b => b.id !== id);
+    setOptimisticBookings(optimisticBookings);
+    setBookings(optimisticBookings);
+    
+    // Close modal if deleting current booking
+    if (selectedBooking?.id === id) {
+      setSelectedBooking(null);
+    }
 
     try {
       const supabase = createClient();
@@ -217,13 +302,21 @@ export default function AdminPage() {
         },
       });
 
-      if (response.ok) {
-        await fetchBookings();
-        setSelectedBooking(null);
-      } else {
+      if (!response.ok) {
+        // Rollback on failure - restore the deleted booking
+        setOptimisticBookings([]);
+        setBookings([...bookings]);
         alert("Failed to delete booking");
+      } else {
+        // Success - fetch fresh data to ensure consistency
+        setTimeout(() => {
+          fetchBookings();
+        }, 500);
       }
     } catch (error) {
+      // Rollback on error
+      setOptimisticBookings([]);
+      setBookings([...bookings]);
       console.error("Error deleting booking:", error);
       alert("Failed to delete booking");
     }
@@ -233,14 +326,18 @@ export default function AdminPage() {
     if (!selectedBooking) return;
 
     setConfirmingPayment(true);
+    setShowPaymentConfirm(false);
+    
+    // Show progress for payment confirmation
+    showProgress('Confirming payment & sending email...', 3000);
+    
     try {
       await updateBooking(selectedBooking.id, {
         action: "update_payment_status",
         payment_status: "paid",
-        status: "confirmed", // Automatically set to confirmed when payment is received
+        status: "confirmed",
         send_email: true,
       });
-      setShowPaymentConfirm(false);
     } finally {
       setConfirmingPayment(false);
     }
@@ -427,6 +524,33 @@ export default function AdminPage() {
         </div>
       </div>
 
+      {/* Slick Progress Bar */}
+      {operationProgress.isActive && (
+        <div className="fixed top-[88px] left-0 right-0 z-50">
+          <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-b border-white/10 p-4">
+            <div className="max-w-7xl mx-auto px-6">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-blue-400/50 border-t-blue-400 rounded-full animate-spin"></div>
+                  <span className="text-white/90 font-medium text-sm">{operationProgress.message}</span>
+                </div>
+                <div className="flex-1 bg-white/10 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-300 ease-out rounded-full shadow-lg"
+                    style={{ width: `${operationProgress.progress}%` }}
+                  >
+                    <div className="h-full bg-white/20 animate-pulse"></div>
+                  </div>
+                </div>
+                <span className="text-white/70 text-xs font-mono min-w-[40px]">
+                  {Math.round(operationProgress.progress)}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Modern Search and Filters */}
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-6 mb-8">
@@ -483,7 +607,7 @@ export default function AdminPage() {
             <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl p-4 border border-blue-500/30">
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-400 mb-1">
-                  {bookings.length}
+                  {displayBookings.length}
                 </div>
                 <div className="text-sm text-white/70 font-medium">
                   Total Bookings
@@ -493,7 +617,7 @@ export default function AdminPage() {
             <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl p-4 border border-green-500/30">
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-400 mb-1">
-                  {bookings.filter((b) => b.payment_status === "paid").length}
+                  {displayBookings.filter((b) => b.payment_status === "paid").length}
                 </div>
                 <div className="text-sm text-white/70 font-medium">Paid</div>
               </div>
@@ -502,7 +626,7 @@ export default function AdminPage() {
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-400 mb-1">
                   {
-                    bookings.filter((b) => b.payment_status === "pending")
+                    displayBookings.filter((b) => b.payment_status === "pending")
                       .length
                   }
                 </div>
@@ -537,7 +661,7 @@ export default function AdminPage() {
             </p>
             <p className="text-white/50 text-sm">Fetching the latest data</p>
           </div>
-        ) : bookings.length === 0 ? (
+        ) : displayBookings.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-24 h-24 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/20">
               <FileText className="w-12 h-12 text-white/50" />
@@ -566,7 +690,7 @@ export default function AdminPage() {
             {/* Cards View */}
             {viewMode === "cards" && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {bookings.map((booking) => (
+                {displayBookings.map((booking) => (
                   <div
                     key={booking.id}
                     className={`group relative bg-white/10 backdrop-blur-lg border rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl ${
@@ -695,7 +819,7 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody className="bg-white/5 divide-y divide-white/10">
-                      {bookings.map((booking) => (
+                      {displayBookings.map((booking) => (
                         <tr
                           key={booking.id}
                           className={`hover:bg-white/20 transition-all duration-300 cursor-pointer group ${
@@ -848,7 +972,7 @@ export default function AdminPage() {
 
             {/* Mobile-Optimized Card View */}
             <div className="md:hidden space-y-4">
-              {bookings.map((booking) => (
+              {displayBookings.map((booking) => (
                 <div
                   key={booking.id}
                   className={`group relative bg-white/10 backdrop-blur-lg border rounded-2xl p-4 hover:bg-white/15 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:shadow-2xl ${

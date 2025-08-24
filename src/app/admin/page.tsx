@@ -452,16 +452,16 @@ export default function AdminPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="pl-10 pr-8 py-4 bg-white/10 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-white w-full sm:min-w-[200px] appearance-none backdrop-blur-sm"
+                  className="pl-10 pr-8 py-4 bg-white/10 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-white w-full sm:min-w-[200px] appearance-none backdrop-blur-sm [&>option]:bg-slate-800 [&>option]:text-white"
                 >
-                  <option value="all">All Bookings</option>
-                  <option value="unviewed">🔴 Unviewed</option>
-                  <option value="pending">⏳ Pending Review</option>
-                  <option value="pending_payment">💳 Awaiting Payment</option>
-                  <option value="paid">💚 Paid</option>
-                  <option value="confirmed">✅ Confirmed</option>
-                  <option value="completed">🎉 Completed</option>
-                  <option value="cancelled">❌ Cancelled</option>
+                  <option value="all" className="bg-slate-800 text-white">All Bookings</option>
+                  <option value="unviewed" className="bg-slate-800 text-white">🔴 Unviewed</option>
+                  <option value="pending" className="bg-slate-800 text-white">⏳ Pending Review</option>
+                  <option value="pending_payment" className="bg-slate-800 text-white">💳 Awaiting Payment</option>
+                  <option value="paid" className="bg-slate-800 text-white">💚 Paid</option>
+                  <option value="confirmed" className="bg-slate-800 text-white">✅ Confirmed</option>
+                  <option value="completed" className="bg-slate-800 text-white">🎉 Completed</option>
+                  <option value="cancelled" className="bg-slate-800 text-white">❌ Cancelled</option>
                 </select>
               </div>
 
@@ -473,7 +473,7 @@ export default function AdminPage() {
                 <RefreshCw
                   className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
                 />
-                <span className="hidden sm:inline">Refresh</span>
+                <span className="inline">Refresh</span>
               </button>
             </div>
           </div>

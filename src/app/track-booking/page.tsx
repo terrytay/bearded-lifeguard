@@ -355,17 +355,14 @@ export default function TrackBooking() {
                           Start Time
                         </span>
                         <p className="font-semibold text-gray-900 mt-1 text-sm sm:text-base">
-                          {SingaporeTime.toLocaleString(
-                            booking.startDateTime,
-                            {
-                              weekday: "short",
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
+                          {SingaporeTime.toLocaleString(booking.startDateTime, {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </p>
                       </div>
                       <div className="bg-white p-4 rounded-lg border">
@@ -373,17 +370,14 @@ export default function TrackBooking() {
                           End Time
                         </span>
                         <p className="font-semibold text-gray-900 mt-1 text-sm sm:text-base">
-                          {SingaporeTime.toLocaleString(
-                            booking.endDateTime,
-                            {
-                              weekday: "short",
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
+                          {SingaporeTime.toLocaleString(booking.endDateTime, {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </p>
                       </div>
                       <div className="bg-gradient-to-br from-[#FF6633] to-[#e55a2b] p-4 rounded-lg text-white">
@@ -419,17 +413,14 @@ export default function TrackBooking() {
                           </p>
                         </div>
                         <p className="text-sm text-gray-600">
-                          {SingaporeTime.toLocaleString(
-                            booking.createdAt, 
-                            {
-                              weekday: "long",
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
+                          {SingaporeTime.toLocaleString(booking.createdAt, {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </p>
                       </div>
                     </div>
@@ -572,7 +563,7 @@ export default function TrackBooking() {
                   </div>
                 </a>
                 <a
-                  href="mailto:support@sglifeguardservices.com"
+                  href="mailto:sales@sglifeguardservices.com"
                   className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-500/10 to-blue-600/10 rounded-xl hover:from-blue-500/20 hover:to-blue-600/20 transition-all duration-200 group border border-blue-500/20"
                 >
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -580,7 +571,7 @@ export default function TrackBooking() {
                   </div>
                   <div>
                     <p className="font-semibold text-[#20334F] group-hover:text-blue-600 transition-colors text-sm sm:text-base">
-                      support@sglifeguardservices.com
+                      sales@sglifeguardservices.com
                     </p>
                     <p className="text-sm text-gray-500">Email support</p>
                   </div>

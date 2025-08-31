@@ -72,7 +72,7 @@ export class EmailService {
         )}`,
         startDate: new Date(data.startISO),
         endDate: new Date(data.endISO),
-        description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${data.orderId}\nAmount Paid: ${data.totalAmount}\nLifeguards: ${data.lifeguards}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 9123 4567`,
+        description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${data.orderId}\nAmount Paid: ${data.totalAmount}\nLifeguards: ${data.lifeguards}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at sales@sglifeguardservices.com or +65 9123 4567`,
         location: data.location || "Location to be confirmed",
       };
 
@@ -166,7 +166,7 @@ export class EmailService {
                 </a>
             </div>
             
-            <p>If you have any questions, feel free to contact us at <a href="mailto:support@sglifeguardservices.com">support@sglifeguardservices.com</a> or +65 9123 4567.</p>
+            <p>If you have any questions, feel free to contact us at <a href="mailto:sales@sglifeguardservices.com">sales@sglifeguardservices.com</a> or +65 9123 4567.</p>
             
             <p>Thank you for choosing Bearded Lifeguard!</p>
         </div>
@@ -197,7 +197,7 @@ ${
   process.env.NEXT_PUBLIC_BASE_URL || "https://yourwebsite.com"
 }/track-booking?order=${data.orderId}
 
-If you have any questions, contact us at support@sglifeguardservices.com or +65 9123 4567.
+If you have any questions, contact us at sales@sglifeguardservices.com or +65 9123 4567.
 
 Thank you for choosing Bearded Lifeguard!
 

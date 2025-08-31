@@ -33,7 +33,7 @@ export default function ThankYou() {
           title: `Bearded Lifeguard - ${serviceType}`,
           startDate: new Date(startDate),
           endDate: new Date(endDate),
-          description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${order}\nAmount Paid: $${amount}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 8200 6021`,
+          description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${order}\nAmount Paid: $${amount}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at sales@sglifeguardservices.com or +65 8200 6021`,
           location: location || "To be confirmed by our operations team",
         }
       : null;
@@ -347,7 +347,7 @@ export default function ThankYou() {
                 </a>
 
                 <a
-                  href="mailto:support@sglifeguardservices.com"
+                  href="mailto:sales@sglifeguardservices.com"
                   className="flex items-center gap-3 text-[#FF6633] hover:text-[#e55a2b] transition-colors"
                 >
                   <Mail className="w-5 h-5" />

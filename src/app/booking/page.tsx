@@ -203,6 +203,7 @@ export default function BookingPage() {
     () => (noticeDays == null ? 1 : lastMinuteMultiplier(noticeDays)),
     [noticeDays]
   );
+  const lmMultPercentage = useMemo(() => (lmMult - 1) * 100, [lmMult]);
   const lmLabel = useMemo(() => lastMinuteLabel(noticeDays), [noticeDays]);
   const surcharge = useMemo(() => subtotal * (lmMult - 1), [subtotal, lmMult]);
   const estTotal = useMemo(() => subtotal * lmMult, [subtotal, lmMult]);
@@ -715,7 +716,7 @@ export default function BookingPage() {
                         Pricing Breakdown
                       </h3>
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
+                        {/* <div className="flex justify-between">
                           <span className="text-gray-600">
                             Rate ({tierLabel}):
                           </span>
@@ -734,13 +735,21 @@ export default function BookingPage() {
                           <span className="font-medium">
                             {formatCurrency(baseSubtotal)}
                           </span>
-                        </div>
+                        </div> */}
                         <div className="flex justify-between">
                           <span className="text-gray-600">
                             Number of lifeguards:
                           </span>
                           <span className="font-medium">
                             {lifeguards} lifeguard{lifeguards > 1 ? "s" : ""}
+                          </span>
+                        </div>{" "}
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            Cost per lifeguard:
+                          </span>
+                          <span className="font-medium">
+                            {formatCurrency(subtotal / lifeguards)}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -749,20 +758,28 @@ export default function BookingPage() {
                             {formatCurrency(subtotal)}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Lead time:</span>
-                          <span className="font-medium">{noticeDaysText}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Surcharge:</span>
-                          <span
-                            className={`font-medium ${
-                              surcharge > 0 ? "text-orange-600" : ""
-                            }`}
-                          >
-                            {formatCurrency(surcharge)}
-                          </span>
-                        </div>
+                        {surcharge > 0 && (
+                          <>
+                            {/* <div className="flex justify-between">
+                              <span className="text-gray-600">Lead time:</span>
+                              <span className="font-medium">
+                                {noticeDaysText}
+                              </span>
+                            </div> */}
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">
+                                Surcharge (+{lmMultPercentage.toFixed(0)}%):
+                              </span>
+                              <span
+                                className={`font-medium ${
+                                  surcharge > 0 ? "text-orange-600" : ""
+                                }`}
+                              >
+                                {formatCurrency(surcharge)}
+                              </span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 

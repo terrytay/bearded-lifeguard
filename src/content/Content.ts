@@ -19,6 +19,10 @@ export const Menu = [
     name: "Water Safety",
     link: "/water-safety",
   },
+  {
+    name: "Contact Us",
+    link: "/contact",
+  },
 ];
 
 export const HeroList = [

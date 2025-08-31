@@ -13,9 +13,12 @@ Disallow: /admin
 Disallow: /api/
 
 # Block temporary/development files
-Disallow: /_next/
 Disallow: /temp/
 Disallow: /.well-known/
+
+# Allow all static assets (important for SEO)
+Allow: /_next/static/
+Allow: /_next/image/
 
 # Sitemap location
 Sitemap: https://sglifeguardservices.com/sitemap.xml

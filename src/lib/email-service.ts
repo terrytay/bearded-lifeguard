@@ -64,18 +64,21 @@ export class EmailService {
     let attachments: any[] = [];
     if (data.startISO && data.endISO) {
       const calendarEvent: CalendarEvent = {
-        title: `Bearded Lifeguard - ${this.formatServiceType(data.serviceType, data.customService)}`,
+        title: `Bearded Lifeguard - ${this.formatServiceType(
+          data.serviceType,
+          data.customService
+        )}`,
         startDate: new Date(data.startISO),
         endDate: new Date(data.endISO),
         description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${data.orderId}\nAmount Paid: ${data.totalAmount}\nLifeguards: ${data.lifeguards}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 9123 4567`,
-        location: "To be confirmed by our operations team"
+        location: "To be confirmed by our operations team",
       };
-      
+
       const icsContent = CalendarHelper.generateICSFile(calendarEvent);
       attachments.push({
         filename: `lifeguard-booking-${data.orderId}.ics`,
         content: icsContent,
-        contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+        contentType: "text/calendar; charset=utf-8; method=REQUEST",
       });
     }
 
@@ -140,7 +143,9 @@ export class EmailService {
             <p><strong>Booking Details:</strong></p>
             <ul>
                 <li><strong>Order Reference:</strong> ${data.orderId}</li>
-                <li><strong>Service Date & Time:</strong> ${data.startDateTime} - ${data.endDateTime}</li>
+                <li><strong>Service Date & Time:</strong> ${
+                  data.startDateTime
+                } - ${data.endDateTime}</li>
                 <li><strong>Amount Paid:</strong> ${data.totalAmount}</li>
             </ul>
             
@@ -151,7 +156,9 @@ export class EmailService {
             <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0; color: white;">
                 <h3 style="margin: 0 0 15px 0; font-size: 18px;">📱 Track Your Booking</h3>
                 <p style="margin: 0 0 20px 0; opacity: 0.9; font-size: 14px;">Keep track of your booking status and get updates in real-time.</p>
-                <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}" 
+                <a href="${
+                  process.env.NEXT_PUBLIC_BASE_URL || "https://yourwebsite.com"
+                }/track-booking?order=${data.orderId}" 
                    style="display: inline-block; background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
                     🔍 Track Booking Status
                 </a>
@@ -184,7 +191,9 @@ WHAT'S NEXT:
 Our operations team will contact you within 24 hours to confirm all final details for your lifeguard service. Our certified lifeguard will arrive 15 minutes before your scheduled start time.
 
 TRACK YOUR BOOKING:
-${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}
+${
+  process.env.NEXT_PUBLIC_BASE_URL || "https://yourwebsite.com"
+}/track-booking?order=${data.orderId}
 
 If you have any questions, contact us at support@sglifeguardservices.com or +65 9123 4567.
 
@@ -196,7 +205,10 @@ Thank you for choosing Bearded Lifeguard!
     const mailOptions = {
       from: {
         name: "Bearded Lifeguard",
-        address: process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@sglifeguardservices.com",
+        address:
+          process.env.SMTP_FROM ||
+          process.env.SMTP_USER ||
+          "noreply@sglifeguardservices.com",
       },
       to: data.customerEmail,
       cc: "sales@sglifeguardservices.com",
@@ -926,7 +938,12 @@ Thank you for choosing Bearded Lifeguard!
                     Keep track of your booking status and get updates in real-time.
                 </p>
                 <div class="contact-methods" style="justify-content: center;">
-                    <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}" class="contact-item" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); max-width: 300px;">
+                    <a href="${
+                      process.env.NEXT_PUBLIC_BASE_URL ||
+                      "https://yourwebsite.com"
+                    }/track-booking?order=${
+      data.orderId
+    }" class="contact-item" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); max-width: 300px;">
                         🔍 Track Booking Status
                     </a>
                 </div>
@@ -939,7 +956,7 @@ Thank you for choosing Bearded Lifeguard!
                     <a href="mailto:sales@sglifeguardservices.com" class="contact-item">
                         ✉️ Email Support
                     </a>
-                    <a href="tel:+6591234567" class="contact-item">
+                    <a href="tel:+6582006021" class="contact-item">
                         📞 Call Us
                     </a>
                 </div>
@@ -994,11 +1011,13 @@ WHAT HAPPENS NEXT:
 4. You'll receive a follow-up call 24 hours before your booking for final confirmation
 
 TRACK YOUR BOOKING:
-${process.env.NEXT_PUBLIC_BASE_URL || 'https://yourwebsite.com'}/track-booking?order=${data.orderId}
+${
+  process.env.NEXT_PUBLIC_BASE_URL || "https://yourwebsite.com"
+}/track-booking?order=${data.orderId}
 
 NEED ASSISTANCE?
 Email: sales@sglifeguardservices.com
-Phone: +65 9123 4567
+Phone: +65 8200 6021
 
 © ${new Date().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority
 `;

@@ -202,7 +202,7 @@ WHAT HAPPENS NEXT:
 
 NEED ASSISTANCE?
 Email: sales@sglifeguardservices.com
-Phone: +65 9123 4567
+Phone: +65 8200 6021
 
 © ${new Date().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority
 `;

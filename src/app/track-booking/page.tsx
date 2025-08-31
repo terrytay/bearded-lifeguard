@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { SingaporeTime } from "@/lib/singapore-time";
 import {
   Search,
   Calendar,
@@ -354,8 +355,8 @@ export default function TrackBooking() {
                           Start Time
                         </span>
                         <p className="font-semibold text-gray-900 mt-1 text-sm sm:text-base">
-                          {new Date(booking.startDateTime).toLocaleString(
-                            "en-SG",
+                          {SingaporeTime.toLocaleString(
+                            booking.startDateTime,
                             {
                               weekday: "short",
                               year: "numeric",
@@ -372,8 +373,8 @@ export default function TrackBooking() {
                           End Time
                         </span>
                         <p className="font-semibold text-gray-900 mt-1 text-sm sm:text-base">
-                          {new Date(booking.endDateTime).toLocaleString(
-                            "en-SG",
+                          {SingaporeTime.toLocaleString(
+                            booking.endDateTime,
                             {
                               weekday: "short",
                               year: "numeric",
@@ -418,14 +419,17 @@ export default function TrackBooking() {
                           </p>
                         </div>
                         <p className="text-sm text-gray-600">
-                          {new Date(booking.createdAt).toLocaleString("en-SG", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {SingaporeTime.toLocaleString(
+                            booking.createdAt, 
+                            {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </p>
                       </div>
                     </div>

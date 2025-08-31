@@ -15,6 +15,7 @@ import {
   Download,
 } from "lucide-react";
 import { CalendarHelper, type CalendarEvent } from "@/lib/calendar";
+import { SingaporeTime } from "@/lib/singapore-time";
 
 export default function ThankYou() {
   const searchParams = useSearchParams();
@@ -113,6 +114,17 @@ export default function ThankYou() {
                       Confirmed
                     </span>
                   </div>
+
+                  {location && (
+                    <div className="flex items-center justify-between py-3 border-t border-gray-100">
+                      <span className="text-gray-600 font-medium">
+                        Location:
+                      </span>
+                      <span className="text-[#20334F] font-medium text-right max-w-xs">
+                        {location}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-blue-50 rounded-xl p-6">
@@ -212,11 +224,13 @@ export default function ThankYou() {
                         </p>
                         <p>
                           <strong>Start:</strong>{" "}
-                          {calendarEvent.startDate.toLocaleString("en-SG")}
+                          {SingaporeTime.toLocaleString(
+                            calendarEvent.startDate
+                          )}
                         </p>
                         <p>
                           <strong>End:</strong>{" "}
-                          {calendarEvent.endDate.toLocaleString("en-SG")}
+                          {SingaporeTime.toLocaleString(calendarEvent.endDate)}
                         </p>
                         <p>
                           <strong>Location:</strong> {calendarEvent.location}

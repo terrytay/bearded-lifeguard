@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { BookingService } from "../../../../../lib/booking-service";
 import { EmailService } from "../../../../../lib/email-service";
 import { createClient } from "../../../../../lib/supabase/server";
+import { SingaporeTime } from "../../../../../lib/singapore-time";
 
 // Helper function to verify admin access
 async function verifyAdmin(request: Request): Promise<boolean> {
@@ -94,8 +95,8 @@ export async function PATCH(
             customerName: booking.customer_name,
             customerEmail: booking.customer_email,
             orderId: booking.order_id,
-            startDateTime: new Date(booking.start_datetime).toLocaleString('en-SG'),
-            endDateTime: new Date(booking.end_datetime).toLocaleString('en-SG'),
+            startDateTime: SingaporeTime.toLocaleString(booking.start_datetime),
+            endDateTime: SingaporeTime.toLocaleString(booking.end_datetime),
             totalAmount: `$${booking.amount.toFixed(2)}`
           });
         } catch (emailError) {

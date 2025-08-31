@@ -20,11 +20,13 @@ export function computeBaseRate(hours: number): number {
   return 21; // >6 hour
 }
 
+import { SingaporeTime } from "./singapore-time";
+
 export function computeLastMinuteSurcharge(
   dateISO: string
 ): QuoteResult["lastMinuteTier"] {
-  const now = new Date();
-  const target = new Date(dateISO);
+  const now = SingaporeTime.now();
+  const target = new Date(dateISO); // dateISO is already Singapore time
   const ms = target.getTime() - now.getTime();
   const days = ms / (1000 * 60 * 60 * 24);
 

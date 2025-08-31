@@ -19,6 +19,7 @@ import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { DateTimePicker } from "@/components/ui/DateTimePicker";
 import { NumberInput } from "@/components/ui/NumberInput";
+import { SingaporeTime } from "@/lib/singapore-time";
 
 type OrderResponse = {
   orderId: string;
@@ -64,19 +65,11 @@ function formatCurrency(n: number) {
   }).format(n);
 }
 function toLocalInputValue(d: Date) {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  const mm = pad(d.getMonth() + 1);
-  const dd = pad(d.getDate());
-  const hh = pad(d.getHours());
-  const mi = pad(d.getMinutes());
-  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+  return SingaporeTime.toLocalInputValue(d);
 }
-// Now, rounded up to next 15 minutes
+// Now, rounded up to next 15 minutes (Singapore time)
 function nowRounded15() {
-  const d = new Date();
-  const ms = 1000 * 60 * 15;
-  return new Date(Math.ceil(d.getTime() / ms) * ms);
+  return SingaporeTime.nowRounded15();
 }
 // Friendly lead-time text
 function formatLeadTime(days: number | null) {
@@ -100,6 +93,7 @@ export default function BookingPage() {
   const [lifeguards, setLifeguards] = useState(1); // number of lifeguards needed
   const [serviceType, setServiceType] = useState(""); // service type selection
   const [customService, setCustomService] = useState(""); // custom service description
+  const [location, setLocation] = useState(""); // event location
   const [remarks, setRemarks] = useState(""); // optional remarks from user
 
   // ui state
@@ -121,6 +115,7 @@ export default function BookingPage() {
     return /^\+?\d{8,15}$/.test(phoneSanitized);
   }, [phoneSanitized]);
   const nameOk = useMemo(() => name.trim().length >= 2, [name]);
+  const locationOk = useMemo(() => location.trim().length >= 3, [location]);
 
   // min datetime for start (now rounded)
   const minStartDate = useMemo(() => nowRounded15(), []);
@@ -190,13 +185,14 @@ export default function BookingPage() {
     return "6+ hrs rate";
   }, [hours]);
 
-  // lead time & last-minute
+  // lead time & last-minute (Singapore time)
   const noticeDays = useMemo(() => {
     if (!startDate) return null;
-    const now = new Date();
+    const sgNow = SingaporeTime.now();
+    // startDate is already in Singapore time from datetime-local input
     return Math.max(
       0,
-      (startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      (startDate.getTime() - sgNow.getTime()) / (1000 * 60 * 60 * 24)
     );
   }, [startDate]);
   const lmMult = useMemo(
@@ -216,7 +212,13 @@ export default function BookingPage() {
     serviceType &&
     (serviceType !== "others" || customService.trim().length >= 3);
   const formOk =
-    nameOk && phoneOk && emailOk && timeOk && serviceOk && !creating;
+    nameOk &&
+    phoneOk &&
+    emailOk &&
+    locationOk &&
+    timeOk &&
+    serviceOk &&
+    !creating;
   const showSummary = timeOk;
 
   function markTouched(k: string) {
@@ -243,8 +245,10 @@ export default function BookingPage() {
           customerEmail: email.trim(),
           customerPhone: phoneSanitized,
           orderId: order.orderId,
-          startDateTime: startDate?.toLocaleString("en-SG"),
-          endDateTime: endDate?.toLocaleString("en-SG"),
+          startDateTime: startDate
+            ? SingaporeTime.toLocaleString(startDate)
+            : "",
+          endDateTime: endDate ? SingaporeTime.toLocaleString(endDate) : "",
           hours,
           rate: formatCurrency(rate),
           subtotal: formatCurrency(subtotal),
@@ -255,9 +259,10 @@ export default function BookingPage() {
           lifeguards,
           serviceType,
           customService: serviceType === "others" ? customService.trim() : "",
+          location: location.trim(),
           remarks: remarks.trim(),
-          startISO: startDate?.toISOString(),
-          endISO: endDate?.toISOString(),
+          startISO: start,
+          endISO: end,
         }),
       });
     } catch (error) {
@@ -268,9 +273,10 @@ export default function BookingPage() {
     const thankYouParams = new URLSearchParams({
       order: order.orderId,
       amount: order.amount.toFixed(2),
-      start: startDate?.toISOString() || "",
-      end: endDate?.toISOString() || "",
+      start: start,
+      end: end,
       service: serviceType === "others" ? customService.trim() : serviceType,
+      location: location.trim(),
     });
 
     r.push(`/thank-you?${thankYouParams.toString()}`);
@@ -282,6 +288,7 @@ export default function BookingPage() {
         name: true,
         phone: true,
         email: true,
+        location: true,
         start: true,
         end: true,
         serviceType: true,
@@ -298,13 +305,14 @@ export default function BookingPage() {
         email: email.trim(),
         phone: phoneSanitized,
         hours,
-        startISO: startDate!.toISOString(),
-        endISO: endDate!.toISOString(),
-        dateISO: startDate!.toISOString(), // server reads dateISO
+        startISO: start,
+        endISO: end,
+        dateISO: start, // server reads dateISO
         noticeDays: noticeDays ?? 14, // server default is 14
         lifeguards,
         serviceType,
         customService: serviceType === "others" ? customService.trim() : "",
+        location: location.trim(),
         remarks: remarks.trim(),
       };
 
@@ -500,6 +508,29 @@ export default function BookingPage() {
                   </FormField>
                 </div>
 
+                {/* Location */}
+                <div className="mb-8">
+                  <FormField
+                    label="Full Venue Address"
+                    required
+                    description="Where will the lifeguard service take place?"
+                    error={
+                      touched.location && location.trim().length < 3
+                        ? "Please provide a valid location (minimum 3 characters)"
+                        : undefined
+                    }
+                  >
+                    <Input
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      onBlur={() => markTouched("location")}
+                      placeholder="e.g. 10 Bayfront Avenue, Singapore 018956"
+                      error={touched.location && location.trim().length < 3}
+                      autoComplete="off"
+                    />
+                  </FormField>
+                </div>
+
                 {/* Number of Lifeguards */}
                 <div className="mb-8">
                   <FormField
@@ -687,13 +718,17 @@ export default function BookingPage() {
                         <div className="flex justify-between">
                           <span className="text-gray-600">Start:</span>
                           <span className="font-medium">
-                            {startDate?.toLocaleString("en-SG")}
+                            {startDate
+                              ? SingaporeTime.toLocaleString(startDate)
+                              : ""}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">End:</span>
                           <span className="font-medium">
-                            {endDate?.toLocaleString("en-SG")}
+                            {endDate
+                              ? SingaporeTime.toLocaleString(endDate)
+                              : ""}
                           </span>
                         </div>
                         <div className="flex justify-between">

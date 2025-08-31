@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { SingaporeTime } from "./singapore-time";
 
 const {
   SMTP_HOST,
@@ -49,7 +50,7 @@ export function renderOrderEmail({
     <p>Hi ${name || "there"}, thanks for booking a lifeguard.</p>
     <p><strong>Order ID:</strong> ${orderId}</p>
     <ul>
-      <li><strong>Date:</strong> ${new Date(dateISO).toLocaleString()}</li>
+      <li><strong>Date:</strong> ${SingaporeTime.toLocaleString(dateISO)}</li>
       <li><strong>Hours:</strong> ${hours} h</li>
       <li><strong>Location:</strong> ${location || "-"}</li>
       <li><strong>Total:</strong> $${total.toFixed(2)}</li>

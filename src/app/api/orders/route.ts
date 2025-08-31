@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 import { PaynowQR } from "../../../lib/paynow";
 import { EmailService } from "../../../lib/email-service";
 import { BookingService } from "../../../lib/booking-service";
+import { SingaporeTime } from "../../../lib/singapore-time";
 
 function computeAmount(hours: number) {
   if (hours < 4) return hours * 50;
@@ -31,6 +32,7 @@ export async function POST(req: Request) {
     lifeguards = 1, // number of lifeguards required
     serviceType = "", // service type selection
     customService = "", // custom service description
+    location = "", // event location
     remarks = "", // optional remarks from user
     startISO,
     endISO
@@ -44,8 +46,8 @@ export async function POST(req: Request) {
     .slice(0, 4)
     .toUpperCase()}`;
 
-  // expiry (optional): 2 hours from now, format YYMMDDhhmm
-  const now = new Date();
+  // expiry (optional): 2 hours from now in Singapore time, format YYMMDDhhmm
+  const now = SingaporeTime.now();
   const exp = new Date(now.getTime() + 2 * 60 * 60 * 1000);
   const pad = (n: number) => String(n).padStart(2, "0");
   const expiry = `${String(exp.getFullYear()).slice(2)}${pad(
@@ -76,12 +78,13 @@ export async function POST(req: Request) {
       customer_name: name,
       customer_email: email,
       customer_phone: phone,
-      start_datetime: startISO || dateISO,
-      end_datetime: endISO || dateISO,
+      start_datetime: startISO || dateISO, // Singapore datetime string from frontend
+      end_datetime: endISO || dateISO, // Singapore datetime string from frontend
       hours: Number(hours),
       lifeguards: Number(lifeguards),
       service_type: serviceType,
       custom_service: customService || null,
+      location: location || null,
       remarks: remarks || null,
       amount: total,
       status: 'pending',

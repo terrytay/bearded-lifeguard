@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { CalendarHelper, type CalendarEvent } from "./calendar";
+import { SingaporeTime } from "./singapore-time";
 
 export type BookingEmailData = {
   customerName: string;
@@ -18,6 +19,7 @@ export type BookingEmailData = {
   lifeguards: number;
   serviceType: string;
   customService: string;
+  location: string;
   remarks: string;
   startISO?: string;
   endISO?: string;
@@ -71,7 +73,7 @@ export class EmailService {
         startDate: new Date(data.startISO),
         endDate: new Date(data.endISO),
         description: `Professional lifeguard service booked through Bearded Lifeguard.\n\nOrder Reference: ${data.orderId}\nAmount Paid: ${data.totalAmount}\nLifeguards: ${data.lifeguards}\n\nOur certified lifeguard will arrive 15 minutes before the scheduled start time.\n\nFor any questions, contact us at support@sglifeguardservices.com or +65 9123 4567`,
-        location: "To be confirmed by our operations team",
+        location: data.location || "Location to be confirmed",
       };
 
       const icsContent = CalendarHelper.generateICSFile(calendarEvent);
@@ -169,7 +171,7 @@ export class EmailService {
             <p>Thank you for choosing Bearded Lifeguard!</p>
         </div>
         <div class="footer">
-            <p>© ${new Date().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority</p>
+            <p>© ${SingaporeTime.now().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority</p>
         </div>
     </div>
 </body>
@@ -199,7 +201,7 @@ If you have any questions, contact us at support@sglifeguardservices.com or +65 
 
 Thank you for choosing Bearded Lifeguard!
 
-© ${new Date().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority
+© ${SingaporeTime.now().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority
 `;
 
     const mailOptions = {
@@ -907,7 +909,7 @@ Thank you for choosing Bearded Lifeguard!
                       startDate: new Date(data.startISO),
                       endDate: new Date(data.endISO),
                       description: `Professional lifeguard service. Order: ${data.orderId}. Amount: ${data.totalAmount}`,
-                      location: "To be confirmed by our operations team",
+                      location: data.location || "Location to be confirmed",
                     })}" class="contact-item" style="background: linear-gradient(135deg, #4285f4 0%, #356ac3 100%);">
                         📅 Google Calendar
                     </a>
@@ -919,7 +921,7 @@ Thank you for choosing Bearded Lifeguard!
                       startDate: new Date(data.startISO),
                       endDate: new Date(data.endISO),
                       description: `Professional lifeguard service. Order: ${data.orderId}. Amount: ${data.totalAmount}`,
-                      location: "To be confirmed by our operations team",
+                      location: data.location || "Location to be confirmed",
                     })}" class="contact-item" style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);">
                         📅 Outlook Calendar
                     </a>
@@ -969,7 +971,7 @@ Thank you for choosing Bearded Lifeguard!
                 <div class="company-name">Bearded Lifeguard</div>
                 <div class="tagline">Your Safety, Our Priority</div>
                 <div class="copyright">
-                    © ${new Date().getFullYear()} Bearded Lifeguard. All rights reserved.
+                    © ${SingaporeTime.now().getFullYear()} Bearded Lifeguard. All rights reserved.
                 </div>
             </div>
         </div>
@@ -1019,7 +1021,7 @@ NEED ASSISTANCE?
 Email: sales@sglifeguardservices.com
 Phone: +65 8200 6021
 
-© ${new Date().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority
+© ${SingaporeTime.now().getFullYear()} Bearded Lifeguard - Your Safety, Our Priority
 `;
   }
 }

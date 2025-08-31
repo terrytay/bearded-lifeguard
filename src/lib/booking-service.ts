@@ -1,5 +1,6 @@
 import { supabaseAdmin, type Booking } from './supabase';
 import { createClient } from './supabase/server';
+import { SingaporeTime } from './singapore-time';
 
 export class BookingService {
   static async createBooking(booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>): Promise<Booking> {
@@ -61,7 +62,7 @@ export class BookingService {
   static async updateBooking(id: string, updates: Partial<Omit<Booking, 'id' | 'created_at'>>): Promise<Booking> {
     const { data, error } = await supabaseAdmin
       .from('bookings')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update({ ...updates, updated_at: SingaporeTime.now().toISOString() })
       .eq('id', id)
       .select()
       .single();

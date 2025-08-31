@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { SingaporeTime } from "@/lib/singapore-time";
 
 interface DateTimePickerProps {
   value: string;
@@ -28,13 +29,13 @@ export function DateTimePicker({
     value ? value.split("T")[1] || "09:00" : "09:00"
   );
 
-  const currentDate = new Date();
+  const currentDate = SingaporeTime.now();
   const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-  const minDate = min ? new Date(min) : new Date();
+  const minDate = min ? new Date(min) : SingaporeTime.now();
 
   const monthNames = [
     "January",
@@ -65,9 +66,23 @@ export function DateTimePicker({
     const dateStr = `${currentYear}-${(currentMonth + 1)
       .toString()
       .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+
     setSelectedDate(dateStr);
-    const fullDateTime = `${dateStr}T${selectedTime}`;
-    onChange(fullDateTime);
+
+    // Validate the combined datetime before setting it
+    if (isDateTimeInPast(dateStr, selectedTime)) {
+      // If combined datetime is in the past, reset time to minimum valid time for this date
+      const minValidTime = getMinTimeForDate(dateStr);
+      if (minValidTime) {
+        setSelectedTime(minValidTime);
+        onChange(`${dateStr}T${minValidTime}`);
+      } else {
+        // If no min time needed (future date), use current time selection
+        onChange(`${dateStr}T${selectedTime}`);
+      }
+    } else {
+      onChange(`${dateStr}T${selectedTime}`);
+    }
 
     // Check if we have both date and time - if so, auto-close
     if (selectedTime && selectedTime !== "09:00") {
@@ -92,13 +107,23 @@ export function DateTimePicker({
   };
 
   const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
-    const fullDateTime = `${
+    const dateToUse =
       selectedDate ||
       `${currentYear}-${(currentMonth + 1)
         .toString()
-        .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`
-    }T${time}`;
+        .padStart(2, "0")}-${currentDate
+        .getDate()
+        .toString()
+        .padStart(2, "0")}`;
+
+    // Validate the combined datetime before setting it
+    if (isDateTimeInPast(dateToUse, time)) {
+      // Don't allow selecting past time
+      return;
+    }
+
+    setSelectedTime(time);
+    const fullDateTime = `${dateToUse}T${time}`;
     onChange(fullDateTime);
 
     // Always auto-close after time selection if we have a date selected
@@ -112,7 +137,79 @@ export function DateTimePicker({
 
   const isDateDisabled = (day: number) => {
     const date = new Date(currentYear, currentMonth, day);
+    if (
+      currentYear === minDate.getFullYear() &&
+      currentMonth === minDate.getMonth() &&
+      day === minDate.getDate()
+    ) {
+      return false;
+    }
+
     return date < minDate;
+  };
+
+  // Check if a time slot should be disabled (for past times on today's date)
+  const isTimeDisabled = (timeString: string) => {
+    if (!selectedDate) return false;
+
+    const selectedDateObj = new Date(selectedDate);
+    const today = SingaporeTime.now();
+
+    // Only disable times if the selected date is today
+    const isToday =
+      selectedDateObj.getFullYear() === today.getFullYear() &&
+      selectedDateObj.getMonth() === today.getMonth() &&
+      selectedDateObj.getDate() === today.getDate();
+
+    if (!isToday) return false;
+
+    // Parse time string (HH:MM) and create a date object for comparison
+    const [hours, minutes] = timeString.split(":").map(Number);
+    const timeDate = new Date(selectedDateObj);
+    timeDate.setHours(hours, minutes, 0, 0);
+
+    // Disable if the time is before the minimum allowed time (rounded to next 15 min)
+    const minAllowedTime = SingaporeTime.nowRounded15();
+    return timeDate < minAllowedTime;
+  };
+
+  // Check if a datetime combination is in the past
+  const isDateTimeInPast = (dateStr: string, timeStr: string) => {
+    if (!dateStr || !timeStr) return false;
+
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const dateTime = new Date(dateStr);
+    dateTime.setHours(hours, minutes, 0, 0);
+
+    const minAllowedTime = SingaporeTime.nowRounded15();
+    return dateTime < minAllowedTime;
+  };
+
+  // Get minimum time for a specific date
+  const getMinTimeForDate = (dateStr: string) => {
+    if (!dateStr) return undefined;
+
+    const selectedDateObj = new Date(dateStr);
+    const today = SingaporeTime.now();
+
+    // Only set min time if selected date is today
+    const isToday =
+      selectedDateObj.getFullYear() === today.getFullYear() &&
+      selectedDateObj.getMonth() === today.getMonth() &&
+      selectedDateObj.getDate() === today.getDate();
+
+    if (!isToday) return undefined;
+
+    // Return current time rounded to next 15 minutes in HH:MM format
+    const minTime = SingaporeTime.nowRounded15();
+    const hours = minTime.getHours().toString().padStart(2, "0");
+    const minutes = minTime.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  // Get minimum time for today (for the time input) - wrapper for backward compatibility
+  const getMinTimeForToday = () => {
+    return getMinTimeForDate(selectedDate);
   };
 
   const formatDisplayValue = () => {
@@ -248,28 +345,37 @@ export function DateTimePicker({
               </div>
               <div className="max-h-32 overflow-y-auto">
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {timeSlots.map((time) => (
-                    <button
-                      key={time}
-                      type="button"
-                      onClick={() => handleTimeSelect(time)}
-                      className={`px-3 py-2 text-sm rounded-lg transition-all transform active:scale-95 ${
-                        selectedTime === time
-                          ? "bg-[#FF6633] text-white shadow-md"
-                          : "hover:bg-gray-100 text-gray-700 border border-gray-200 hover:border-[#FF6633] hover:text-[#FF6633]"
-                      }`}
-                      style={{ minHeight: "40px" }} // Better mobile touch targets
-                    >
-                      {(() => {
-                        const [h, m] = time.split(":").map(Number);
-                        const period = h >= 12 ? "PM" : "AM";
-                        const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
-                        return `${displayHour}:${m
-                          .toString()
-                          .padStart(2, "0")} ${period}`;
-                      })()}
-                    </button>
-                  ))}
+                  {timeSlots.map((time) => {
+                    const disabled = isTimeDisabled(time);
+                    return (
+                      !disabled && (
+                        <button
+                          key={time}
+                          type="button"
+                          onClick={() => !disabled && handleTimeSelect(time)}
+                          disabled={disabled}
+                          className={`px-3 py-2 text-sm rounded-lg transition-all transform ${
+                            disabled
+                              ? "bg-gray-50 text-gray-300 cursor-not-allowed border border-gray-100"
+                              : selectedTime === time
+                              ? "bg-[#FF6633] text-white shadow-md active:scale-95"
+                              : "hover:bg-gray-100 text-gray-700 border border-gray-200 hover:border-[#FF6633] hover:text-[#FF6633] active:scale-95"
+                          }`}
+                          style={{ minHeight: "40px" }} // Better mobile touch targets
+                        >
+                          {(() => {
+                            const [h, m] = time.split(":").map(Number);
+                            const period = h >= 12 ? "PM" : "AM";
+                            const displayHour =
+                              h === 0 ? 12 : h > 12 ? h - 12 : h;
+                            return `${displayHour}:${m
+                              .toString()
+                              .padStart(2, "0")} ${period}`;
+                          })()}
+                        </button>
+                      )
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -284,6 +390,7 @@ export function DateTimePicker({
                   type="time"
                   value={selectedTime}
                   onChange={(e) => handleTimeSelect(e.target.value)}
+                  min={getMinTimeForToday()}
                   className="flex-1 px-3 py-3 border border-gray-200 rounded-lg text-base focus:border-[#FF6633] focus:ring-2 focus:ring-[#FF6633]/20 outline-none bg-white"
                   step="60"
                   style={{ minHeight: "44px" }} // Better mobile touch target

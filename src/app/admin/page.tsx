@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { SingaporeTime } from "@/lib/singapore-time";
 import {
   Search,
   Eye,
@@ -81,7 +82,7 @@ export default function AdminPage() {
     isActive: boolean;
     message: string;
     progress: number;
-  }>({ isActive: false, message: '', progress: 0 });
+  }>({ isActive: false, message: "", progress: 0 });
   const [optimisticBookings, setOptimisticBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
@@ -95,22 +96,23 @@ export default function AdminPage() {
   }, [user, searchTerm, statusFilter]);
 
   // Use optimistic bookings when available, fallback to regular bookings
-  const displayBookings = optimisticBookings.length > 0 ? optimisticBookings : bookings;
+  const displayBookings =
+    optimisticBookings.length > 0 ? optimisticBookings : bookings;
 
   // Progress bar animation helper
   const showProgress = (message: string, duration: number = 2000) => {
     setOperationProgress({ isActive: true, message, progress: 0 });
-    
+
     const interval = setInterval(() => {
-      setOperationProgress(prev => {
+      setOperationProgress((prev) => {
         if (prev.progress >= 100) {
           clearInterval(interval);
           setTimeout(() => {
-            setOperationProgress({ isActive: false, message: '', progress: 0 });
+            setOperationProgress({ isActive: false, message: "", progress: 0 });
           }, 500);
           return prev;
         }
-        return { ...prev, progress: prev.progress + (100 / (duration / 50)) };
+        return { ...prev, progress: prev.progress + 100 / (duration / 50) };
       });
     }, 50);
   };
@@ -201,24 +203,24 @@ export default function AdminPage() {
   };
 
   const updateBooking = async (id: string, updates: any) => {
-    const targetBooking = bookings.find(b => b.id === id);
+    const targetBooking = bookings.find((b) => b.id === id);
     if (!targetBooking) return;
 
     // Show progress
-    showProgress('Updating booking...', 1500);
+    showProgress("Updating booking...", 1500);
 
     // Optimistic update
     const optimisticUpdate = { ...targetBooking, ...updates };
-    if (updates.action === 'mark_viewed') {
+    if (updates.action === "mark_viewed") {
       optimisticUpdate.viewed_by_admin = true;
-    } else if (updates.action === 'mark_unviewed') {
+    } else if (updates.action === "mark_unviewed") {
       optimisticUpdate.viewed_by_admin = false;
-    } else if (updates.payment_status === 'paid') {
-      optimisticUpdate.payment_status = 'paid';
-      optimisticUpdate.status = 'confirmed';
+    } else if (updates.payment_status === "paid") {
+      optimisticUpdate.payment_status = "paid";
+      optimisticUpdate.status = "confirmed";
     }
 
-    const optimisticBookings = bookings.map(b => 
+    const optimisticBookings = bookings.map((b) =>
       b.id === id ? optimisticUpdate : b
     );
     setOptimisticBookings(optimisticBookings);
@@ -273,17 +275,17 @@ export default function AdminPage() {
   const deleteBooking = async (id: string) => {
     if (!confirm("Are you sure you want to delete this booking?")) return;
 
-    const targetBooking = bookings.find(b => b.id === id);
+    const targetBooking = bookings.find((b) => b.id === id);
     if (!targetBooking) return;
 
     // Show progress
-    showProgress('Deleting booking...', 2000);
+    showProgress("Deleting booking...", 2000);
 
     // Optimistic delete - remove from list immediately
-    const optimisticBookings = bookings.filter(b => b.id !== id);
+    const optimisticBookings = bookings.filter((b) => b.id !== id);
     setOptimisticBookings(optimisticBookings);
     setBookings(optimisticBookings);
-    
+
     // Close modal if deleting current booking
     if (selectedBooking?.id === id) {
       setSelectedBooking(null);
@@ -327,10 +329,10 @@ export default function AdminPage() {
 
     setConfirmingPayment(true);
     setShowPaymentConfirm(false);
-    
+
     // Show progress for payment confirmation
-    showProgress('Confirming payment & sending email...', 3000);
-    
+    showProgress("Confirming payment & sending email...", 3000);
+
     try {
       await updateBooking(selectedBooking.id, {
         action: "update_payment_status",
@@ -532,10 +534,12 @@ export default function AdminPage() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 border-2 border-blue-400/50 border-t-blue-400 rounded-full animate-spin"></div>
-                  <span className="text-white/90 font-medium text-sm">{operationProgress.message}</span>
+                  <span className="text-white/90 font-medium text-sm">
+                    {operationProgress.message}
+                  </span>
                 </div>
                 <div className="flex-1 bg-white/10 rounded-full h-2 overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-300 ease-out rounded-full shadow-lg"
                     style={{ width: `${operationProgress.progress}%` }}
                   >
@@ -578,14 +582,33 @@ export default function AdminPage() {
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="pl-10 pr-8 py-4 bg-white/10 border-2 border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-200 text-white w-full sm:min-w-[200px] appearance-none backdrop-blur-sm [&>option]:bg-slate-800 [&>option]:text-white"
                 >
-                  <option value="all" className="bg-slate-800 text-white">All Bookings</option>
-                  <option value="unviewed" className="bg-slate-800 text-white">🔴 Unviewed</option>
-                  <option value="pending" className="bg-slate-800 text-white">⏳ Pending Review</option>
-                  <option value="pending_payment" className="bg-slate-800 text-white">💳 Awaiting Payment</option>
-                  <option value="paid" className="bg-slate-800 text-white">💚 Paid</option>
-                  <option value="confirmed" className="bg-slate-800 text-white">✅ Confirmed</option>
-                  <option value="completed" className="bg-slate-800 text-white">🎉 Completed</option>
-                  <option value="cancelled" className="bg-slate-800 text-white">❌ Cancelled</option>
+                  <option value="all" className="bg-slate-800 text-white">
+                    All Bookings
+                  </option>
+                  <option value="unviewed" className="bg-slate-800 text-white">
+                    🔴 Unviewed
+                  </option>
+                  <option value="pending" className="bg-slate-800 text-white">
+                    ⏳ Pending Review
+                  </option>
+                  <option
+                    value="pending_payment"
+                    className="bg-slate-800 text-white"
+                  >
+                    💳 Awaiting Payment
+                  </option>
+                  <option value="paid" className="bg-slate-800 text-white">
+                    💚 Paid
+                  </option>
+                  <option value="confirmed" className="bg-slate-800 text-white">
+                    ✅ Confirmed
+                  </option>
+                  <option value="completed" className="bg-slate-800 text-white">
+                    🎉 Completed
+                  </option>
+                  <option value="cancelled" className="bg-slate-800 text-white">
+                    ❌ Cancelled
+                  </option>
                 </select>
               </div>
 
@@ -617,7 +640,10 @@ export default function AdminPage() {
             <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl p-4 border border-green-500/30">
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-400 mb-1">
-                  {displayBookings.filter((b) => b.payment_status === "paid").length}
+                  {
+                    displayBookings.filter((b) => b.payment_status === "paid")
+                      .length
+                  }
                 </div>
                 <div className="text-sm text-white/70 font-medium">Paid</div>
               </div>
@@ -626,8 +652,9 @@ export default function AdminPage() {
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-400 mb-1">
                   {
-                    displayBookings.filter((b) => b.payment_status === "pending")
-                      .length
+                    displayBookings.filter(
+                      (b) => b.payment_status === "pending"
+                    ).length
                   }
                 </div>
                 <div className="text-sm text-white/70 font-medium">
@@ -739,9 +766,7 @@ export default function AdminPage() {
                       </div>
                       <div className="text-white/70 text-sm mb-3">
                         📅{" "}
-                        {new Date(booking.start_datetime).toLocaleString(
-                          "en-SG"
-                        )}
+                        {SingaporeTime.toLocaleString(booking.start_datetime)}
                       </div>
 
                       {/* Quick Stats */}
@@ -861,9 +886,10 @@ export default function AdminPage() {
                                 </div>
                                 <div className="text-xs text-white/50 mt-1 font-mono">
                                   #{booking.order_id} •{" "}
-                                  {new Date(
-                                    booking.created_at
-                                  ).toLocaleDateString("en-SG")}
+                                  {SingaporeTime.format(
+                                    booking.created_at,
+                                    "dd/MM/yyyy"
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -876,11 +902,14 @@ export default function AdminPage() {
                                   booking.custom_service
                                 )}
                               </div>
+                              <div className="text-sm text-white/70 mb-1">
+                                📍 {booking.location || "Location not specified"}
+                              </div>
                               <div className="text-sm text-white/70 mb-2">
                                 📅{" "}
-                                {new Date(
+                                {SingaporeTime.toLocaleString(
                                   booking.start_datetime
-                                ).toLocaleString("en-SG")}
+                                )}
                               </div>
                               <div className="flex items-center gap-4 text-xs text-white/60">
                                 <span className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg">
@@ -1054,9 +1083,11 @@ export default function AdminPage() {
                         booking.custom_service
                       )}
                     </div>
+                    <div className="text-white/70 text-sm mb-2">
+                      📍 {booking.location || "Location not specified"}
+                    </div>
                     <div className="text-white/70 text-sm mb-3">
-                      📅{" "}
-                      {new Date(booking.start_datetime).toLocaleString("en-SG")}
+                      📅 {SingaporeTime.toLocaleString(booking.start_datetime)}
                     </div>
 
                     {/* Quick Stats Grid */}
@@ -1097,7 +1128,7 @@ export default function AdminPage() {
                     </span>
 
                     <div className="text-white/50 text-xs">
-                      {new Date(booking.created_at).toLocaleDateString("en-SG")}
+                      {SingaporeTime.format(booking.created_at, "dd/MM/yyyy")}
                     </div>
                   </div>
 
@@ -1412,18 +1443,26 @@ export default function AdminPage() {
                         </div>
                         <div>
                           <span className="text-white/60 text-sm">
+                            Location:
+                          </span>
+                          <p className="font-semibold text-white mt-1">
+                            {selectedBooking.location || "Not specified"}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-white/60 text-sm">
                             Schedule:
                           </span>
                           <p className="font-semibold text-white mt-1">
-                            {new Date(
+                            {SingaporeTime.toLocaleString(
                               selectedBooking.start_datetime
-                            ).toLocaleString("en-SG")}
+                            )}
                           </p>
                           <p className="text-white/70 text-sm">
                             to{" "}
-                            {new Date(
+                            {SingaporeTime.toLocaleString(
                               selectedBooking.end_datetime
-                            ).toLocaleString("en-SG")}
+                            )}
                           </p>
                         </div>
                       </div>
@@ -1490,9 +1529,9 @@ export default function AdminPage() {
                             Booking Created
                           </div>
                           <div className="text-white/60 text-sm">
-                            {new Date(
+                            {SingaporeTime.toLocaleString(
                               selectedBooking.created_at
-                            ).toLocaleString("en-SG")}
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1568,9 +1607,10 @@ export default function AdminPage() {
                         <div className="flex justify-between">
                           <span className="text-white/60">Created:</span>
                           <span className="text-white text-sm">
-                            {new Date(
-                              selectedBooking.created_at
-                            ).toLocaleDateString("en-SG")}
+                            {SingaporeTime.format(
+                              selectedBooking.created_at,
+                              "dd/MM/yyyy"
+                            )}
                           </span>
                         </div>
                       </div>

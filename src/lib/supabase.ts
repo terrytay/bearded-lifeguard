@@ -34,6 +34,7 @@ export interface Booking {
   service_type: string;
   custom_service?: string;
   remarks?: string;
+  location?: string;
   amount: number;
   status: "pending" | "confirmed" | "paid" | "completed" | "cancelled";
   payment_status: "pending" | "paid" | "refunded";

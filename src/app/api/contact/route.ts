@@ -79,12 +79,12 @@ Your inquiry:
 If this is an urgent matter, please call us directly at +65 8200 6021.
 
 Best regards,
-The Bearded Lifeguard Team
+Bearded Lifeguard Team
 
 ---
 Bearded Lifeguard
 Professional Lifeguard Services in Singapore
-Email: support@sglifeguardservices.com
+Email: sales@sglifeguardservices.com
 Phone: +65 8200 6021
     `.trim();
 

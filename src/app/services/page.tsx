@@ -5,19 +5,33 @@ import { ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Lifeguard Services - Bearded Lifeguard",
+  title: "Professional Lifeguard Services Singapore | Pool, Event & Water Safety | Bearded Lifeguard",
   description:
-    "Professional lifeguard services in Singapore for pools, events, parties, and open water. Certified lifeguards available for residential, commercial, and event coverage. Book reliable water safety supervision now.",
+    "Singapore's premier lifeguard services for swimming pools, events, pool parties & open water activities. Certified professional lifeguards available island-wide. Residential, commercial & event coverage. Book now!",
   keywords: [
     "lifeguard services singapore",
-    "pool lifeguards",
-    "event lifeguards",
-    "party lifeguards",
-    "open water lifeguards",
-    "residential pool lifeguards",
-    "commercial lifeguards",
-    "hotel lifeguards",
-    "professional water safety",
+    "lifeguardservices sg", 
+    "lifeguard service singapore",
+    "lifeguardservice sg",
+    "professional lifeguards singapore",
+    "singapore lifeguards",
+    "sg lifeguard services",
+    "swimming pool lifeguard singapore",
+    "event lifeguard services sg",
+    "pool party lifeguard singapore", 
+    "open water lifeguard sg",
+    "water safety services singapore",
+    "certified lifeguards sg",
+    "residential pool lifeguard singapore",
+    "commercial lifeguard services sg",
+    "hotel pool lifeguard singapore",
+    "condo lifeguard services sg",
+    "private pool lifeguard singapore",
+    "corporate event lifeguard sg",
+    "wedding lifeguard singapore",
+    "beach lifeguard services sg",
+    "aquatic safety singapore",
+    "professional water safety sg",
     "lifeguard hire singapore",
   ],
   authors: [{ name: "Bearded Lifeguard" }],
@@ -103,7 +117,7 @@ export default function LifeguardServicesPage() {
                 <div className="relative">
                   <Image
                     src="/gallery/pool/pool.jpg"
-                    alt="Pool lifeguard services"
+                    alt="Professional swimming pool lifeguard services Singapore - certified lifeguards for residential and commercial pools"
                     width={600}
                     height={300}
                     className="h-48 w-full object-cover"
@@ -142,7 +156,7 @@ export default function LifeguardServicesPage() {
                 <div className="relative">
                   <Image
                     src="/gallery/event/event2.jpg"
-                    alt="Event lifeguard services"
+                    alt="Event lifeguard services Singapore - professional water safety supervision for corporate events, weddings, and special occasions"
                     width={600}
                     height={300}
                     className="h-48 w-full object-cover"
@@ -181,7 +195,7 @@ export default function LifeguardServicesPage() {
                 <div className="relative">
                   <Image
                     src="/gallery/party/party1.jpg"
-                    alt="Pool party lifeguard services"
+                    alt="Pool party lifeguard services Singapore - certified lifeguards for birthday parties, celebrations, and recreational swimming events"
                     width={600}
                     height={300}
                     className="h-48 w-full object-cover"
@@ -220,7 +234,7 @@ export default function LifeguardServicesPage() {
                 <div className="relative">
                   <Image
                     src="/gallery/open-water/open-water9.jpg"
-                    alt="Open water lifeguard services"
+                    alt="Open water lifeguard services Singapore - professional beach and sea rescue lifeguards for coastal activities and water sports"
                     width={600}
                     height={300}
                     className="h-48 w-full object-cover"

@@ -1,21 +1,33 @@
 import { Hero } from "@/components/Hero";
 import { Metadata } from "next";
+import { homePageJsonLd } from "./home-layout";
 
 export const metadata: Metadata = {
-  title: "Professional Lifeguard Services Singapore - Bearded Lifeguard",
+  title: "Professional Lifeguard Services Singapore | Pool, Event & Water Safety | Bearded Lifeguard",
   description:
-    "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards, water safety courses, and expert consultation. Book now for reliable water safety solutions.",
+    "Singapore's #1 professional lifeguard services provider. Certified lifeguards for swimming pools, events, pool parties & open water activities. Water safety courses & training available island-wide. Book now!",
   keywords: [
-    "lifeguard services Singapore",
-    "professional lifeguards",
-    "pool lifeguards",
-    "event lifeguards",
-    "water safety",
-    "lifeguard courses",
-    "swimming pool safety",
-    "certified lifeguards",
-    "aquatic safety",
-    "open water lifeguards",
+    "lifeguard services singapore",
+    "singapore lifeguard services", 
+    "sg lifeguard",
+    "lifeguards singapore",
+    "lifeguardservices sg",
+    "lifeguardservice singapore",
+    "professional lifeguards singapore",
+    "water safety singapore", 
+    "swimming pool lifeguard sg",
+    "event lifeguard singapore",
+    "pool party lifeguard sg",
+    "open water lifeguard singapore",
+    "lifeguard courses singapore",
+    "water safety training sg",
+    "certified lifeguards singapore",
+    "lifeguard hire singapore",
+    "lifeguard booking sg",
+    "aquatic safety singapore",
+    "pool safety sg",
+    "beach lifeguard singapore",
+    "singapore water safety"
   ],
   metadataBase: new URL("https://sglifeguardservices.com"),
   authors: [{ name: "Bearded Lifeguard" }],
@@ -42,7 +54,7 @@ export const metadata: Metadata = {
     siteName: "Bearded Lifeguard",
     images: [
       {
-        url: "/og-image-home.jpg",
+        url: "https://sglifeguardservices.com/og-image-about.jpg",
         width: 1200,
         height: 630,
         alt: "Bearded Lifeguard - Professional Lifeguard Services Singapore",
@@ -54,7 +66,7 @@ export const metadata: Metadata = {
     title: "Professional Lifeguard Services Singapore - Bearded Lifeguard",
     description:
       "Singapore's premier professional lifeguard services for pools, events, and open water. Certified lifeguards available now.",
-    images: ["/og-image-home.jpg"],
+    images: ["https://sglifeguardservices.com/og-image-about.jpg"],
   },
   alternates: {
     canonical: "https://sglifeguardservices.com",
@@ -69,12 +81,18 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="page-container">
-      <section className="page-content">
-        <div className="content-wrapper">
-          <Hero />
-        </div>
-      </section>
-    </main>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageJsonLd) }}
+      />
+      <main className="page-container">
+        <section className="page-content">
+          <div className="content-wrapper">
+            <Hero />
+          </div>
+        </section>
+      </main>
+    </>
   );
 }

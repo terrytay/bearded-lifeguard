@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   
   <!-- Home Page -->
   <url>
     <loc>https://sglifeguardservices.com</loc>
-    <lastmod>2025-08-24</lastmod>
+    <lastmod>2025-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://sglifeguardservices.com/og-image-about.jpg</image:loc>
+      <image:caption>Professional lifeguards providing water safety services in Singapore</image:caption>
+      <image:title>Bearded Lifeguard Singapore</image:title>
+    </image:image>
   </url>
   
   <!-- About Page -->
@@ -20,9 +25,14 @@
   <!-- Main Services Page -->
   <url>
     <loc>https://sglifeguardservices.com/services</loc>
-    <lastmod>2025-08-24</lastmod>
+    <lastmod>2025-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://sglifeguardservices.com/services1.jpg</image:loc>
+      <image:caption>Professional lifeguard services Singapore - swimming pool, event and water safety</image:caption>
+      <image:title>Lifeguard Services Singapore</image:title>
+    </image:image>
   </url>
   
   <!-- Pool Services -->
@@ -60,9 +70,14 @@
   <!-- Booking Page -->
   <url>
     <loc>https://sglifeguardservices.com/booking</loc>
-    <lastmod>2025-08-24</lastmod>
+    <lastmod>2025-08-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://sglifeguardservices.com/services2.jpg</image:loc>
+      <image:caption>Book lifeguard services online Singapore - instant booking platform</image:caption>
+      <image:title>Book Lifeguard Singapore</image:title>
+    </image:image>
   </url>
   
   <!-- Track Booking Page -->

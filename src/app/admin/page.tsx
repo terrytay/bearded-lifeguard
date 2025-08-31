@@ -51,6 +51,7 @@ interface Booking {
   lifeguards: number;
   service_type: string;
   custom_service?: string;
+  location?: string;
   remarks?: string;
   amount: number;
   status: "pending" | "confirmed" | "paid" | "completed" | "cancelled";
@@ -903,7 +904,8 @@ export default function AdminPage() {
                                 )}
                               </div>
                               <div className="text-sm text-white/70 mb-1">
-                                📍 {booking.location || "Location not specified"}
+                                📍{" "}
+                                {booking.location || "Location not specified"}
                               </div>
                               <div className="text-sm text-white/70 mb-2">
                                 📅{" "}

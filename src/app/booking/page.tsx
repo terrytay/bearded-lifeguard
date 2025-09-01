@@ -620,10 +620,8 @@ export default function BookingPage() {
                         • Billing rounds up to the next whole hour (minimum 1
                         hour)
                         <br />
-                        • Rates: &lt;4hrs $50/hr • 4hrs $30/hr • 5hrs $25/hr •
-                        6+hrs $21/hr
-                        <br />• Last-minute bookings: +20% (&lt;1 week), +40%
-                        (&lt;2 days), +100% (&lt;1 day)
+                        • Rates: Charges per hour subjected to duration and advance notice
+  
                       </p>
                     </div>
                   </div>

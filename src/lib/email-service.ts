@@ -145,9 +145,24 @@ export class EmailService {
             <p><strong>Booking Details:</strong></p>
             <ul>
                 <li><strong>Order Reference:</strong> ${data.orderId}</li>
-                <li><strong>Service Date & Time:</strong> ${
-                  data.startDateTime
-                } - ${data.endDateTime}</li>
+                <li><strong>Service Date & Time:</strong> ${SingaporeTime.toLocaleString(
+                  data.startDateTime,
+                  {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )} - ${SingaporeTime.toLocaleString(data.endDateTime, {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })}</li>
                 <li><strong>Amount Paid:</strong> ${data.totalAmount}</li>
             </ul>
             

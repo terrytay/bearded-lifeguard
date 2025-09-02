@@ -619,9 +619,8 @@ export default function BookingPage() {
                       <p className="text-blue-700 text-sm leading-relaxed">
                         • Billing rounds up to the next whole hour (minimum 1
                         hour)
-                        <br />
-                        • Rates: Charges per hour subjected to duration and advance notice
-  
+                        <br />• Rates: Charges per hour subjected to duration
+                        and advance notice
                       </p>
                     </div>
                   </div>

@@ -744,18 +744,7 @@ Thank you for choosing Bearded Lifeguard!
                                     <tr>
                                         <td class="detail-label">Start Time</td>
                                         <td class="detail-value highlight-value">
-                                          ${SingaporeTime.toLocaleString(
-                                            data.startDateTime,
-                                            {
-                                              weekday: "short",
-                                              year: "numeric",
-                                              month: "short",
-                                              day: "numeric",
-                                              hour: "2-digit",
-                                              minute: "2-digit",
-                                            }
-                                          )}
-                                        }</td>
+                                          ${data.startDateTime}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -763,17 +752,9 @@ Thank you for choosing Bearded Lifeguard!
                                 <table class="detail-table">
                                     <tr>
                                         <td class="detail-label">End Time</td>
-                                        <td class="detail-value highlight-value">${SingaporeTime.toLocaleString(
-                                          data.endDateTime,
-                                          {
-                                            weekday: "short",
-                                            year: "numeric",
-                                            month: "short",
-                                            day: "numeric",
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                          }
-                                        )}</td>
+                                        <td class="detail-value highlight-value">${
+                                          data.endDateTime
+                                        }</td>
                                     </tr>
                                 </table>
                             </div>

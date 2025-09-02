@@ -109,9 +109,8 @@ export default function ThankYou() {
                     <span className="text-gray-600 font-medium">
                       Payment Status:
                     </span>
-                    <span className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                      <CheckCircle className="w-4 h-4" />
-                      Confirmed
+                    <span className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+                      ⏳Pending
                     </span>
                   </div>
 
@@ -224,13 +223,11 @@ export default function ThankYou() {
                         </p>
                         <p>
                           <strong>Start:</strong>{" "}
-                          {SingaporeTime.toLocaleString(
-                            calendarEvent.startDate
-                          )}
+                          {calendarEvent.startDate.toString()}
                         </p>
                         <p>
                           <strong>End:</strong>{" "}
-                          {SingaporeTime.toLocaleString(calendarEvent.endDate)}
+                          {calendarEvent.endDate.toString()}
                         </p>
                         <p>
                           <strong>Location:</strong> {calendarEvent.location}

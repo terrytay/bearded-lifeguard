@@ -75,7 +75,7 @@ export default function AdminPage() {
     x: number;
     y: number;
   } | null>(null);
-  const [viewMode, setViewMode] = useState<"table" | "cards">("cards");
+  const [viewMode, setViewMode] = useState<"table" | "cards">("table");
   const [selectedTab, setSelectedTab] = useState<
     "overview" | "details" | "actions"
   >("overview");
@@ -887,10 +887,11 @@ export default function AdminPage() {
                                 </div>
                                 <div className="text-xs text-white/50 mt-1 font-mono">
                                   #{booking.order_id} •{" "}
-                                  {SingaporeTime.format(
-                                    booking.created_at,
-                                    "dd/MM/yyyy"
-                                  )}
+                                  {new Date(
+                                    booking.created_at + "Z"
+                                  ).toLocaleString("en-SG", {
+                                    timeZone: "Asia/Singapore",
+                                  })}
                                 </div>
                               </div>
                             </div>
@@ -1532,7 +1533,7 @@ export default function AdminPage() {
                           </div>
                           <div className="text-white/60 text-sm">
                             {SingaporeTime.toLocaleString(
-                              selectedBooking.created_at
+                              selectedBooking.created_at + "Z"
                             )}
                           </div>
                         </div>

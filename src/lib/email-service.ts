@@ -201,7 +201,21 @@ Great news! We've received and confirmed your payment for your lifeguard booking
 
 BOOKING DETAILS:
 Order Reference: ${data.orderId}
-Service Date & Time: ${data.startDateTime} - ${data.endDateTime}
+Service Date & Time: ${SingaporeTime.toLocaleString(data.startDateTime, {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${SingaporeTime.toLocaleString(data.endDateTime, {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
 Amount Paid: ${data.totalAmount}
 
 WHAT'S NEXT:
@@ -744,8 +758,18 @@ Thank you for choosing Bearded Lifeguard!
                                 <table class="detail-table">
                                     <tr>
                                         <td class="detail-label">Start Time</td>
-                                        <td class="detail-value highlight-value">${
-                                          data.startDateTime
+                                        <td class="detail-value highlight-value">
+                                          ${SingaporeTime.toLocaleString(
+                                            data.startDateTime,
+                                            {
+                                              weekday: "short",
+                                              year: "numeric",
+                                              month: "short",
+                                              day: "numeric",
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                            }
+                                          )}
                                         }</td>
                                     </tr>
                                 </table>
@@ -754,9 +778,17 @@ Thank you for choosing Bearded Lifeguard!
                                 <table class="detail-table">
                                     <tr>
                                         <td class="detail-label">End Time</td>
-                                        <td class="detail-value highlight-value">${
-                                          data.endDateTime
-                                        }</td>
+                                        <td class="detail-value highlight-value">${SingaporeTime.toLocaleString(
+                                          data.endDateTime,
+                                          {
+                                            weekday: "short",
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                          }
+                                        )}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -1005,8 +1037,22 @@ Thank you for choosing Bearded Lifeguard! Your booking has been confirmed and pa
 
 BOOKING DETAILS:
 Order ID: ${data.orderId}
-Service Start: ${data.startDateTime}
-Service End: ${data.endDateTime}
+Service Start: ${SingaporeTime.toLocaleString(data.startDateTime, {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
+Service End: ${SingaporeTime.toLocaleString(data.endDateTime, {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
 Duration: ${data.hours} hour${data.hours > 1 ? "s" : ""}
 Lifeguards Required: ${data.lifeguards} professional lifeguard${
       data.lifeguards > 1 ? "s" : ""

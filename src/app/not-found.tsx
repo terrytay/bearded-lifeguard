@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { Home, Search, ArrowLeft, Waves, LifeBuoy } from "lucide-react";
+import { Metadata } from "next";
+
+export const generateMetadata = (): Metadata => ({
+  title: "404 - Page Not Found | Bearded Lifeguard",
+  robots: { index: false, follow: true },
+  alternates: { canonical: undefined }, // removes canonical from layout
+});
 
 export default function NotFound() {
   return (
@@ -26,8 +33,8 @@ export default function NotFound() {
             Page Not Found
           </h2>
           <p className="text-xl text-gray-600 mb-6 max-w-lg mx-auto">
-            Oops! It looks like this page has drifted away. Don't worry - our lifeguards 
-            are here to help you navigate back to safety.
+            Oops! It looks like this page has drifted away. Don't worry - our
+            lifeguards are here to help you navigate back to safety.
           </p>
         </div>
 
@@ -50,7 +57,7 @@ export default function NotFound() {
             <Home className="w-5 h-5" />
             Go Home
           </Link>
-          
+
           <Link
             href="/services"
             className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#20334F] border-2 border-gray-200 rounded-xl font-semibold hover:border-[#FF6633] hover:text-[#FF6633] hover:shadow-lg transition-all duration-200 w-full sm:w-auto"
@@ -62,7 +69,9 @@ export default function NotFound() {
 
         {/* Quick Links */}
         <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-gray-600 mb-4 font-medium">Looking for something specific?</p>
+          <p className="text-gray-600 mb-4 font-medium">
+            Looking for something specific?
+          </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/booking"

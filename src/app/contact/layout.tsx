@@ -12,10 +12,25 @@ export const metadata: Metadata = {
     "water safety singapore",
     "professional lifeguards contact",
   ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "Contact Us - Bearded Lifeguard",
-    description: "Contact Bearded Lifeguard for professional lifeguard services in Singapore",
+    description:
+      "Contact Bearded Lifeguard for professional lifeguard services in Singapore",
     type: "website",
+  },
+  alternates: {
+    canonical: "https://sglifeguardservices.com/contact",
   },
 };
 

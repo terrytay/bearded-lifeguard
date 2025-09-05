@@ -13,17 +13,18 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: {
     template: "%s | Bearded Lifeguard - Singapore's #1 Lifeguard Services",
-    default: "Bearded Lifeguard - Singapore's Premier Lifeguard Services | Pool, Event & Water Safety",
+    default:
+      "Bearded Lifeguard - Singapore's Premier Lifeguard Services | Pool, Event & Water Safety",
   },
   description:
-    "Singapore's leading lifeguard services provider. Professional certified lifeguards for swimming pools, events, pool parties, open water activities & water safety training. Available island-wide in SG. Book now!",
+    "Singapore's leading lifeguard services provider. Professional certified lifeguards for swimming pools, events, pool parties, open water activities & water safety training. Available island-wide in SG.",
   keywords: [
     "singapore lifeguard services",
     "sg lifeguard",
     "lifeguard singapore",
     "lifeguards singapore",
     "lifeguard services singapore",
-    "lifeguard service singapore", 
+    "lifeguard service singapore",
     "lifeguardservices sg",
     "lifeguardservice singapore",
     "water safety singapore",
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     "private pool lifeguard sg",
     "event safety singapore",
     "water rescue singapore",
-    "lifesaving courses sg"
+    "lifesaving courses sg",
   ],
   authors: [{ name: "Bearded Lifeguard Singapore" }],
   creator: "Bearded Lifeguard",
@@ -56,9 +57,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   alternates: {
@@ -66,7 +67,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Bearded Lifeguard - Singapore's Premier Lifeguard Services",
-    description: "Professional certified lifeguards for pools, events, and water safety in Singapore. Available island-wide with 24/7 booking.",
+    description:
+      "Professional certified lifeguards for pools, events, and water safety in Singapore. Available island-wide with 24/7 booking.",
     type: "website",
     locale: "en_SG",
     url: "https://sglifeguardservices.com",
@@ -91,7 +93,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Bearded Lifeguard - Singapore's Premier Lifeguard Services",
-    description: "Professional certified lifeguards for pools, events, and water safety in Singapore.",
+    description:
+      "Professional certified lifeguards for pools, events, and water safety in Singapore.",
     images: ["https://sglifeguardservices.com/og-image-about.jpg"],
     creator: "@BeardedLifeguardSG",
   },
@@ -102,7 +105,7 @@ export const metadata: Metadata = {
     "geo.region": "SG",
     "geo.placename": "Singapore",
     "geo.position": "1.3521;103.8198",
-    "ICBM": "1.3521, 103.8198",
+    ICBM: "1.3521, 103.8198",
   },
 };
 
@@ -115,106 +118,112 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": "https://sglifeguardservices.com/#business",
-    "name": "Bearded Lifeguard",
-    "alternateName": "Bearded Lifeguard Singapore",
-    "description": "Singapore's leading lifeguard services provider. Professional certified lifeguards for swimming pools, events, pool parties, open water activities & water safety training.",
-    "url": "https://sglifeguardservices.com",
-    "telephone": "+65-8200-6021",
-    "email": "sales@sglifeguardservices.com",
-    "address": {
+    name: "Bearded Lifeguard",
+    alternateName: "Bearded Lifeguard Singapore",
+    description:
+      "Singapore's leading lifeguard services provider. Professional certified lifeguards for swimming pools, events, pool parties, open water activities & water safety training.",
+    url: "https://sglifeguardservices.com",
+    telephone: "+65-8200-6021",
+    email: "sales@sglifeguardservices.com",
+    address: {
       "@type": "PostalAddress",
-      "addressCountry": "SG",
-      "addressRegion": "Singapore"
+      addressCountry: "SG",
+      addressRegion: "Singapore",
     },
-    "geo": {
+    geo: {
       "@type": "GeoCoordinates",
-      "latitude": "1.3521",
-      "longitude": "103.8198"
+      latitude: "1.3521",
+      longitude: "103.8198",
     },
-    "areaServed": {
+    areaServed: {
       "@type": "Country",
-      "name": "Singapore"
+      name: "Singapore",
     },
-    "serviceArea": {
+    serviceArea: {
       "@type": "GeoCircle",
-      "geoMidpoint": {
+      geoMidpoint: {
         "@type": "GeoCoordinates",
-        "latitude": "1.3521",
-        "longitude": "103.8198"
+        latitude: "1.3521",
+        longitude: "103.8198",
       },
-      "geoRadius": "50000"
+      geoRadius: "50000",
     },
-    "hasOfferCatalog": {
+    hasOfferCatalog: {
       "@type": "OfferCatalog",
-      "name": "Lifeguard Services",
-      "itemListElement": [
+      name: "Lifeguard Services",
+      itemListElement: [
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Swimming Pool Lifeguard Services",
-            "description": "Professional lifeguards for private and public swimming pools in Singapore"
-          }
+            name: "Swimming Pool Lifeguard Services",
+            description:
+              "Professional lifeguards for private and public swimming pools in Singapore",
+          },
         },
         {
-          "@type": "Offer", 
-          "itemOffered": {
+          "@type": "Offer",
+          itemOffered: {
             "@type": "Service",
-            "name": "Event Lifeguard Services",
-            "description": "Certified lifeguards for corporate events, parties and special occasions"
-          }
+            name: "Event Lifeguard Services",
+            description:
+              "Certified lifeguards for corporate events, parties and special occasions",
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service", 
-            "name": "Pool Party Lifeguard Services",
-            "description": "Safety supervision for pool parties and recreational activities"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Open Water Lifeguard Services", 
-            "description": "Professional water safety for beaches, lakes and open water activities"
-          }
+            name: "Pool Party Lifeguard Services",
+            description:
+              "Safety supervision for pool parties and recreational activities",
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
+            "@type": "Service",
+            name: "Open Water Lifeguard Services",
+            description:
+              "Professional water safety for beaches, lakes and open water activities",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
             "@type": "EducationalOccupationalProgram",
-            "name": "Lifeguard Training Courses",
-            "description": "Water safety and lifesaving certification courses in Singapore"
-          }
-        }
-      ]
+            name: "Lifeguard Training Courses",
+            description:
+              "Water safety and lifesaving certification courses in Singapore",
+          },
+        },
+      ],
     },
-    "sameAs": [
+    sameAs: [
       "https://www.facebook.com/BeardedLifeguardSG",
-      "https://www.instagram.com/beardedlifeguardsg"
+      "https://www.instagram.com/beardedlifeguardsg",
     ],
-    "logo": {
+    logo: {
       "@type": "ImageObject",
-      "url": "https://sglifeguardservices.com/logo.png",
-      "width": "200",
-      "height": "200"
+      url: "https://sglifeguardservices.com/logo.png",
+      width: "200",
+      height: "200",
     },
-    "image": {
-      "@type": "ImageObject", 
-      "url": "https://sglifeguardservices.com/og-image-about.jpg",
-      "width": "1200",
-      "height": "630"
+    image: {
+      "@type": "ImageObject",
+      url: "https://sglifeguardservices.com/og-image-about.jpg",
+      width: "1200",
+      height: "630",
     },
-    "priceRange": "$$",
-    "currenciesAccepted": "SGD",
-    "paymentAccepted": "PayNow, Cash, Bank Transfer",
-    "openingHours": "Mo-Su 06:00-23:00",
-    "aggregateRating": {
+    priceRange: "$$",
+    currenciesAccepted: "SGD",
+    paymentAccepted: "PayNow, Cash, Bank Transfer",
+    openingHours: "Mo-Su 06:00-23:00",
+    aggregateRating: {
       "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "127"
-    }
+      ratingValue: "4.9",
+      reviewCount: "127",
+    },
   };
 
   return (

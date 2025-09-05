@@ -3,18 +3,19 @@ import { Metadata } from "next";
 import { homePageJsonLd } from "./home-layout";
 
 export const metadata: Metadata = {
-  title: "Professional Lifeguard Services Singapore | Pool, Event & Water Safety | Bearded Lifeguard",
+  title:
+    "Professional Lifeguard Services Singapore | Pool, Event & Water Safety | Bearded Lifeguard",
   description:
-    "Singapore's #1 professional lifeguard services provider. Certified lifeguards for swimming pools, events, pool parties & open water activities. Water safety courses & training available island-wide. Book now!",
+    "Singapore's #1 professional lifeguard services provider. Certified lifeguards for swimming pools, events, pool parties & open water activities. Water safety courses & training available island-wide.",
   keywords: [
     "lifeguard services singapore",
-    "singapore lifeguard services", 
+    "singapore lifeguard services",
     "sg lifeguard",
     "lifeguards singapore",
     "lifeguardservices sg",
     "lifeguardservice singapore",
     "professional lifeguards singapore",
-    "water safety singapore", 
+    "water safety singapore",
     "swimming pool lifeguard sg",
     "event lifeguard singapore",
     "pool party lifeguard sg",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     "aquatic safety singapore",
     "pool safety sg",
     "beach lifeguard singapore",
-    "singapore water safety"
+    "singapore water safety",
   ],
   metadataBase: new URL("https://sglifeguardservices.com"),
   authors: [{ name: "Bearded Lifeguard" }],

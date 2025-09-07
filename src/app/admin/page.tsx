@@ -238,6 +238,10 @@ export default function AdminDashboard() {
     total: bookings.length,
     paid: bookings.filter((b) => b.payment_status === "paid").length,
     pending: bookings.filter((b) => b.payment_status === "pending").length,
+    unconfirmed: bookings.filter((b) => b.status === "pending").length,
+    confirmed: bookings.filter((b) => b.status === "confirmed").length,
+    completed: bookings.filter((b) => b.status === "completed").length,
+    cancelled: bookings.filter((b) => b.status === "cancelled").length,
     newCount: newBookingsCount,
   };
 
@@ -259,7 +263,7 @@ export default function AdminDashboard() {
         isLoading={loading}
       />
       {/* Stats */}
-      {/* <StatsBar {...stats} /> */}
+      <StatsBar {...stats} />
       {/* Content */}
       <div className="p-3 md:p-6">
         <div className="max-w-7xl mx-auto">

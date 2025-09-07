@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   description:
     "Singapore's #1 professional lifeguard services provider. Certified lifeguards for swimming pools, events, pool parties & open water activities. Water safety courses & training available island-wide.",
   keywords: [
+    "sglifeguard",
+    "sglifeguards",
+    "sglifeguard services",
+    "sg lifeguard services",
+    "sglifeguards services",
+    "sglifeguards services",
+    "lifeguard services",
+    "lifeguard servcice",
     "lifeguard services singapore",
     "singapore lifeguard services",
     "sg lifeguard",

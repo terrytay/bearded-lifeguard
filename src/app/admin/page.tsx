@@ -247,8 +247,8 @@ export default function AdminDashboard() {
       onSignOut={signOut}
       processing={processing}
     >
-      <BackToTopButton/>
-      
+      <BackToTopButton />
+
       {/* Search */}
       <SearchBar
         searchQuery={searchQuery}
@@ -259,7 +259,7 @@ export default function AdminDashboard() {
         isLoading={loading}
       />
       {/* Stats */}
-      <StatsBar {...stats} />
+      {/* <StatsBar {...stats} /> */}
       {/* Content */}
       <div className="p-3 md:p-6">
         <div className="max-w-7xl mx-auto">

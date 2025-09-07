@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/Input";
 import { DateTimePicker } from "@/components/ui/DateTimePicker";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { SingaporeTime } from "@/lib/singapore-time";
+import Modal from "./components/Modal";
 
 type OrderResponse = {
   orderId: string;
@@ -837,76 +838,70 @@ export default function BookingPage() {
         </div>
 
         {/* QR Modal */}
-        {showQR && order && (
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="qr-title"
-            onKeyDown={(e) => e.key === "Escape" && setShowQR(false)}
-          >
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 transform transition-all">
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                </div>
-                <h3
-                  id="qr-title"
-                  className="text-2xl font-bold text-[#20334F] mb-2"
-                >
-                  Payment QR Code
-                </h3>
-                <p className="text-gray-600">
-                  Order <span className="font-semibold">{order.orderId}</span> •{" "}
-                  {formatCurrency(order.amount)}
-                </p>
+        {order && (
+          <Modal open={showQR} onClose={() => setShowQR(false)}>
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-
-              <div className="bg-gray-50 rounded-2xl p-4 mb-6">
-                <img
-                  src={order.paynow.qrDataUrl}
-                  alt={`PayNow QR for order ${order.orderId}`}
-                  className="w-full max-w-xs mx-auto rounded-lg"
-                />
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  ref={closeBtnRef}
-                  onClick={() => setShowQR(false)}
-                  className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
-                >
-                  Close
-                </button>
-                <a
-                  href={order.paynow.qrDataUrl}
-                  download={`PayNow-${order.orderId}.png`}
-                  className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors text-center inline-flex items-center justify-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  Download QR
-                </a>
-                <button
-                  type="button"
-                  onClick={onPaid}
-                  disabled={paying}
-                  aria-busy={paying}
-                  className={`flex-1 px-4 py-3 bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white rounded-xl font-semibold transition-all ${
-                    paying ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
-                  }`}
-                >
-                  {paying ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block mr-2" />
-                      Processing...
-                    </>
-                  ) : (
-                    "I've Paid"
-                  )}
-                </button>
-              </div>
+              <h3
+                id="qr-title"
+                className="text-2xl font-bold text-[#20334F] mb-2"
+              >
+                Payment QR Code
+              </h3>
+              <p className="text-gray-600">
+                Order <span className="font-semibold">{order.orderId}</span> •{" "}
+                {formatCurrency(order.amount)}
+              </p>
             </div>
-          </div>
+
+            <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+              <img
+                src={order.paynow.qrDataUrl}
+                alt={`PayNow QR for order ${order.orderId}`}
+                className="w-full max-w-xs mx-auto rounded-lg"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                ref={closeBtnRef}
+                onClick={() => setShowQR(false)}
+                className="flex-1 px-4 py-3 text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+
+              <a
+                href={order.paynow.qrDataUrl}
+                download={`PayNow-${order.orderId}.png`}
+                className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors text-center inline-flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Download QR
+              </a>
+
+              <button
+                type="button"
+                onClick={onPaid}
+                disabled={paying}
+                aria-busy={paying}
+                className={`flex-1 px-4 py-3 bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white rounded-xl font-semibold transition-all ${
+                  paying ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
+                }`}
+              >
+                {paying ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block mr-2" />
+                    Processing...
+                  </>
+                ) : (
+                  "I've Paid"
+                )}
+              </button>
+            </div>
+          </Modal>
         )}
       </div>
     </main>

@@ -278,49 +278,80 @@ export default function BookingDetailPage() {
           {/* Header */}
           <BookingDetailHeader booking={booking} />
 
-          {/* Content Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-6">
-            {/* Main Info */}
-            <div className="xl:col-span-2 space-y-4 md:space-y-6">
-              <BookingDetailInfo booking={booking} />
+          {/* Single Column Layout - Mobile First */}
+          <div className="mt-5 space-y-3 md:space-y-6">
+            {/* Actions on mobile - moved to top */}
+            <div className="md:hidden bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-3">
+              <h3 className="font-bold text-white mb-2 flex items-center text-sm">
+                <div className="w-5 h-5 bg-purple-500/20 rounded-lg flex items-center justify-center mr-2">
+                  <svg
+                    className="w-3 h-3 text-purple-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                </div>
+                Quick Actions
+              </h3>
+              <div className="space-y-2">
+                <PaymentActions booking={booking} onUpdate={updateBooking} />
+                <StatusActions
+                  booking={booking}
+                  onUpdate={updateBooking}
+                  onDelete={deleteBooking}
+                />
+              </div>
             </div>
 
-            {/* Actions Sidebar */}
-            <div className="space-y-4 md:space-y-6">
-              <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">
-                <h3 className="font-bold text-white mb-3 md:mb-4 flex items-center text-sm md:text-base">
-                  <div className="w-6 h-6 md:w-8 md:h-8 bg-purple-500/20 rounded-lg md:rounded-xl flex items-center justify-center mr-2 md:mr-3">
-                    <svg
-                      className="w-4 h-4 md:w-5 md:h-5 text-purple-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  </div>
-                  Quick Actions
-                </h3>
+            {/* Main Info */}
+            <BookingDetailInfo booking={booking} />
 
-                <div className="space-y-3 md:space-y-4">
-                  <PaymentActions booking={booking} onUpdate={updateBooking} />
-                  <StatusActions
-                    booking={booking}
-                    onUpdate={updateBooking}
-                    onDelete={deleteBooking}
-                  />
+            {/* Actions on desktop - moved to bottom */}
+            <div className="hidden md:block bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
+              <h3 className="font-bold text-white mb-4 flex items-center text-base">
+                <div className="w-8 h-8 bg-purple-500/20 rounded-xl flex items-center justify-center mr-3">
+                  <svg
+                    className="w-5 h-5 text-purple-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
                 </div>
+                Quick Actions
+              </h3>
+              <div className="flex gap-4">
+                <PaymentActions booking={booking} onUpdate={updateBooking} />
+                <StatusActions
+                  booking={booking}
+                  onUpdate={updateBooking}
+                  onDelete={deleteBooking}
+                />
               </div>
             </div>
           </div>

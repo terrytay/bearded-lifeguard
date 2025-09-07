@@ -39,21 +39,36 @@ const serviceNames: Record<string, string> = {
   others: "Custom Service",
 };
 
-const getStatusColor = (status: string, paymentStatus: string): string => {
-  if (paymentStatus === "paid")
+const getStatusColor = (status: string): string => {
+  if (status === "confirmed")
     return "bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-300 border-emerald-500/30";
-  if (status === "cancelled")
-    return "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border-red-500/30";
+  // if (status === "pending")
+  //   return "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border-red-500/30";
   if (status === "pending")
     return "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border-yellow-500/30";
   return "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border-gray-500/30";
 };
 
-const getStatusText = (status: string, paymentStatus: string): string => {
-  if (paymentStatus === "paid") return "Paid";
+const getStatusText = (status: string): string => {
+  if (status === "completed") return "Completed";
+  if (status === "confirmed") return "Confirmed";
   if (status === "cancelled") return "Cancelled";
-  if (status === "pending") return "Pending";
-  return "Awaiting Payment";
+  return "Unconfirmed";
+};
+
+const getPaymentStatusColor = (status: string): string => {
+  if (status === "paid")
+    return "bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-300 border-emerald-500/30";
+  // if (status === "pending")
+  //   return "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border-red-500/30";
+  if (status === "pending")
+    return "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border-yellow-500/30";
+  return "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border-gray-500/30";
+};
+
+const getPaymentStatusText = (status: string): string => {
+  if (status === "pending") return "Unpaid";
+  return "Paid";
 };
 
 export default function BookingCard({
@@ -106,15 +121,22 @@ export default function BookingCard({
             </p>
           </div>
         </div>
-
-        <span
-          className={`px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl text-xs font-semibold border shadow-lg ${getStatusColor(
-            booking.status,
-            booking.payment_status
-          )}`}
-        >
-          {getStatusText(booking.status, booking.payment_status)}
-        </span>
+        <div className="flex space-x-2">
+          <span
+            className={`px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl text-xs font-semibold border shadow-lg ${getPaymentStatusColor(
+              booking.payment_status
+            )}`}
+          >
+            {getPaymentStatusText(booking.payment_status)}
+          </span>
+          <span
+            className={`px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl text-xs font-semibold border shadow-lg ${getStatusColor(
+              booking.status
+            )}`}
+          >
+            {getStatusText(booking.status)}
+          </span>
+        </div>
       </div>
 
       {/* Service Info */}

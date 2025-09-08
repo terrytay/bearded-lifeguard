@@ -304,7 +304,7 @@ export class ExportService {
     if (type === 'csv') {
       return new Blob([content as string], { type: 'text/csv;charset=utf-8;' });
     } else {
-      return new Blob([content], { type: 'application/pdf' });
+      return new Blob([content as BlobPart], { type: 'application/pdf' });
     }
   }
 

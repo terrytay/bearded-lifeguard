@@ -7,6 +7,7 @@ import {
   MagnifyingGlassIcon,
   CalendarDaysIcon,
   UserGroupIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 interface DashboardLayoutProps {
@@ -37,6 +38,12 @@ export default function DashboardLayout({
       href: '/admin/lifeguards',
       icon: UserGroupIcon,
       current: pathname.startsWith('/admin/lifeguards'),
+    },
+    {
+      name: 'Reports',
+      href: '/admin/reports',
+      icon: ChartBarIcon,
+      current: pathname.startsWith('/admin/reports'),
     },
   ];
   return (

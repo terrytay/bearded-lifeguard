@@ -70,8 +70,9 @@ export async function GET(
 // PATCH /api/admin/lifeguards/[id] - Update lifeguard
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const isAdmin = await verifyAdmin(request);
     if (!isAdmin) {
@@ -106,10 +107,7 @@ export async function PATCH(
       );
     }
 
-    const lifeguard = await LifeguardService.updateLifeguard(
-      params.id,
-      updates
-    );
+    const lifeguard = await LifeguardService.updateLifeguard(id, updates);
 
     return NextResponse.json(lifeguard);
   } catch (error) {
@@ -127,15 +125,16 @@ export async function PATCH(
 // DELETE /api/admin/lifeguards/[id] - Delete lifeguard
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const isAdmin = await verifyAdmin(request);
     if (!isAdmin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await LifeguardService.deleteLifeguard(params.id);
+    await LifeguardService.deleteLifeguard(id);
 
     return NextResponse.json({ message: "Lifeguard deleted successfully" });
   } catch (error) {

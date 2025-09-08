@@ -217,7 +217,7 @@ export class LifeguardService {
     }
 
     const currentAssignments = booking.lifeguards_assigned || [];
-    const updatedAssignments = currentAssignments.filter(id => id !== lifeguardId);
+    const updatedAssignments = currentAssignments.filter((id: string) => id !== lifeguardId);
 
     const { data, error } = await supabaseAdmin
       .from('bookings')

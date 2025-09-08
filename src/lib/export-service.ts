@@ -78,7 +78,7 @@ export class ExportService {
     // Footer
     this.addPDFFooter(doc, pageHeight, margin);
 
-    return doc.output('arraybuffer') as Uint8Array;
+    return new Uint8Array(doc.output('arraybuffer') as ArrayBuffer);
   }
 
   private static addPDFHeader(
@@ -211,7 +211,7 @@ export class ExportService {
       didDrawPage: (data) => {
         // Add page numbers
         const pageCount = doc.getNumberOfPages();
-        const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
+        const currentPage = (doc as any).internal.getCurrentPageInfo().pageNumber;
         
         doc.setFontSize(10);
         doc.text(
@@ -304,7 +304,7 @@ export class ExportService {
     if (type === 'csv') {
       return new Blob([content as string], { type: 'text/csv;charset=utf-8;' });
     } else {
-      return new Blob([content as Uint8Array], { type: 'application/pdf' });
+      return new Blob([content], { type: 'application/pdf' });
     }
   }
 

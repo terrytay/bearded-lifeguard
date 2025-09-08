@@ -96,7 +96,7 @@ export async function POST(request: Request) {
       
       const fileName = ExportService.generateFileName(type, 'pdf', { startDate, endDate });
 
-      return new NextResponse(pdfBuffer, {
+      return new NextResponse(Buffer.from(pdfBuffer), {
         headers: {
           'Content-Type': 'application/pdf',
           'Content-Disposition': `attachment; filename="${fileName}"`,

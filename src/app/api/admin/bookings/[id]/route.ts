@@ -103,7 +103,7 @@ export async function PATCH(
             customerEmail: booking.customer_email,
             orderId: booking.order_id,
             startDateTime: booking.start_datetime.split("T").join(" "),
-            endDateTime: booking.start_datetime.split("T").join(" "),
+            endDateTime: booking.end_datetime.split("T").join(" "),
             totalAmount: `$${booking.amount.toFixed(2)}`,
           });
         } catch (emailError) {

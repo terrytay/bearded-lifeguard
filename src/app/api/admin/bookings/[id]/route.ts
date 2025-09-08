@@ -102,8 +102,8 @@ export async function PATCH(
             customerName: booking.customer_name,
             customerEmail: booking.customer_email,
             orderId: booking.order_id,
-            startDateTime: SingaporeTime.toLocaleString(booking.start_datetime),
-            endDateTime: SingaporeTime.toLocaleString(booking.end_datetime),
+            startDateTime: booking.start_datetime,
+            endDateTime: booking.end_datetime,
             totalAmount: `$${booking.amount.toFixed(2)}`,
           });
         } catch (emailError) {

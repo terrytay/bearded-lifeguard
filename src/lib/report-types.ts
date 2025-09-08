@@ -21,6 +21,10 @@ export interface BookingReportFields {
   lifeguards_assigned_count: boolean; // Computed field
   revenue_per_hour: boolean; // Computed field
   service_display_name: boolean; // Computed field
+  actual_revenue_only: boolean; // Computed field - Amount only if paid & not cancelled
+  is_revenue_generating: boolean; // Computed field - Boolean if contributes to actual revenue
+  revenue_status: boolean; // Computed field - 'Actual', 'Potential', 'Lost', 'At-Risk'
+  days_since_booking: boolean; // Computed field - For at-risk analysis
 }
 
 // Lifeguard Report Field Definitions
@@ -70,12 +74,18 @@ export const BOOKING_FIELD_DEFINITIONS: FieldDefinition[] = [
   { key: 'lifeguards_assigned_count', label: 'Lifeguards Assigned', type: 'number', computed: true, group: 'computed', description: 'Number of lifeguards actually assigned' },
   
   // Financial
-  { key: 'amount', label: 'Total Amount', type: 'currency', group: 'financial' },
+  { key: 'amount', label: 'Booking Amount', type: 'currency', group: 'financial' },
   { key: 'payment_status', label: 'Payment Status', type: 'string', group: 'financial' },
-  { key: 'revenue_per_hour', label: 'Revenue per Hour', type: 'currency', computed: true, group: 'computed', description: 'Amount divided by hours' },
+  { key: 'revenue_per_hour', label: 'Revenue per Hour', type: 'currency', computed: true, group: 'computed', description: 'Booking amount divided by hours' },
   
   // Timestamps
   { key: 'created_at', label: 'Created Date', type: 'date', group: 'timestamps' },
+  
+  // New Revenue Classification Fields
+  { key: 'actual_revenue_only', label: 'Actual Revenue', type: 'currency', computed: true, group: 'computed', description: 'Revenue amount only if booking is paid and not cancelled' },
+  { key: 'is_revenue_generating', label: 'Revenue Generating', type: 'boolean', computed: true, group: 'computed', description: 'True if booking contributes to actual revenue' },
+  { key: 'revenue_status', label: 'Revenue Status', type: 'string', computed: true, group: 'computed', description: 'Categorizes revenue as Actual, Potential, Lost, or At-Risk' },
+  { key: 'days_since_booking', label: 'Days Since Booking', type: 'number', computed: true, group: 'computed', description: 'Number of days since booking was created' },
 ];
 
 // Lifeguard Field Definitions
@@ -116,6 +126,11 @@ export const DEFAULT_BOOKING_FIELDS: BookingReportFields = {
   lifeguards_assigned_count: true,
   revenue_per_hour: false,
   service_display_name: false,
+  // New revenue fields (default to false for existing reports)
+  actual_revenue_only: false,
+  is_revenue_generating: true,
+  revenue_status: true,
+  days_since_booking: false,
 };
 
 export const DEFAULT_LIFEGUARD_FIELDS: LifeguardReportFields = {
@@ -209,6 +224,11 @@ export interface BookingReportData {
   lifeguards_assigned_count?: number;
   revenue_per_hour?: number;
   service_display_name?: string;
+  // New revenue classification fields
+  actual_revenue_only?: number;
+  is_revenue_generating?: boolean;
+  revenue_status?: 'Actual' | 'Potential' | 'Lost' | 'At-Risk';
+  days_since_booking?: number;
 }
 
 export interface LifeguardReportData {
@@ -235,10 +255,21 @@ export interface ReportSummary {
     startDate: string;
     endDate: string;
   };
-  // Booking-specific summary
-  totalRevenue?: number;
-  averageBookingValue?: number;
+  // Enhanced booking-specific summary
+  actualRevenue?: number; // Only from paid, non-cancelled bookings
+  potentialRevenue?: number; // From confirmed/pending unpaid bookings
+  lostRevenue?: number; // From cancelled bookings
+  totalGrossRevenue?: number; // Sum of actual + potential
+  conversionRate?: number; // Actual revenue / (actual + lost) revenue %
+  averagePaidBookingValue?: number; // Average of only paid bookings
+  paymentCollectionRate?: number; // Paid bookings / Total confirmed bookings %
   totalHours?: number;
+  // Revenue health indicators
+  revenueHealthStatus?: 'healthy' | 'attention' | 'concern';
+  atRiskRevenue?: number; // Revenue from bookings pending payment >7 days
+  // Legacy (deprecated but kept for compatibility)
+  totalRevenue?: number; // Now equals actualRevenue
+  averageBookingValue?: number; // Now equals averagePaidBookingValue
   // Lifeguard-specific summary
   totalActiveLifeguards?: number;
   totalAssignments?: number;

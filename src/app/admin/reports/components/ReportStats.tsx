@@ -21,40 +21,63 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
 
   const bookingStats = [
     {
-      label: "Total Records",
-      value: formatNumber(summary.totalRecords),
-      icon: CalendarDaysIcon,
-      color: "from-blue-500 to-cyan-600",
-      bgColor: "bg-blue-500/20",
-      textColor: "text-blue-300",
-    },
-    {
-      label: "Total Revenue",
-      value: summary.totalRevenue
-        ? formatCurrency(summary.totalRevenue)
+      label: "Actual Revenue",
+      value: summary.actualRevenue
+        ? formatCurrency(summary.actualRevenue)
         : "$0.00",
       icon: CurrencyDollarIcon,
       color: "from-green-500 to-emerald-600",
       bgColor: "bg-green-500/20",
       textColor: "text-green-300",
+      description: "Revenue from paid, non-cancelled bookings",
     },
     {
-      label: "Avg Booking Value",
-      value: summary.averageBookingValue
-        ? formatCurrency(summary.averageBookingValue)
+      label: "Potential Revenue",
+      value: summary.potentialRevenue
+        ? formatCurrency(summary.potentialRevenue)
         : "$0.00",
       icon: ArrowTrendingUpIcon,
       color: "from-yellow-500 to-orange-600",
       bgColor: "bg-yellow-500/20",
       textColor: "text-yellow-300",
+      description: "Revenue from pending payments",
     },
     {
-      label: "Total Hours",
-      value: summary.totalHours ? `${formatNumber(summary.totalHours)}h` : "0h",
-      icon: ClockIcon,
-      color: "from-purple-500 to-pink-600",
-      bgColor: "bg-purple-500/20",
-      textColor: "text-purple-300",
+      label: "Lost Revenue",
+      value: summary.lostRevenue
+        ? formatCurrency(summary.lostRevenue)
+        : "$0.00",
+      icon: CalendarDaysIcon,
+      color: "from-red-500 to-pink-600",
+      bgColor: "bg-red-500/20",
+      textColor: "text-red-300",
+      description: "Revenue from cancelled bookings",
+    },
+    {
+      label: "Collection Rate",
+      value: summary.paymentCollectionRate
+        ? `${summary.paymentCollectionRate.toFixed(1)}%`
+        : "0%",
+      icon: ChartBarIcon,
+      color:
+        summary.paymentCollectionRate && summary.paymentCollectionRate >= 80
+          ? "from-green-500 to-emerald-600"
+          : summary.paymentCollectionRate && summary.paymentCollectionRate >= 60
+          ? "from-yellow-500 to-orange-600"
+          : "from-red-500 to-pink-600",
+      bgColor:
+        summary.paymentCollectionRate && summary.paymentCollectionRate >= 80
+          ? "bg-green-500/20"
+          : summary.paymentCollectionRate && summary.paymentCollectionRate >= 60
+          ? "bg-yellow-500/20"
+          : "bg-red-500/20",
+      textColor:
+        summary.paymentCollectionRate && summary.paymentCollectionRate >= 80
+          ? "text-green-300"
+          : summary.paymentCollectionRate && summary.paymentCollectionRate >= 60
+          ? "text-yellow-300"
+          : "text-red-300",
+      description: "Percentage of confirmed bookings that are paid",
     },
   ];
 
@@ -131,8 +154,14 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
 
         <div className="text-right">
           <div className="text-white/60 text-xs uppercase tracking-wider">
-            {reportType === "bookings" ? "Bookings" : "Lifeguards"} Report
+            {reportType === "bookings" ? "Enhanced Revenue" : "Lifeguards"}{" "}
+            Report
           </div>
+          {reportType === "bookings" && summary.totalRecords && (
+            <div className="text-white/80 text-xs mt-1">
+              {summary.totalRecords} bookings analyzed
+            </div>
+          )}
         </div>
       </div>
 
@@ -181,58 +210,85 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
         })}
       </div>
 
-      {/* Additional Context */}
-      {reportType === "bookings" &&
-        summary.totalRevenue &&
-        summary.totalHours && (
-          <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 text-center">
-              <div className="bg-white/5 rounded-lg p-3">
-                <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
-                  Revenue per Hour
-                </div>
-                <div className="text-white font-bold">
-                  {summary.totalHours > 0
-                    ? formatCurrency(summary.totalRevenue / summary.totalHours)
-                    : "$0.00"}
-                </div>
-              </div>
-
-              <div className="bg-white/5 rounded-lg p-3">
-                <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
-                  Days in Range
-                </div>
-                <div className="text-white font-bold">
-                  {Math.ceil(
-                    (new Date(summary.dateRange.endDate).getTime() -
-                      new Date(summary.dateRange.startDate).getTime()) /
-                      (1000 * 60 * 60 * 24)
-                  )}{" "}
-                  days
-                </div>
-              </div>
-
-              <div className="bg-white/5 rounded-lg p-3">
-                <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
-                  Bookings per Day
-                </div>
-                <div className="text-white font-bold">
-                  {(
-                    summary.totalRecords /
-                    Math.max(
-                      1,
-                      Math.ceil(
-                        (new Date(summary.dateRange.endDate).getTime() -
-                          new Date(summary.dateRange.startDate).getTime()) /
-                          (1000 * 60 * 60 * 24)
-                      )
-                    )
-                  ).toFixed(1)}
-                </div>
-              </div>
+      {/* Revenue Health Status Indicator */}
+      {reportType === "bookings" && summary.revenueHealthStatus && (
+        <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/10">
+          <div className="flex items-center justify-center mb-4">
+            <div
+              className={`px-4 py-2 rounded-full text-sm font-medium border ${
+                summary.revenueHealthStatus === "healthy"
+                  ? "bg-green-500/20 text-green-300 border-green-500/30"
+                  : summary.revenueHealthStatus === "attention"
+                  ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/30"
+                  : "bg-red-500/20 text-red-300 border-red-500/30"
+              }`}
+            >
+              {summary.revenueHealthStatus === "healthy"
+                ? "🟢 Healthy Revenue Performance"
+                : summary.revenueHealthStatus === "attention"
+                ? "🟡 Revenue Needs Attention"
+                : "🔴 Revenue Performance Concerning"}
             </div>
           </div>
-        )}
+
+          {/* Enhanced Context */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 text-center">
+            <div className="bg-white/5 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Conversion Rate
+              </div>
+              <div className="text-white font-bold">
+                {summary.conversionRate
+                  ? `${summary.conversionRate.toFixed(1)}%`
+                  : "0%"}
+              </div>
+              <div className="text-white/40 text-xs mt-1">
+                Actual / (Actual + Lost)
+              </div>
+            </div>
+
+            <div className="bg-white/5 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                At-Risk Revenue
+              </div>
+              <div className="text-white font-bold">
+                {summary.atRiskRevenue
+                  ? formatCurrency(summary.atRiskRevenue)
+                  : "$0.00"}
+              </div>
+              <div className="text-white/40 text-xs mt-1">
+                Unpaid {">"}7 days
+              </div>
+            </div>
+
+            <div className="bg-white/5 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Gross Potential
+              </div>
+              <div className="text-white font-bold">
+                {summary.totalGrossRevenue
+                  ? formatCurrency(summary.totalGrossRevenue)
+                  : "$0.00"}
+              </div>
+              <div className="text-white/40 text-xs mt-1">
+                Actual + Potential
+              </div>
+            </div>
+
+            <div className="bg-white/5 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Avg Paid Value
+              </div>
+              <div className="text-white font-bold">
+                {summary.averagePaidBookingValue
+                  ? formatCurrency(summary.averagePaidBookingValue)
+                  : "$0.00"}
+              </div>
+              <div className="text-white/40 text-xs mt-1">Per paid booking</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

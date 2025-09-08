@@ -126,24 +126,59 @@ export class ExportService {
 
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Summary Statistics', margin, currentY);
+    doc.text('Revenue Analysis Summary', margin, currentY);
     currentY += 25;
 
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
 
     if (reportType === 'bookings') {
-      const stats = [
-        `Total Bookings: ${summary.totalRecords.toLocaleString()}`,
-        `Total Revenue: $${(summary.totalRevenue || 0).toFixed(2)}`,
-        `Average Booking Value: $${(summary.averageBookingValue || 0).toFixed(2)}`,
-        `Total Hours: ${(summary.totalHours || 0).toLocaleString()}h`,
+      // Revenue breakdown
+      const revenueStats = [
+        `Actual Revenue (Paid): $${(summary.actualRevenue || 0).toFixed(2)}`,
+        `Potential Revenue (Pending): $${(summary.potentialRevenue || 0).toFixed(2)}`,
+        `Lost Revenue (Cancelled): $${(summary.lostRevenue || 0).toFixed(2)}`,
+        `At-Risk Revenue (>7 days): $${(summary.atRiskRevenue || 0).toFixed(2)}`,
       ];
 
-      stats.forEach((stat, index) => {
-        doc.text(stat, margin + (index % 2) * 250, currentY + Math.floor(index / 2) * 20);
+      revenueStats.forEach((stat, index) => {
+        doc.text(stat, margin + (index % 2) * 270, currentY + Math.floor(index / 2) * 18);
       });
       currentY += 50;
+
+      // Performance metrics
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Performance Metrics', margin, currentY);
+      currentY += 20;
+
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      
+      const performanceStats = [
+        `Collection Rate: ${(summary.paymentCollectionRate || 0).toFixed(1)}%`,
+        `Conversion Rate: ${(summary.conversionRate || 0).toFixed(1)}%`,
+        `Avg Paid Booking: $${(summary.averagePaidBookingValue || 0).toFixed(2)}`,
+        `Revenue Health: ${summary.revenueHealthStatus?.toUpperCase() || 'UNKNOWN'}`,
+      ];
+
+      performanceStats.forEach((stat, index) => {
+        doc.text(stat, margin + (index % 2) * 270, currentY + Math.floor(index / 2) * 18);
+      });
+      currentY += 50;
+
+      // Additional context
+      const contextStats = [
+        `Total Bookings: ${summary.totalRecords.toLocaleString()}`,
+        `Total Hours: ${(summary.totalHours || 0).toLocaleString()}h`,
+        `Gross Potential: $${(summary.totalGrossRevenue || 0).toFixed(2)}`,
+      ];
+
+      contextStats.forEach((stat, index) => {
+        doc.text(stat, margin + (index % 2) * 270, currentY + Math.floor(index / 2) * 18);
+      });
+      currentY += 40;
+
     } else {
       const stats = [
         `Total Lifeguards: ${summary.totalRecords.toLocaleString()}`,
@@ -291,8 +326,19 @@ export class ExportService {
         return typeof value === 'number' ? value.toLocaleString() : String(value);
         
       default:
-        // Handle string truncation for PDF to prevent overflow
+        // Handle revenue status with visual indicators
         const stringValue = String(value);
+        if (stringValue === 'Actual' && format === 'pdf') {
+          return '✓ Actual';
+        } else if (stringValue === 'Potential' && format === 'pdf') {
+          return '⏳ Potential';
+        } else if (stringValue === 'Lost' && format === 'pdf') {
+          return '✗ Lost';
+        } else if (stringValue === 'At-Risk' && format === 'pdf') {
+          return '⚠ At-Risk';
+        }
+        
+        // Handle string truncation for PDF to prevent overflow
         if (format === 'pdf' && stringValue.length > 30) {
           return stringValue.substring(0, 27) + '...';
         }

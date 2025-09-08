@@ -73,9 +73,9 @@ export async function GET(request: Request) {
 
 async function generateBookingsReport(supabase: any, startDate: string, endDate: string, fields: string[]) {
   try {
-    // Build the select query based on requested fields
+    // Build the select query based on requested fields (excluding computed fields)
     const selectFields = fields.filter(field => 
-      !['lifeguards_assigned_count', 'revenue_per_hour', 'service_display_name'].includes(field)
+      !['lifeguards_assigned_count', 'revenue_per_hour', 'service_display_name', 'actual_revenue_only', 'is_revenue_generating', 'revenue_status', 'days_since_booking'].includes(field)
     );
     
     // Base query
@@ -97,7 +97,7 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
     const processedData = await Promise.all(bookings.map(async (booking: any) => {
       const result = { ...booking };
 
-      // Add computed fields
+      // Existing computed fields
       if (fields.includes('lifeguards_assigned_count')) {
         result.lifeguards_assigned_count = booking.lifeguards_assigned?.length || 0;
       }
@@ -120,20 +120,97 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
         }
       }
 
+      // New revenue classification fields
+      const isPaid = booking.payment_status === 'paid';
+      const isCancelled = booking.status === 'cancelled';
+      const isConfirmedOrPending = ['confirmed', 'pending'].includes(booking.status);
+      const daysSinceBooking = Math.floor((new Date().getTime() - new Date(booking.created_at).getTime()) / (1000 * 60 * 60 * 24));
+
+      if (fields.includes('actual_revenue_only')) {
+        result.actual_revenue_only = (isPaid && !isCancelled) ? booking.amount : 0;
+      }
+
+      if (fields.includes('is_revenue_generating')) {
+        result.is_revenue_generating = isPaid && !isCancelled;
+      }
+
+      if (fields.includes('revenue_status')) {
+        if (isCancelled) {
+          result.revenue_status = 'Lost';
+        } else if (isPaid) {
+          result.revenue_status = 'Actual';
+        } else if (isConfirmedOrPending && daysSinceBooking > 7) {
+          result.revenue_status = 'At-Risk';
+        } else if (isConfirmedOrPending) {
+          result.revenue_status = 'Potential';
+        } else {
+          result.revenue_status = 'Potential';
+        }
+      }
+
+      if (fields.includes('days_since_booking')) {
+        result.days_since_booking = daysSinceBooking;
+      }
+
       return result;
     }));
 
-    // Calculate summary statistics
-    const totalRevenue = bookings.reduce((sum: number, booking: any) => sum + (booking.amount || 0), 0);
+    // Calculate enhanced revenue statistics
+    const actualRevenue = bookings.reduce((sum: number, booking: any) => {
+      return sum + (booking.payment_status === 'paid' && booking.status !== 'cancelled' ? (booking.amount || 0) : 0);
+    }, 0);
+
+    const potentialRevenue = bookings.reduce((sum: number, booking: any) => {
+      return sum + (booking.payment_status === 'pending' && ['confirmed', 'pending'].includes(booking.status) ? (booking.amount || 0) : 0);
+    }, 0);
+
+    const lostRevenue = bookings.reduce((sum: number, booking: any) => {
+      return sum + (booking.status === 'cancelled' ? (booking.amount || 0) : 0);
+    }, 0);
+
+    const atRiskRevenue = bookings.reduce((sum: number, booking: any) => {
+      const daysSince = Math.floor((new Date().getTime() - new Date(booking.created_at).getTime()) / (1000 * 60 * 60 * 24));
+      return sum + (booking.payment_status === 'pending' && ['confirmed', 'pending'].includes(booking.status) && daysSince > 7 ? (booking.amount || 0) : 0);
+    }, 0);
+
+    const totalGrossRevenue = actualRevenue + potentialRevenue;
+    const conversionRate = (actualRevenue + lostRevenue) > 0 ? (actualRevenue / (actualRevenue + lostRevenue)) * 100 : 0;
+    
+    const paidBookings = bookings.filter((booking: any) => booking.payment_status === 'paid' && booking.status !== 'cancelled');
+    const confirmedBookings = bookings.filter((booking: any) => ['confirmed', 'pending'].includes(booking.status));
+    
+    const averagePaidBookingValue = paidBookings.length > 0 ? actualRevenue / paidBookings.length : 0;
+    const paymentCollectionRate = confirmedBookings.length > 0 ? (paidBookings.length / confirmedBookings.length) * 100 : 0;
+
+    // Determine revenue health status
+    let revenueHealthStatus: 'healthy' | 'attention' | 'concern' = 'healthy';
+    const cancellationRate = bookings.length > 0 ? (bookings.filter((b: any) => b.status === 'cancelled').length / bookings.length) * 100 : 0;
+    
+    if (paymentCollectionRate < 60 || cancellationRate > 30) {
+      revenueHealthStatus = 'concern';
+    } else if (paymentCollectionRate < 80 || cancellationRate > 20) {
+      revenueHealthStatus = 'attention';
+    }
+
     const totalHours = bookings.reduce((sum: number, booking: any) => sum + (booking.hours || 0), 0);
-    const averageBookingValue = bookings.length > 0 ? totalRevenue / bookings.length : 0;
 
     const summary = {
       totalRecords: count || 0,
       dateRange: { startDate, endDate },
-      totalRevenue,
-      averageBookingValue,
+      // Enhanced revenue metrics
+      actualRevenue,
+      potentialRevenue,
+      lostRevenue,
+      totalGrossRevenue,
+      conversionRate,
+      averagePaidBookingValue,
+      paymentCollectionRate,
+      revenueHealthStatus,
+      atRiskRevenue,
       totalHours,
+      // Legacy fields (for compatibility)
+      totalRevenue: actualRevenue,
+      averageBookingValue: averagePaidBookingValue,
     };
 
     return NextResponse.json({

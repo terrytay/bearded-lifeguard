@@ -317,7 +317,7 @@ export default function BookingDetailPage() {
             </div>
 
             {/* Main Info */}
-            <BookingDetailInfo booking={booking} />
+            <BookingDetailInfo booking={booking} onRefresh={loadBooking} />
 
             {/* Actions on desktop - moved to bottom */}
             <div className="hidden md:block bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">

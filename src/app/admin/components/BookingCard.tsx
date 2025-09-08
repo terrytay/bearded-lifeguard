@@ -23,6 +23,7 @@ interface Booking {
   status: string;
   payment_status: string;
   viewed_by_admin: boolean;
+  lifeguards_assigned?: string[];
 }
 
 interface BookingCardProps {
@@ -164,12 +165,16 @@ export default function BookingCard({
         </div>
         <div className="bg-white/5 rounded-lg p-2 md:p-3 text-center">
           <div className="flex items-center justify-center mb-1">
-            <UserGroupIcon className="w-3 h-3 md:w-4 md:h-4 text-green-400 mr-1" />
+            <UserGroupIcon className={`w-3 h-3 md:w-4 md:h-4 mr-1 ${
+              (booking.lifeguards_assigned?.length || 0) >= booking.lifeguards 
+                ? 'text-green-400' 
+                : 'text-yellow-400'
+            }`} />
             <span className="text-white font-bold text-xs md:text-sm">
-              {booking.lifeguards}
+              {booking.lifeguards_assigned?.length || 0}/{booking.lifeguards}
             </span>
           </div>
-          <p className="text-white/60 text-xs">Guards</p>
+          <p className="text-white/60 text-xs">Assigned</p>
         </div>
         <div className="bg-white/5 rounded-lg p-2 md:p-3 text-center">
           <div className="flex items-center justify-center mb-1">

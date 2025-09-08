@@ -6,6 +6,8 @@ import {
   ClockIcon 
 } from "@heroicons/react/24/outline";
 import { SingaporeTime } from "@/lib/singapore-time";
+import AssignedLifeguards from "./AssignedLifeguards";
+import LifeguardAssignment from "./LifeguardAssignment";
 
 interface Booking {
   id: string;
@@ -26,10 +28,18 @@ interface Booking {
   payment_status: string;
   created_at: string;
   viewed_by_admin: boolean;
+  lifeguards_assigned?: string[];
+  assigned_lifeguards?: Array<{
+    id: string;
+    name: string;
+    contact_number: string;
+    is_active: boolean;
+  }>;
 }
 
 interface BookingDetailInfoProps {
   booking: Booking;
+  onRefresh?: () => void;
 }
 
 const serviceNames: Record<string, string> = {
@@ -40,7 +50,7 @@ const serviceNames: Record<string, string> = {
   others: "Custom Service",
 };
 
-export default function BookingDetailInfo({ booking }: BookingDetailInfoProps) {
+export default function BookingDetailInfo({ booking, onRefresh }: BookingDetailInfoProps) {
   const serviceName = serviceNames[booking.service_type] || booking.service_type;
   const fullService = booking.service_type === "others" && booking.custom_service 
     ? `${serviceName}: ${booking.custom_service}`
@@ -171,6 +181,21 @@ export default function BookingDetailInfo({ booking }: BookingDetailInfoProps) {
           </div>
         </div>
       )}
+
+      {/* Lifeguard Assignment */}
+      <div className="space-y-3 md:space-y-6">
+        <LifeguardAssignment
+          bookingId={booking.id}
+          requiredCount={booking.lifeguards}
+          currentAssignments={booking.assigned_lifeguards || []}
+          onAssignmentUpdate={() => onRefresh?.()}
+        />
+        
+        <AssignedLifeguards
+          lifeguards={booking.assigned_lifeguards || []}
+          requiredCount={booking.lifeguards}
+        />
+      </div>
 
       {/* Technical Details */}
       <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6">

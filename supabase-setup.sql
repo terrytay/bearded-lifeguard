@@ -64,6 +64,45 @@ CREATE POLICY "Admin can manage all profiles" ON profiles
 CREATE POLICY "Allow public read on profiles" ON profiles
   FOR SELECT USING (true);
 
+-- Create the lifeguards table
+CREATE TABLE IF NOT EXISTS lifeguards (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  contact_number VARCHAR NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create index for better search performance
+CREATE INDEX IF NOT EXISTS idx_lifeguards_name ON lifeguards(name);
+CREATE INDEX IF NOT EXISTS idx_lifeguards_active ON lifeguards(is_active);
+
+-- Update bookings table to add location and lifeguards_assigned columns if they don't exist
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS location TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS lifeguards_assigned UUID[] DEFAULT '{}';
+
+-- Enable RLS on lifeguards table
+ALTER TABLE lifeguards ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for lifeguards table (admin access only)
+CREATE POLICY "Admin can manage all lifeguards" ON lifeguards
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE profiles.id = auth.uid() 
+      AND profiles.role = 'admin'
+    )
+  );
+
+-- Insert some sample lifeguards for testing
+INSERT INTO lifeguards (name, contact_number) VALUES
+('John Doe', '+65 9123 4567'),
+('Jane Smith', '+65 9234 5678'),
+('Mike Johnson', '+65 9345 6789'),
+('Sarah Wilson', '+65 9456 7890')
+ON CONFLICT DO NOTHING;
+
 -- Create an admin user profile
 -- Replace 'your-user-uuid' with the actual UUID from Authentication > Users
 -- You can get this by creating a user first in the Supabase Dashboard

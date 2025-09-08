@@ -127,4 +127,32 @@ export class BookingService {
 
     return data;
   }
+
+  // Lifeguard assignment methods
+  static async assignLifeguardsToBooking(bookingId: string, lifeguardIds: string[]): Promise<Booking> {
+    return this.updateBooking(bookingId, { lifeguards_assigned: lifeguardIds });
+  }
+
+  static async getBookingWithLifeguards(id: string): Promise<Booking & { assigned_lifeguards?: any[] } | null> {
+    const booking = await this.getBookingById(id);
+    if (!booking || !booking.lifeguards_assigned || booking.lifeguards_assigned.length === 0) {
+      return booking;
+    }
+
+    // Get lifeguard details
+    const { data: lifeguards, error } = await supabaseAdmin
+      .from('lifeguards')
+      .select('*')
+      .in('id', booking.lifeguards_assigned);
+
+    if (error) {
+      console.error('Failed to fetch assigned lifeguards:', error);
+      return booking;
+    }
+
+    return {
+      ...booking,
+      assigned_lifeguards: lifeguards || [],
+    };
+  }
 }

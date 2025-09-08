@@ -50,7 +50,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const booking = await BookingService.getBookingById(id);
+    const booking = await BookingService.getBookingWithLifeguards(id);
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }

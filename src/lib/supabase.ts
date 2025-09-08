@@ -41,6 +41,16 @@ export interface Booking {
   created_at: string;
   updated_at: string;
   viewed_by_admin: boolean;
+  lifeguards_assigned?: string[];
+}
+
+export interface Lifeguard {
+  id: string;
+  name: string;
+  contact_number: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Database {
@@ -50,6 +60,11 @@ export interface Database {
         Row: Booking;
         Insert: Omit<Booking, "id" | "created_at" | "updated_at">;
         Update: Partial<Omit<Booking, "id" | "created_at">>;
+      };
+      lifeguards: {
+        Row: Lifeguard;
+        Insert: Omit<Lifeguard, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<Lifeguard, "id" | "created_at">>;
       };
     };
   };

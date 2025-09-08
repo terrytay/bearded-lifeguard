@@ -1,9 +1,12 @@
 import { ReactNode } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import {
   BellIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   MagnifyingGlassIcon,
+  CalendarDaysIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 interface DashboardLayoutProps {
@@ -19,6 +22,23 @@ export default function DashboardLayout({
   onSignOut,
   processing = false,
 }: DashboardLayoutProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const navigation = [
+    {
+      name: 'Bookings',
+      href: '/admin',
+      icon: CalendarDaysIcon,
+      current: pathname === '/admin',
+    },
+    {
+      name: 'Lifeguards',
+      href: '/admin/lifeguards',
+      icon: UserGroupIcon,
+      current: pathname.startsWith('/admin/lifeguards'),
+    },
+  ];
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900">
       {/* Processing overlay */}
@@ -35,10 +55,7 @@ export default function DashboardLayout({
       <header className="bg-white/10 backdrop-blur-lg border-b border-white/20 sticky top-0 z-40">
         <div className="px-3 py-3 md:px-6 md:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 md:space-x-4">
-              {/* <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg md:rounded-xl flex items-center justify-center">
-                <Bars3Icon className="w-4 h-4 md:w-6 md:h-6 text-white" />
-              </div> */}
+            <div className="flex items-center space-x-2 md:space-x-6">
               <div>
                 <h1 className="text-sm md:text-xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
                   Admin Dashboard
@@ -46,6 +63,54 @@ export default function DashboardLayout({
                 <p className="text-white/60 text-xs md:text-sm">
                   Bearded Lifeguard
                 </p>
+              </div>
+
+              {/* Navigation */}
+              <nav className="hidden md:flex space-x-1">
+                {navigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={() => router.push(item.href)}
+                      className={`flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        item.current
+                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                          : 'text-white/70 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{item.name}</span>
+                      {item.name === 'Bookings' && newBookingsCount > 0 && (
+                        <span className="bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                          {newBookingsCount}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Mobile Navigation */}
+              <div className="md:hidden">
+                <select
+                  value={pathname}
+                  onChange={(e) => router.push(e.target.value)}
+                  className="bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-white text-sm backdrop-blur-sm"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff50' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                    backgroundPosition: "right 0.5rem center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "1em 1em",
+                  }}
+                >
+                  {navigation.map((item) => (
+                    <option key={item.href} value={item.href} className="bg-slate-800">
+                      {item.name}
+                      {item.name === 'Bookings' && newBookingsCount > 0 && ` (${newBookingsCount})`}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

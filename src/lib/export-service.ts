@@ -110,18 +110,19 @@ export class ExportService {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
     const startDate = new Date(dateRange.startDate);
+    console.log(dateRange.startDate);
     const endDate = new Date(dateRange.endDate);
     const dateRangeText = `${startDate.toLocaleDateString(
-      "en-GB"
-    )} - ${endDate.toLocaleDateString("en-GB")}`;
+      "en-SG"
+    )} - ${endDate.toLocaleDateString("en-SG")}`;
     doc.text(`Report Period: ${dateRangeText}`, margin, margin + 70);
 
     // Generation timestamp
     doc.setFontSize(10);
     const generationDate =
-      new Date().toLocaleDateString("en-GB") +
+      new Date().toLocaleDateString("en-SG") +
       " " +
-      new Date().toLocaleTimeString("en-GB", { hour12: false });
+      new Date().toLocaleTimeString("en-SG", { hour12: false });
     doc.text(
       `Generated on: ${generationDate}`,
       pageWidth - margin - 150,

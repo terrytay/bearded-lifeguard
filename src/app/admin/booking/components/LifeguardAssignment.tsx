@@ -35,9 +35,7 @@ export default function LifeguardAssignment({
   const [availableLifeguards, setAvailableLifeguards] = useState<Lifeguard[]>(
     []
   );
-  const [filteredLifeguards, setFilteredLifeguards] = useState<Lifeguard[]>(
-    []
-  );
+  const [filteredLifeguards, setFilteredLifeguards] = useState<Lifeguard[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -58,9 +56,10 @@ export default function LifeguardAssignment({
       setFilteredLifeguards(availableLifeguards);
     } else {
       const query = searchQuery.toLowerCase();
-      const filtered = availableLifeguards.filter((lifeguard) =>
-        lifeguard.name.toLowerCase().includes(query) ||
-        lifeguard.contact_number.toLowerCase().includes(query)
+      const filtered = availableLifeguards.filter(
+        (lifeguard) =>
+          lifeguard.name.toLowerCase().includes(query) ||
+          lifeguard.contact_number.toLowerCase().includes(query)
       );
       setFilteredLifeguards(filtered);
     }
@@ -208,7 +207,7 @@ export default function LifeguardAssignment({
       {/* Assignment Modal */}
       {showModal &&
         createPortal(
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[999]">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-99">
             <div className="bg-gradient-to-br from-slate-900 to-indigo-900 border border-white/20 rounded-2xl md:rounded-3xl w-full max-w-2xl max-h-[90vh] shadow-2xl flex flex-col">
               {/* Header - Fixed */}
               <div className="p-6 md:p-8 border-b border-white/10 flex-shrink-0">
@@ -261,12 +260,14 @@ export default function LifeguardAssignment({
                   </div>
                   {selectedLifeguards.length > requiredCount && (
                     <p className="text-red-400 text-xs mt-1">
-                      Too many selected! Only {requiredCount} lifeguards are needed.
+                      Too many selected! Only {requiredCount} lifeguards are
+                      needed.
                     </p>
                   )}
                   {searchQuery && (
                     <p className="text-white/60 text-xs mt-1">
-                      Showing {filteredLifeguards.length} of {availableLifeguards.length} lifeguards
+                      Showing {filteredLifeguards.length} of{" "}
+                      {availableLifeguards.length} lifeguards
                     </p>
                   )}
                 </div>
@@ -277,15 +278,16 @@ export default function LifeguardAssignment({
                 {loading ? (
                   <div className="text-center py-8">
                     <div className="w-8 h-8 border-4 border-white/10 border-t-blue-400 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-white/70">Loading available lifeguards...</p>
+                    <p className="text-white/70">
+                      Loading available lifeguards...
+                    </p>
                   </div>
                 ) : filteredLifeguards.length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-white/70">
-                      {searchQuery 
-                        ? "No lifeguards found matching your search" 
-                        : "No lifeguards available for this time slot"
-                      }
+                      {searchQuery
+                        ? "No lifeguards found matching your search"
+                        : "No lifeguards available for this time slot"}
                     </p>
                     {searchQuery && (
                       <button
@@ -299,7 +301,9 @@ export default function LifeguardAssignment({
                 ) : (
                   <div className="space-y-2">
                     {filteredLifeguards.map((lifeguard) => {
-                      const isSelected = selectedLifeguards.includes(lifeguard.id);
+                      const isSelected = selectedLifeguards.includes(
+                        lifeguard.id
+                      );
                       const isCurrentlyAssigned = currentAssignments.some(
                         (lg) => lg.id === lifeguard.id
                       );
@@ -370,7 +374,9 @@ export default function LifeguardAssignment({
                   </button>
                   <button
                     onClick={handleSaveAssignments}
-                    disabled={processing || selectedLifeguards.length > requiredCount}
+                    disabled={
+                      processing || selectedLifeguards.length > requiredCount
+                    }
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {processing ? "Saving..." : "Save Assignment"}

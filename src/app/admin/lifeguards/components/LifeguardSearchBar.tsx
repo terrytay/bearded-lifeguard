@@ -25,7 +25,7 @@ export default function LifeguardSearchBar({
   isLoading,
 }: LifeguardSearchBarProps) {
   return (
-    <div className="sticky top-0 z-[999] p-3 md:p-6 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg border-b border-white/10">
+    <div className="sticky top-0 z-[50] p-3 md:p-6 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg border-b border-white/10">
       <div className="max-w-7xl mx-auto space-y-3 md:space-y-4">
         <div className="relative">
           <MagnifyingGlassIcon className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-white/50" />

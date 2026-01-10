@@ -22,6 +22,8 @@ export default function AssignedLifeguards({
 }: AssignedLifeguardsProps) {
   const assignedCount = lifeguards.length;
   const isComplete = assignedCount >= requiredCount;
+  const isOverAssigned = assignedCount > requiredCount;
+  const overAssignedCount = Math.max(0, assignedCount - requiredCount);
   
   return (
     <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">

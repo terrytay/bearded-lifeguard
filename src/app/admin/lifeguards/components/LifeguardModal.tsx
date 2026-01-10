@@ -14,9 +14,15 @@ interface LifeguardModalProps {
   lifeguard: Lifeguard | null;
   onClose: () => void;
   onSubmit: (data: { name: string; contact_number: string; is_active: boolean }) => void;
+  overlayClassName?: string;
 }
 
-export default function LifeguardModal({ lifeguard, onClose, onSubmit }: LifeguardModalProps) {
+export default function LifeguardModal({
+  lifeguard,
+  onClose,
+  onSubmit,
+  overlayClassName = "z-50",
+}: LifeguardModalProps) {
   const [name, setName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [isActive, setIsActive] = useState(true);
@@ -79,7 +85,7 @@ export default function LifeguardModal({ lifeguard, onClose, onSubmit }: Lifegua
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 ${overlayClassName}`}>
       <div className="bg-gradient-to-br from-slate-900 to-indigo-900 border border-white/20 rounded-2xl md:rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 md:mb-8">

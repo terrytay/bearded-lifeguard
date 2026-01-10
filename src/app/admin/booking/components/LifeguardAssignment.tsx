@@ -11,6 +11,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
+import LifeguardModal from "@/app/admin/lifeguards/components/LifeguardModal";
 
 interface Lifeguard {
   id: string;
@@ -41,6 +42,7 @@ export default function LifeguardAssignment({
   const [showModal, setShowModal] = useState(false);
   const [selectedLifeguards, setSelectedLifeguards] = useState<string[]>([]);
   const [processing, setProcessing] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     if (showModal) {
@@ -142,7 +144,67 @@ export default function LifeguardAssignment({
 
   const assignedCount = currentAssignments.length;
   const isComplete = assignedCount >= requiredCount;
-  const canAddMore = assignedCount < requiredCount;
+  const canSave = selectedLifeguards.length <= requiredCount;
+  const sortByName = (lifeguards: Lifeguard[]) =>
+    [...lifeguards].sort((a, b) => a.name.localeCompare(b.name));
+  const closeAssignmentModal = () => {
+    setShowModal(false);
+    setShowAddModal(false);
+  };
+
+  const handleCreateLifeguard = async (data: {
+    name: string;
+    contact_number: string;
+    is_active: boolean;
+  }) => {
+    try {
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const response = await fetch("/api/admin/lifeguards", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        alert(error.error || "Failed to create lifeguard");
+        return;
+      }
+
+      const lifeguard = (await response.json()) as Lifeguard;
+      setAvailableLifeguards((prev) => sortByName([...prev, lifeguard]));
+      const query = searchQuery.trim().toLowerCase();
+      setFilteredLifeguards((prev) => {
+        if (!query) {
+          return sortByName([...prev, lifeguard]);
+        }
+        const matches =
+          lifeguard.name.toLowerCase().includes(query) ||
+          lifeguard.contact_number.toLowerCase().includes(query);
+        return matches ? sortByName([...prev, lifeguard]) : prev;
+      });
+      setSelectedLifeguards((prev) => {
+        if (prev.includes(lifeguard.id)) {
+          return prev;
+        }
+        if (prev.length >= requiredCount) {
+          return [...prev.slice(1), lifeguard.id];
+        }
+        return [...prev, lifeguard.id];
+      });
+      setShowAddModal(false);
+    } catch (error) {
+      console.error("Error creating lifeguard:", error);
+      alert("Failed to create lifeguard");
+    }
+  };
 
   return (
     <>
@@ -215,12 +277,12 @@ export default function LifeguardAssignment({
                   <h2 className="text-xl md:text-2xl font-bold text-white">
                     Assign Lifeguards
                   </h2>
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
-                  >
-                    <XMarkIcon className="w-5 h-5 md:w-6 md:h-6" />
-                  </button>
+          <button
+            onClick={closeAssignmentModal}
+            className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
+          >
+            <XMarkIcon className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
                 </div>
 
                 {/* Search Input */}
@@ -243,6 +305,16 @@ export default function LifeguardAssignment({
                   )}
                 </div>
 
+                <div className="mb-4">
+                  <button
+                    onClick={() => setShowAddModal(true)}
+                    className="w-full px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl transition-all duration-200 font-semibold text-sm flex items-center justify-center space-x-2"
+                  >
+                    <PlusIcon className="w-4 h-4" />
+                    <span>Add New Lifeguard</span>
+                  </button>
+                </div>
+
                 <div className="p-3 bg-white/5 rounded-xl">
                   <div className="flex items-center justify-between text-sm md:text-base">
                     <span className="text-white/70">Selection:</span>
@@ -253,17 +325,11 @@ export default function LifeguardAssignment({
                           : selectedLifeguards.length > requiredCount
                           ? "text-red-400"
                           : "text-yellow-400"
-                      }`}
+                  }`}
                     >
                       {selectedLifeguards.length} / {requiredCount} selected
                     </span>
                   </div>
-                  {selectedLifeguards.length > requiredCount && (
-                    <p className="text-red-400 text-xs mt-1">
-                      Too many selected! Only {requiredCount} lifeguards are
-                      needed.
-                    </p>
-                  )}
                   {searchQuery && (
                     <p className="text-white/60 text-xs mt-1">
                       Showing {filteredLifeguards.length} of{" "}
@@ -366,7 +432,7 @@ export default function LifeguardAssignment({
               <div className="p-6 md:p-8 border-t border-white/10 flex-shrink-0">
                 <div className="flex space-x-4">
                   <button
-                    onClick={() => setShowModal(false)}
+                    onClick={closeAssignmentModal}
                     className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl transition-all duration-200 font-semibold text-sm md:text-base"
                     disabled={processing}
                   >
@@ -374,9 +440,7 @@ export default function LifeguardAssignment({
                   </button>
                   <button
                     onClick={handleSaveAssignments}
-                    disabled={
-                      processing || selectedLifeguards.length > requiredCount
-                    }
+                    disabled={processing || !canSave}
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {processing ? "Saving..." : "Save Assignment"}
@@ -387,6 +451,15 @@ export default function LifeguardAssignment({
           </div>,
           document.body
         )}
+
+      {showAddModal && (
+        <LifeguardModal
+          lifeguard={null}
+          onClose={() => setShowAddModal(false)}
+          onSubmit={handleCreateLifeguard}
+          overlayClassName="z-[120]"
+        />
+      )}
     </>
   );
 }

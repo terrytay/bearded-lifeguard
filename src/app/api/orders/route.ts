@@ -15,8 +15,9 @@ function computeAmount(hours: number) {
 }
 function lastMinuteMultiplier(noticeDays: number) {
   if (noticeDays < 1) return 2.0; // <1 day = +100%
-  if (noticeDays < 2) return 1.4; // <2 days = +40%
-  if (noticeDays < 7) return 1.2; // <1 week = +20%
+  if (noticeDays < 3) return 1.6; // <3 days = +60%
+  if (noticeDays < 7) return 1.4; // <1 week = +40%
+  if (noticeDays < 14) return 1.2; // <2 week = +20%
   return 1.0;
 }
 

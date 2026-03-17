@@ -48,15 +48,17 @@ function computeBase(hours: number) {
 // Match server thresholds
 function lastMinuteMultiplier(days: number) {
   if (days < 1) return 2.0; // +100%
-  if (days < 2) return 1.4; // +40%
-  if (days < 7) return 1.2; // +20%
+  if (days < 3) return 1.6; // +60%
+  if (days < 7) return 1.4; // +40%
+  if (days < 14) return 1.2; // +20%
   return 1.0; // standard
 }
 function lastMinuteLabel(days: number | null) {
   if (days == null) return "-";
   if (days < 1) return "Less than 1 day (+100%)";
-  if (days < 2) return "Less than 2 days (+40%)";
-  if (days < 7) return "Less than 1 week (+20%)";
+  if (days < 3) return "Less than 3 days (+60%)";
+  if (days < 7) return "Less than 1 week (+40%)";
+  if (days < 14) return "Less than 2 weeks (+20%)";
   return "Standard rate";
 }
 function formatCurrency(n: number) {
@@ -461,11 +463,10 @@ export default function BookingPage() {
                         value={serviceType}
                         onChange={(e) => setServiceType(e.target.value)}
                         onBlur={() => markTouched("serviceType")}
-                        className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white ${
-                          touched.serviceType && !serviceOk
-                            ? "border-red-300 focus:border-red-500"
-                            : "border-gray-200 focus:border-[#FF6633] hover:border-gray-300"
-                        }`}
+                        className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white ${touched.serviceType && !serviceOk
+                          ? "border-red-300 focus:border-red-500"
+                          : "border-gray-200 focus:border-[#FF6633] hover:border-gray-300"
+                          }`}
                       >
                         <option value="">Select service type...</option>
                         <option value="pools">Pool Lifeguarding</option>
@@ -487,13 +488,12 @@ export default function BookingPage() {
                             onBlur={() => markTouched("serviceType")}
                             placeholder="Please describe your specific lifeguard service needs..."
                             rows={3}
-                            className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white placeholder:text-gray-400 resize-y ${
-                              touched.serviceType &&
+                            className={`w-full rounded-xl border-2 px-4 py-3 text-base transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 bg-white placeholder:text-gray-400 resize-y ${touched.serviceType &&
                               serviceType === "others" &&
                               customService.trim().length < 3
-                                ? "border-red-300 focus:border-red-500"
-                                : "border-gray-200 focus:border-[#FF6633] hover:border-gray-300"
-                            }`}
+                              ? "border-red-300 focus:border-red-500"
+                              : "border-gray-200 focus:border-[#FF6633] hover:border-gray-300"
+                              }`}
                           />
                           {touched.serviceType &&
                             serviceType === "others" &&
@@ -650,11 +650,10 @@ export default function BookingPage() {
                     onClick={onConfirm}
                     disabled={!formOk}
                     aria-busy={creating}
-                    className={`flex-1 w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform ${
-                      formOk
-                        ? "bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
-                        : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    }`}
+                    className={`flex-1 w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 transform ${formOk
+                      ? "bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      }`}
                   >
                     {creating ? (
                       <>
@@ -685,11 +684,10 @@ export default function BookingPage() {
                       Booking Summary
                     </h2>
                     <span
-                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
-                        lmMult > 1
-                          ? "bg-orange-100 text-orange-700"
-                          : "bg-green-100 text-green-700"
-                      }`}
+                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${lmMult > 1
+                        ? "bg-orange-100 text-orange-700"
+                        : "bg-green-100 text-green-700"
+                        }`}
                     >
                       {lmMult > 1 ? (
                         <>
@@ -804,9 +802,8 @@ export default function BookingPage() {
                                 Surcharge (+{lmMultPercentage.toFixed(0)}%):
                               </span>
                               <span
-                                className={`font-medium ${
-                                  surcharge > 0 ? "text-orange-600" : ""
-                                }`}
+                                className={`font-medium ${surcharge > 0 ? "text-orange-600" : ""
+                                  }`}
                               >
                                 {formatCurrency(surcharge)}
                               </span>
@@ -887,9 +884,8 @@ export default function BookingPage() {
                 onClick={onPaid}
                 disabled={paying}
                 aria-busy={paying}
-                className={`flex-1 px-4 py-3 bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white rounded-xl font-semibold transition-all ${
-                  paying ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
-                }`}
+                className={`flex-1 px-4 py-3 bg-gradient-to-r from-[#FF6633] to-[#e55a2b] text-white rounded-xl font-semibold transition-all ${paying ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"
+                  }`}
               >
                 {paying ? (
                   <>

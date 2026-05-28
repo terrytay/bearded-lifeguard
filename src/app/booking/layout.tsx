@@ -3,7 +3,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Book Lifeguard Services Singapore - Instant Online Booking | Professional Water Safety",
   description:
-    "Book certified lifeguards online in Singapore. Professional water safety for swimming pools, events, pool parties & open water. Instant booking, transparent pricing, available island-wide. Starting from $21/hour.",
+    "Book certified lifeguards online in Singapore. Professional water safety for swimming pools, events, pool parties & open water. Instant booking, transparent pricing, available island-wide. Starting from $25/hour.",
   keywords: [
     "book lifeguard singapore",
     "hire lifeguard sg", 
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     url: "https://sglifeguardservices.com/booking",
     title: "Book Lifeguard Services Singapore - Instant Online Booking",
     description:
-      "Professional certified lifeguards available for immediate booking in Singapore. Swimming pools, events, parties & open water safety. Starting from $21/hour.",
+      "Professional certified lifeguards available for immediate booking in Singapore. Swimming pools, events, parties & open water safety. Starting from $25/hour.",
     siteName: "Bearded Lifeguard Singapore",
     images: [
       {

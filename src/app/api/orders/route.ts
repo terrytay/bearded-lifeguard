@@ -6,20 +6,12 @@ import { PaynowQR } from "../../../lib/paynow";
 import { EmailService } from "../../../lib/email-service";
 import { BookingService } from "../../../lib/booking-service";
 import { SingaporeTime } from "../../../lib/singapore-time";
-
-function computeAmount(hours: number) {
-  if (hours < 4) return hours * 50;
-  if (hours === 4) return 4 * 30;
-  if (hours === 5) return 5 * 25;
-  return hours * 21; // >= 6
-}
-function lastMinuteMultiplier(noticeDays: number) {
-  if (noticeDays < 1) return 2.0; // <1 day = +100%
-  if (noticeDays < 3) return 1.6; // <3 days = +60%
-  if (noticeDays < 7) return 1.4; // <1 week = +40%
-  if (noticeDays < 14) return 1.2; // <2 week = +20%
-  return 1.0;
-}
+import {
+  computeBaseSubtotal,
+  lastMinuteMultiplier,
+  resolveRateCategory,
+  type RateCategory,
+} from "../../../lib/pricing";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -33,13 +25,22 @@ export async function POST(req: Request) {
     lifeguards = 1, // number of lifeguards required
     serviceType = "", // service type selection
     customService = "", // custom service description
+    venueType, // "swimming-pool" | "open-water" — required when serviceType is events/others
     location = "", // event location
     remarks = "", // optional remarks from user
     startISO,
     endISO
   } = body;
 
-  const base = computeAmount(Number(hours));
+  const category = resolveRateCategory(serviceType, venueType as RateCategory | undefined);
+  if (!category) {
+    return NextResponse.json(
+      { error: "Missing or invalid venueType for the selected serviceType" },
+      { status: 400 }
+    );
+  }
+
+  const base = computeBaseSubtotal(Number(hours), category);
   const subtotal = base * lastMinuteMultiplier(Number(noticeDays));
   const total = subtotal * Number(lifeguards);
 
@@ -85,6 +86,7 @@ export async function POST(req: Request) {
       lifeguards: Number(lifeguards),
       service_type: serviceType,
       custom_service: customService || null,
+      venue_type: category,
       location: location || null,
       remarks: remarks || null,
       amount: total,
@@ -108,6 +110,7 @@ export async function POST(req: Request) {
     lifeguards,
     serviceType,
     customService,
+    venueType: category,
     remarks,
     paynow: { payload, qrDataUrl },
   });

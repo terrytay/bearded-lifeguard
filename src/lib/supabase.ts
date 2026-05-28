@@ -32,7 +32,8 @@ export interface Booking {
   hours: number;
   lifeguards: number;
   service_type: string;
-  custom_service?: string;
+  custom_service?: string | null;
+  venue_type?: "swimming-pool" | "open-water" | null;
   remarks?: string;
   location?: string;
   amount: number;

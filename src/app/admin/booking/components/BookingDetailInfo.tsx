@@ -21,6 +21,7 @@ interface Booking {
   lifeguards: number;
   service_type: string;
   custom_service?: string;
+  venue_type?: "swimming-pool" | "open-water" | null;
   location?: string;
   remarks?: string;
   amount: number;
@@ -112,8 +113,13 @@ export default function BookingDetailInfo({ booking, onRefresh }: BookingDetailI
           <div>
             <label className="text-white/70 text-xs md:text-sm font-medium">Service Type</label>
             <p className="text-white font-bold text-sm md:text-xl mt-0.5 md:mt-1">{fullService}</p>
+            {booking.venue_type && (
+              <p className="text-white/70 text-xs md:text-sm mt-0.5 md:mt-1">
+                Rate category: {booking.venue_type === "swimming-pool" ? "Swimming pool" : "Open water / beach"}
+              </p>
+            )}
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
             <div>
               <label className="text-white/70 text-xs md:text-sm font-medium flex items-center">

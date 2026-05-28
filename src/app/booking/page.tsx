@@ -20,6 +20,15 @@ import { Input } from "@/components/ui/Input";
 import { DateTimePicker } from "@/components/ui/DateTimePicker";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { SingaporeTime } from "@/lib/singapore-time";
+import {
+  computeBaseRate,
+  computeBaseSubtotal,
+  lastMinuteMultiplier,
+  lastMinuteLabel,
+  rateCategoryLabel,
+  resolveRateCategory,
+  type RateCategory,
+} from "@/lib/pricing";
 import Modal from "./components/Modal";
 
 type OrderResponse = {
@@ -35,32 +44,7 @@ type OrderResponse = {
   hours: number;
 };
 
-// ---------- Pricing helpers (client preview only; server is source-of-truth)
-function computeRate(hours: number) {
-  if (hours < 4) return 50;
-  if (hours === 4) return 30;
-  if (hours === 5) return 25;
-  return 21; // >= 6 hrs
-}
-function computeBase(hours: number) {
-  return computeRate(hours) * hours;
-}
-// Match server thresholds
-function lastMinuteMultiplier(days: number) {
-  if (days < 1) return 2.0; // +100%
-  if (days < 3) return 1.6; // +60%
-  if (days < 7) return 1.4; // +40%
-  if (days < 14) return 1.2; // +20%
-  return 1.0; // standard
-}
-function lastMinuteLabel(days: number | null) {
-  if (days == null) return "-";
-  if (days < 1) return "Less than 1 day (+100%)";
-  if (days < 3) return "Less than 3 days (+60%)";
-  if (days < 7) return "Less than 1 week (+40%)";
-  if (days < 14) return "Less than 2 weeks (+20%)";
-  return "Standard rate";
-}
+// ---------- UI helpers (pricing logic lives in @/lib/pricing — single source of truth)
 function formatCurrency(n: number) {
   return new Intl.NumberFormat("en-SG", {
     style: "currency",
@@ -96,6 +80,7 @@ export default function BookingPage() {
   const [lifeguards, setLifeguards] = useState(1); // number of lifeguards needed
   const [serviceType, setServiceType] = useState(""); // service type selection
   const [customService, setCustomService] = useState(""); // custom service description
+  const [venueType, setVenueType] = useState<RateCategory | "">(""); // only used for events/others; auto-derived otherwise
   const [location, setLocation] = useState(""); // event location
   const [remarks, setRemarks] = useState(""); // optional remarks from user
 
@@ -162,8 +147,19 @@ export default function BookingPage() {
     () => Math.max(1, Math.ceil(diffHoursRaw)),
     [diffHoursRaw]
   );
-  const rate = useMemo(() => computeRate(hours), [hours]);
-  const baseSubtotal = useMemo(() => computeBase(hours), [hours]); // per lifeguard
+  const needsVenuePick = serviceType === "events" || serviceType === "others";
+  const rateCategory = useMemo<RateCategory | null>(
+    () => resolveRateCategory(serviceType, venueType || undefined),
+    [serviceType, venueType]
+  );
+  const rate = useMemo(
+    () => (rateCategory ? computeBaseRate(hours, rateCategory) : 0),
+    [hours, rateCategory]
+  );
+  const baseSubtotal = useMemo(
+    () => (rateCategory ? computeBaseSubtotal(hours, rateCategory) : 0),
+    [hours, rateCategory]
+  ); // per lifeguard
   const subtotal = useMemo(
     () => baseSubtotal * lifeguards,
     [baseSubtotal, lifeguards]
@@ -182,11 +178,10 @@ export default function BookingPage() {
     return `Rounded up from ${diffHoursRaw.toFixed(2)}h to ${rounded}h`;
   }, [timeOk, diffHoursRaw]);
   const tierLabel = useMemo(() => {
-    if (hours < 4) return "< 4 hrs tier";
-    if (hours === 4) return "4-hr package";
-    if (hours === 5) return "5-hr package";
-    return "6+ hrs rate";
-  }, [hours]);
+    if (!rateCategory) return "-";
+    const tierName = hours >= 6 ? "6+ hrs" : `${hours} hr${hours > 1 ? "s" : ""}`;
+    return `${tierName} (${rateCategoryLabel(rateCategory)})`;
+  }, [hours, rateCategory]);
 
   // lead time & last-minute (Singapore time)
   const noticeDays = useMemo(() => {
@@ -212,8 +207,9 @@ export default function BookingPage() {
   );
 
   const serviceOk =
-    serviceType &&
-    (serviceType !== "others" || customService.trim().length >= 3);
+    !!serviceType &&
+    (serviceType !== "others" || customService.trim().length >= 3) &&
+    (!needsVenuePick || !!venueType);
   const formOk =
     nameOk &&
     phoneOk &&
@@ -222,7 +218,7 @@ export default function BookingPage() {
     timeOk &&
     serviceOk &&
     !creating;
-  const showSummary = timeOk;
+  const showSummary = timeOk && !!rateCategory;
 
   function markTouched(k: string) {
     setTouched((t) => ({ ...t, [k]: true }));
@@ -295,6 +291,7 @@ export default function BookingPage() {
         start: true,
         end: true,
         serviceType: true,
+        venueType: true,
       });
       return;
     }
@@ -315,6 +312,7 @@ export default function BookingPage() {
         lifeguards,
         serviceType,
         customService: serviceType === "others" ? customService.trim() : "",
+        venueType: rateCategory ?? undefined,
         location: location.trim(),
         remarks: remarks.trim(),
       };
@@ -508,6 +506,48 @@ export default function BookingPage() {
                     </div>
                   </FormField>
                 </div>
+
+                {/* Venue Type (only when serviceType requires user disambiguation) */}
+                {needsVenuePick && (
+                  <div className="mb-8">
+                    <FormField
+                      label="Venue Type"
+                      required
+                      description="Which environment best describes your venue? Rates differ between pool and open water."
+                      error={
+                        touched.venueType && !venueType
+                          ? "Please select a venue type"
+                          : undefined
+                      }
+                    >
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {([
+                          { value: "swimming-pool", label: "Swimming pool" },
+                          { value: "open-water", label: "Open water / beach" },
+                        ] as const).map((opt) => {
+                          const selected = venueType === opt.value;
+                          return (
+                            <button
+                              type="button"
+                              key={opt.value}
+                              onClick={() => {
+                                setVenueType(opt.value);
+                                markTouched("venueType");
+                              }}
+                              className={`rounded-xl border-2 px-4 py-3 text-base text-left transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6633]/10 ${selected
+                                ? "border-[#FF6633] bg-orange-50 text-[#20334F]"
+                                : "border-gray-200 bg-white hover:border-gray-300 text-gray-700"
+                                }`}
+                              aria-pressed={selected}
+                            >
+                              {opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </FormField>
+                  </div>
+                )}
 
                 {/* Location */}
                 <div className="mb-8">

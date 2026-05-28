@@ -82,6 +82,11 @@ CREATE INDEX IF NOT EXISTS idx_lifeguards_active ON lifeguards(is_active);
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS location TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS lifeguards_assigned UUID[] DEFAULT '{}';
 
+-- Add venue_type (rate category) to bookings: 'swimming-pool' | 'open-water'.
+-- Nullable for back-compat with existing rows; new rows always populate it.
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS venue_type TEXT
+  CHECK (venue_type IN ('swimming-pool', 'open-water'));
+
 -- Enable RLS on lifeguards table
 ALTER TABLE lifeguards ENABLE ROW LEVEL SECURITY;
 

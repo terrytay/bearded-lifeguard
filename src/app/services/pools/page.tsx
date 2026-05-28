@@ -358,7 +358,7 @@ export default function PoolsPage() {
 
           <div className="mt-8 text-white/80 text-sm">
             <p>
-              • Hourly rates from $21/hour • Same-day availability •
+              • Hourly rates from $25/hour • Same-day availability •
               Professional certified lifeguards
             </p>
           </div>

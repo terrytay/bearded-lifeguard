@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../lib/supabase/server";
 import { SingaporeTime } from "../../../../lib/singapore-time";
+import {
+  normalizeReportRange,
+  computeProration,
+  buildProrationNote,
+} from "../../../../lib/report-types";
 
 // Helper function to verify admin access
 async function verifyAdmin(request: Request): Promise<boolean> {
@@ -73,18 +78,28 @@ export async function GET(request: Request) {
 
 async function generateBookingsReport(supabase: any, startDate: string, endDate: string, fields: string[]) {
   try {
+    // Normalize the requested range to naive Singapore-local, end-of-day inclusive
+    const { rangeStart, rangeEnd } = normalizeReportRange(startDate, endDate);
+
     // Build the select query based on requested fields (excluding computed fields)
-    const selectFields = fields.filter(field => 
-      !['lifeguards_assigned_count', 'revenue_per_hour', 'service_display_name', 'actual_revenue_only', 'is_revenue_generating', 'revenue_status', 'days_since_booking'].includes(field)
-    );
-    
-    // Base query
+    const computedFields = [
+      'lifeguards_assigned_count', 'revenue_per_hour', 'service_display_name',
+      'actual_revenue_only', 'is_revenue_generating', 'revenue_status', 'days_since_booking',
+      'hours_in_period', 'amount_in_period', 'is_prorated', 'proration_note',
+    ];
+    const selectFields = fields.filter(field => !computedFields.includes(field));
+
+    // Columns always needed for proration / breakdown / revenue logic, even if not displayed
+    const requiredColumns = ['start_datetime', 'end_datetime', 'hours', 'amount', 'status', 'payment_status', 'created_at'];
+    const dbColumns = Array.from(new Set([...selectFields, ...requiredColumns]));
+
+    // Base query: bookings whose SERVICE WINDOW overlaps the selected period
     let query = supabase
       .from('bookings')
-      .select(selectFields.join(', '), { count: 'exact' })
-      .gte('created_at', startDate)
-      .lte('created_at', endDate)
-      .order('created_at', { ascending: false });
+      .select(dbColumns.join(', '), { count: 'exact' })
+      .lte('start_datetime', rangeEnd)
+      .gte('end_datetime', rangeStart)
+      .order('start_datetime', { ascending: true });
 
     const { data: bookings, error, count } = await query;
 
@@ -152,6 +167,25 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
         result.days_since_booking = daysSinceBooking;
       }
 
+      // Payroll: prorate billed hours/amount to the selected period (overlap-based)
+      const proration = computeProration(booking, rangeStart, rangeEnd);
+
+      if (fields.includes('hours_in_period')) {
+        result.hours_in_period = Number(proration.hoursInPeriod.toFixed(2));
+      }
+
+      if (fields.includes('amount_in_period')) {
+        result.amount_in_period = Number(proration.amountInPeriod.toFixed(2));
+      }
+
+      if (fields.includes('is_prorated')) {
+        result.is_prorated = proration.isProrated;
+      }
+
+      if (fields.includes('proration_note')) {
+        result.proration_note = buildProrationNote(booking, rangeStart, rangeEnd, proration);
+      }
+
       return result;
     }));
 
@@ -194,6 +228,22 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
 
     const totalHours = bookings.reduce((sum: number, booking: any) => sum + (booking.hours || 0), 0);
 
+    // Payroll breakdown: prorated hours/amount split by cancelled vs non-cancelled
+    let nonCancelledCount = 0, nonCancelledProratedHours = 0, nonCancelledProratedAmount = 0;
+    let cancelledCount = 0, cancelledProratedHours = 0, cancelledProratedAmount = 0;
+    for (const booking of bookings) {
+      const p = computeProration(booking, rangeStart, rangeEnd);
+      if (booking.status === 'cancelled') {
+        cancelledCount += 1;
+        cancelledProratedHours += p.hoursInPeriod;
+        cancelledProratedAmount += p.amountInPeriod;
+      } else {
+        nonCancelledCount += 1;
+        nonCancelledProratedHours += p.hoursInPeriod;
+        nonCancelledProratedAmount += p.amountInPeriod;
+      }
+    }
+
     const summary = {
       totalRecords: count || 0,
       dateRange: { startDate, endDate },
@@ -208,6 +258,14 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
       revenueHealthStatus,
       atRiskRevenue,
       totalHours,
+      // Payroll: cancelled vs non-cancelled prorated breakdown
+      nonCancelledCount,
+      nonCancelledProratedHours: Number(nonCancelledProratedHours.toFixed(2)),
+      nonCancelledProratedAmount: Number(nonCancelledProratedAmount.toFixed(2)),
+      cancelledCount,
+      cancelledProratedHours: Number(cancelledProratedHours.toFixed(2)),
+      cancelledProratedAmount: Number(cancelledProratedAmount.toFixed(2)),
+      totalProratedHours: Number(nonCancelledProratedHours.toFixed(2)),
       // Legacy fields (for compatibility)
       totalRevenue: actualRevenue,
       averageBookingValue: averagePaidBookingValue,
@@ -227,18 +285,19 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
 
 async function generateLifeguardsReport(supabase: any, startDate: string, endDate: string, fields: string[]) {
   try {
+    const { rangeStart, rangeEnd } = normalizeReportRange(startDate, endDate);
+
     // Build the select query based on requested fields (excluding computed fields)
-    const selectFields = fields.filter(field => 
-      !['total_assignments', 'active_assignments', 'total_revenue_generated', 'avg_assignment_duration'].includes(field)
-    );
-    
-    // Base query for lifeguards
+    const computedFields = ['total_assignments', 'active_assignments', 'total_revenue_generated', 'avg_assignment_duration', 'total_prorated_hours', 'cancelled_assignments'];
+    const selectFields = fields.filter(field => !computedFields.includes(field));
+    const dbColumns = Array.from(new Set([...selectFields, 'id', 'is_active', 'name']));
+
+    // Base query: list ALL active lifeguards (not filtered by record-creation date)
     let query = supabase
       .from('lifeguards')
-      .select(selectFields.join(', '), { count: 'exact' })
-      .gte('created_at', startDate)
-      .lte('created_at', endDate)
-      .order('created_at', { ascending: false });
+      .select(dbColumns.join(', '), { count: 'exact' })
+      .eq('is_active', true)
+      .order('name', { ascending: true });
 
     const { data: lifeguards, error, count } = await query;
 
@@ -247,68 +306,97 @@ async function generateLifeguardsReport(supabase: any, startDate: string, endDat
       throw error;
     }
 
+    // Fetch all bookings whose SERVICE WINDOW overlaps the period once (avoids N+1 per lifeguard)
+    const needsAssignmentData = fields.some(f => computedFields.includes(f));
+    let periodBookings: any[] = [];
+    if (needsAssignmentData) {
+      const { data: pb } = await supabase
+        .from('bookings')
+        .select('id, amount, hours, status, lifeguards_assigned, start_datetime, end_datetime')
+        .lte('start_datetime', rangeEnd)
+        .gte('end_datetime', rangeStart);
+      periodBookings = pb || [];
+    }
+
     // Process computed fields if requested
-    const processedData = await Promise.all(lifeguards.map(async (lifeguard: any) => {
+    const processedData = lifeguards.map((lifeguard: any) => {
       const result = { ...lifeguard };
 
-      // Get assignment data for computed fields
-      if (fields.some(f => ['total_assignments', 'active_assignments', 'total_revenue_generated', 'avg_assignment_duration'].includes(f))) {
-        const { data: bookings } = await supabase
-          .from('bookings')
-          .select('id, amount, hours, status, lifeguards_assigned')
-          .gte('created_at', startDate)
-          .lte('created_at', endDate);
-
-        // Filter bookings where this lifeguard is assigned
-        const assignedBookings = bookings?.filter((booking: any) => 
+      if (needsAssignmentData) {
+        // Overlapping bookings assigned to this lifeguard
+        const assignedBookings = periodBookings.filter((booking: any) =>
           booking.lifeguards_assigned?.includes(lifeguard.id)
-        ) || [];
+        );
+        const nonCancelled = assignedBookings.filter((b: any) => b.status !== 'cancelled');
 
         if (fields.includes('total_assignments')) {
           result.total_assignments = assignedBookings.length;
         }
 
         if (fields.includes('active_assignments')) {
-          result.active_assignments = assignedBookings.filter((booking: any) => 
+          result.active_assignments = assignedBookings.filter((booking: any) =>
             ['confirmed', 'paid'].includes(booking.status)
           ).length;
         }
 
+        if (fields.includes('cancelled_assignments')) {
+          result.cancelled_assignments = assignedBookings.filter((b: any) => b.status === 'cancelled').length;
+        }
+
         if (fields.includes('total_revenue_generated')) {
-          result.total_revenue_generated = assignedBookings.reduce((sum: number, booking: any) => 
+          result.total_revenue_generated = nonCancelled.reduce((sum: number, booking: any) =>
             sum + (booking.amount || 0), 0
           );
         }
 
+        // Prorated in-period hours from non-cancelled assignments (payroll)
+        const proratedHours = nonCancelled.reduce((sum: number, booking: any) =>
+          sum + computeProration(booking, rangeStart, rangeEnd).hoursInPeriod, 0
+        );
+
+        if (fields.includes('total_prorated_hours')) {
+          result.total_prorated_hours = Number(proratedHours.toFixed(2));
+        }
+
         if (fields.includes('avg_assignment_duration')) {
-          const totalHours = assignedBookings.reduce((sum: number, booking: any) => 
-            sum + (booking.hours || 0), 0
-          );
-          result.avg_assignment_duration = assignedBookings.length > 0 
-            ? totalHours / assignedBookings.length 
+          result.avg_assignment_duration = nonCancelled.length > 0
+            ? Number((proratedHours / nonCancelled.length).toFixed(2))
             : 0;
         }
       }
 
       return result;
-    }));
+    });
 
     // Calculate summary statistics
     const totalActiveLifeguards = lifeguards.filter((lg: any) => lg.is_active).length;
-    
-    // Get total assignments across all lifeguards in the date range
-    const { data: allBookings } = await supabase
-      .from('bookings')
-      .select('lifeguards_assigned')
-      .gte('created_at', startDate)
-      .lte('created_at', endDate);
 
-    const totalAssignments = allBookings?.reduce((sum: number, booking: any) => 
+    // Source for assignment/payroll totals: reuse the pre-fetched overlapping bookings
+    let assignmentSource = periodBookings;
+    if (!needsAssignmentData) {
+      const { data: pb } = await supabase
+        .from('bookings')
+        .select('lifeguards_assigned, status, hours, amount, start_datetime, end_datetime')
+        .lte('start_datetime', rangeEnd)
+        .gte('end_datetime', rangeStart);
+      assignmentSource = pb || [];
+    }
+
+    const totalAssignments = assignmentSource.reduce((sum: number, booking: any) =>
       sum + (booking.lifeguards_assigned?.length || 0), 0
-    ) || 0;
+    );
 
-    const averageAssignmentsPerLifeguard = lifeguards.length > 0 
-      ? totalAssignments / lifeguards.length 
+    // Payroll: total prorated hours across non-cancelled assignments (per assigned lifeguard)
+    let totalProratedHours = 0;
+    for (const booking of assignmentSource) {
+      if (booking.status === 'cancelled') continue;
+      const assignedCount = booking.lifeguards_assigned?.length || 0;
+      if (assignedCount === 0) continue;
+      totalProratedHours += computeProration(booking, rangeStart, rangeEnd).hoursInPeriod * assignedCount;
+    }
+
+    const averageAssignmentsPerLifeguard = lifeguards.length > 0
+      ? totalAssignments / lifeguards.length
       : 0;
 
     const summary = {
@@ -317,6 +405,7 @@ async function generateLifeguardsReport(supabase: any, startDate: string, endDat
       totalActiveLifeguards,
       totalAssignments,
       averageAssignmentsPerLifeguard,
+      totalProratedHours: Number(totalProratedHours.toFixed(2)),
     };
 
     return NextResponse.json({

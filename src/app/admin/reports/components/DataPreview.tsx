@@ -156,28 +156,57 @@ export default function DataPreview({
 
               {/* Table Body */}
               <tbody className="divide-y divide-white/5">
-                {previewData.map((row, index) => (
+                {previewData.map((row, index) => {
+                  const prorated = Boolean((row as any).is_prorated);
+                  const cancelled = (row as any).status === 'cancelled';
+                  return (
                   <tr
                     key={index}
                     className={`hover:bg-white/5 transition-all duration-200 ${
-                      index % 2 === 0 ? 'bg-white/2' : ''
+                      cancelled
+                        ? 'bg-red-500/10'
+                        : prorated
+                        ? 'bg-amber-500/10'
+                        : index % 2 === 0
+                        ? 'bg-white/2'
+                        : ''
                     }`}
                   >
-                    {selectedFields.map((field) => (
-                      <td
-                        key={field.key}
-                        className="px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm text-white/90"
-                      >
-                        <div className="truncate max-w-[200px]" title={String(row[field.key as keyof typeof row] || '')}>
-                          {formatCellValue(
-                            row[field.key as keyof typeof row],
-                            getFieldType(field.key)
-                          )}
-                        </div>
-                      </td>
-                    ))}
+                    {selectedFields.map((field) => {
+                      const cellValue = row[field.key as keyof typeof row];
+
+                      // Make the prorated indicator a clear badge
+                      if (field.key === 'is_prorated') {
+                        return (
+                          <td key={field.key} className="px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm">
+                            {cellValue ? (
+                              <span className="px-2 py-0.5 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 whitespace-nowrap">
+                                Prorated
+                              </span>
+                            ) : (
+                              <span className="text-white/40 text-xs">Full</span>
+                            )}
+                          </td>
+                        );
+                      }
+
+                      return (
+                        <td
+                          key={field.key}
+                          className="px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm text-white/90"
+                        >
+                          <div
+                            className={`${field.key === 'proration_note' ? 'max-w-[320px]' : 'truncate max-w-[200px]'}`}
+                            title={String(cellValue ?? '')}
+                          >
+                            {formatCellValue(cellValue, getFieldType(field.key))}
+                          </div>
+                        </td>
+                      );
+                    })}
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

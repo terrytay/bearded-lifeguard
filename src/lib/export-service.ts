@@ -110,7 +110,6 @@ export class ExportService {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
     const startDate = new Date(dateRange.startDate);
-    console.log(dateRange.startDate);
     const endDate = new Date(dateRange.endDate);
     const dateRangeText = `${startDate.toLocaleDateString(
       "en-SG"
@@ -217,6 +216,41 @@ export class ExportService {
         );
       });
       currentY += 40;
+
+      // Payroll (prorated) breakdown — cancelled vs non-cancelled
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("Payroll (Prorated to Period)", margin, currentY);
+      currentY += 20;
+
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+
+      const payrollStats = [
+        `Non-Cancelled: ${(summary.nonCancelledCount || 0).toLocaleString()} bookings`,
+        `Payroll Hours (Prorated): ${(
+          summary.nonCancelledProratedHours || 0
+        ).toFixed(1)}h`,
+        `Non-Cancelled Amount: $${(
+          summary.nonCancelledProratedAmount || 0
+        ).toFixed(2)}`,
+        `Cancelled: ${(summary.cancelledCount || 0).toLocaleString()} bookings`,
+        `Cancelled Hours (Prorated): ${(
+          summary.cancelledProratedHours || 0
+        ).toFixed(1)}h`,
+        `Cancelled Amount: $${(summary.cancelledProratedAmount || 0).toFixed(
+          2
+        )}`,
+      ];
+
+      payrollStats.forEach((stat, index) => {
+        doc.text(
+          stat,
+          margin + (index % 2) * 270,
+          currentY + Math.floor(index / 2) * 18
+        );
+      });
+      currentY += 70;
     } else {
       const stats = [
         `Total Lifeguards: ${summary.totalRecords.toLocaleString()}`,
@@ -239,6 +273,17 @@ export class ExportService {
         );
       });
       currentY += 50;
+
+      doc.setFont("helvetica", "bold");
+      doc.text(
+        `Total Prorated Hours (Payroll): ${(
+          summary.totalProratedHours || 0
+        ).toFixed(1)}h`,
+        margin,
+        currentY
+      );
+      doc.setFont("helvetica", "normal");
+      currentY += 25;
     }
 
     return currentY;

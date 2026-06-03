@@ -24,6 +24,14 @@ import {
   LifeguardReportData,
 } from "@/lib/report-types";
 
+// Format a Date as a Singapore-local date-only string (YYYY-MM-DD) using local
+// calendar components. The admin runs in SGT, so this matches how booking
+// start/end times are stored and avoids the UTC shift that .toISOString() causes.
+function toSgtDateString(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export default function ReportsPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -96,8 +104,8 @@ export default function ReportsPage() {
 
       const params = new URLSearchParams({
         type: reportType,
-        startDate: dateRange.startDate.toISOString(),
-        endDate: dateRange.endDate.toISOString(),
+        startDate: toSgtDateString(dateRange.startDate),
+        endDate: toSgtDateString(dateRange.endDate),
         fields: selectedFields.join(','),
         format: 'json',
       });
@@ -144,8 +152,8 @@ export default function ReportsPage() {
         },
         body: JSON.stringify({
           type: reportType,
-          startDate: dateRange.startDate.toISOString(),
-          endDate: dateRange.endDate.toISOString(),
+          startDate: toSgtDateString(dateRange.startDate),
+          endDate: toSgtDateString(dateRange.endDate),
           fields: selectedFields,
           format,
         }),
@@ -156,7 +164,7 @@ export default function ReportsPage() {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${reportType}_report_${dateRange.startDate.toISOString().split('T')[0]}_${dateRange.endDate.toISOString().split('T')[0]}.${format}`;
+        link.download = `${reportType}_report_${toSgtDateString(dateRange.startDate)}_${toSgtDateString(dateRange.endDate)}.${format}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

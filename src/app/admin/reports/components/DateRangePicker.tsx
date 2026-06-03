@@ -38,7 +38,10 @@ export default function DateRangePicker({
   };
 
   const formatDateForInput = (date: Date): string => {
-    return date.toISOString().split('T')[0];
+    // Use local (Singapore) calendar components, not toISOString() — the latter
+    // converts local midnight to UTC and lands on the previous day (1-day-behind bug).
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   };
 
   const formatDateRange = () => {

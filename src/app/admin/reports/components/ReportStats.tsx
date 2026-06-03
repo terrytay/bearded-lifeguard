@@ -116,6 +116,14 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
       bgColor: "bg-yellow-500/20",
       textColor: "text-yellow-300",
     },
+    {
+      label: "Prorated Hours (Payroll)",
+      value: `${(summary.totalProratedHours || 0).toFixed(1)}h`,
+      icon: ClockIcon,
+      color: "from-blue-500 to-indigo-600",
+      bgColor: "bg-blue-500/20",
+      textColor: "text-blue-300",
+    },
   ];
 
   const stats = reportType === "bookings" ? bookingStats : lifeguardStats;
@@ -209,6 +217,60 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
           );
         })}
       </div>
+
+      {/* Payroll Breakdown (Prorated to selected period) */}
+      {reportType === "bookings" && (
+        <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-white/10">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-white/60 text-xs uppercase tracking-wider">
+              Payroll Breakdown — Prorated to Period
+            </div>
+            <div className="text-white/40 text-xs">
+              Hours/amounts counted only for the part of each booking inside the range
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-center">
+            <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Non-Cancelled
+              </div>
+              <div className="text-white font-bold">
+                {(summary.nonCancelledCount || 0).toLocaleString()} bookings
+              </div>
+            </div>
+            <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Payroll Hours
+              </div>
+              <div className="text-white font-bold">
+                {(summary.nonCancelledProratedHours || 0).toFixed(1)}h
+              </div>
+              <div className="text-white/40 text-xs mt-1">
+                {formatCurrency(summary.nonCancelledProratedAmount || 0)} value
+              </div>
+            </div>
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Cancelled Hours
+              </div>
+              <div className="text-white font-bold">
+                {(summary.cancelledProratedHours || 0).toFixed(1)}h
+              </div>
+              <div className="text-white/40 text-xs mt-1">
+                {(summary.cancelledCount || 0).toLocaleString()} bookings (not payable)
+              </div>
+            </div>
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+              <div className="text-white/60 text-xs uppercase tracking-wider mb-1">
+                Cancelled Amount
+              </div>
+              <div className="text-white font-bold">
+                {formatCurrency(summary.cancelledProratedAmount || 0)}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Revenue Health Status Indicator */}
       {reportType === "bookings" && summary.revenueHealthStatus && (

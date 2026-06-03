@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CommandLineIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import DashboardLayout from "../components/DashboardLayout";
 import ReportTypeSelector from "./components/ReportTypeSelector";
 import DateRangePicker from "./components/DateRangePicker";
+import FilterPanel from "./components/FilterPanel";
 import FieldSelector from "./components/FieldSelector";
 import DataPreview from "./components/DataPreview";
 import ExportActions from "./components/ExportActions";
@@ -13,15 +15,13 @@ import BackToTopButton from "../components/BackToTop";
 
 import {
   ReportType,
-  ReportFilters,
+  ReportQueryFilters,
   BookingReportFields,
   LifeguardReportFields,
   DEFAULT_BOOKING_FIELDS,
   DEFAULT_LIFEGUARD_FIELDS,
   getDateRangePresets,
   ReportResponse,
-  BookingReportData,
-  LifeguardReportData,
 } from "@/lib/report-types";
 
 // Format a Date as a Singapore-local date-only string (YYYY-MM-DD) using local
@@ -29,22 +29,34 @@ import {
 // start/end times are stored and avoids the UTC shift that .toISOString() causes.
 function toSgtDateString(date: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}`;
 }
 
 export default function ReportsPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [reportType, setReportType] = useState<ReportType>('bookings');
+  const [reportType, setReportType] = useState<ReportType>("bookings");
   const [dateRange, setDateRange] = useState(() => {
     const presets = getDateRangePresets();
+    const thisMonth = presets.find((p) => p.value === "thisMonth");
     return {
-      startDate: presets.find(p => p.value === 'thisMonth')?.startDate || new Date(),
-      endDate: presets.find(p => p.value === 'thisMonth')?.endDate || new Date(),
+      startDate: thisMonth?.startDate || new Date(),
+      endDate: thisMonth?.endDate || new Date(),
     };
   });
-  const [bookingFields, setBookingFields] = useState<BookingReportFields>(DEFAULT_BOOKING_FIELDS);
-  const [lifeguardFields, setLifeguardFields] = useState<LifeguardReportFields>(DEFAULT_LIFEGUARD_FIELDS);
+  const [filters, setFilters] = useState<ReportQueryFilters>({
+    status: [],
+    paymentStatus: [],
+    serviceType: [],
+  });
+  const [bookingFields, setBookingFields] = useState<BookingReportFields>(
+    DEFAULT_BOOKING_FIELDS
+  );
+  const [lifeguardFields, setLifeguardFields] = useState<LifeguardReportFields>(
+    DEFAULT_LIFEGUARD_FIELDS
+  );
   const [reportData, setReportData] = useState<ReportResponse | null>(null);
   const [loadingReport, setLoadingReport] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -57,7 +69,8 @@ export default function ReportsPage() {
     if (user) {
       loadReportData();
     }
-  }, [user, reportType, dateRange, bookingFields, lifeguardFields]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, reportType, dateRange, filters, bookingFields, lifeguardFields]);
 
   const checkAuth = async () => {
     const supabase = createClient();
@@ -87,6 +100,14 @@ export default function ReportsPage() {
     setLoading(false);
   };
 
+  const selectedFieldList = () => {
+    const currentFields =
+      reportType === "bookings" ? bookingFields : lifeguardFields;
+    return Object.entries(currentFields)
+      .filter(([, selected]) => selected)
+      .map(([field]) => field);
+  };
+
   const loadReportData = async () => {
     if (!user) return;
 
@@ -97,18 +118,18 @@ export default function ReportsPage() {
         data: { session },
       } = await supabase.auth.getSession();
 
-      const currentFields = reportType === 'bookings' ? bookingFields : lifeguardFields;
-      const selectedFields = Object.entries(currentFields)
-        .filter(([_, selected]) => selected)
-        .map(([field, _]) => field);
-
       const params = new URLSearchParams({
         type: reportType,
         startDate: toSgtDateString(dateRange.startDate),
         endDate: toSgtDateString(dateRange.endDate),
-        fields: selectedFields.join(','),
-        format: 'json',
+        fields: selectedFieldList().join(","),
+        format: "json",
       });
+      if (filters.status?.length) params.set("status", filters.status.join(","));
+      if (filters.paymentStatus?.length)
+        params.set("paymentStatus", filters.paymentStatus.join(","));
+      if (filters.serviceType?.length)
+        params.set("serviceType", filters.serviceType.join(","));
 
       const response = await fetch(`/api/admin/reports?${params}`, {
         headers: { Authorization: `Bearer ${session?.access_token}` },
@@ -118,7 +139,7 @@ export default function ReportsPage() {
         const data: ReportResponse = await response.json();
         setReportData(data);
       } else {
-        console.error('Failed to load report data');
+        console.error("Failed to load report data");
         setReportData(null);
       }
     } catch (error) {
@@ -129,7 +150,7 @@ export default function ReportsPage() {
     }
   };
 
-  const handleExport = async (format: 'csv' | 'pdf') => {
+  const handleExport = async (format: "csv" | "pdf") => {
     if (!user || !reportData) return;
 
     setProcessing(true);
@@ -139,42 +160,42 @@ export default function ReportsPage() {
         data: { session },
       } = await supabase.auth.getSession();
 
-      const currentFields = reportType === 'bookings' ? bookingFields : lifeguardFields;
-      const selectedFields = Object.entries(currentFields)
-        .filter(([_, selected]) => selected)
-        .map(([field, _]) => field);
-
-      const response = await fetch('/api/admin/reports/export', {
-        method: 'POST',
+      const response = await fetch("/api/admin/reports/export", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${session?.access_token}`,
         },
         body: JSON.stringify({
           type: reportType,
           startDate: toSgtDateString(dateRange.startDate),
           endDate: toSgtDateString(dateRange.endDate),
-          fields: selectedFields,
+          fields: selectedFieldList(),
           format,
+          status: filters.status || [],
+          paymentStatus: filters.paymentStatus || [],
+          serviceType: filters.serviceType || [],
         }),
       });
 
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.download = `${reportType}_report_${toSgtDateString(dateRange.startDate)}_${toSgtDateString(dateRange.endDate)}.${format}`;
+        link.download = `${reportType}_report_${toSgtDateString(
+          dateRange.startDate
+        )}_${toSgtDateString(dateRange.endDate)}.${format}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } else {
-        alert('Export failed. Please try again.');
+        alert("Export failed. Please try again.");
       }
     } catch (error) {
-      console.error('Export error:', error);
-      alert('Export failed. Please try again.');
+      console.error("Export error:", error);
+      alert("Export failed. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -188,10 +209,10 @@ export default function ReportsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking access...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center font-mono">
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center">
+          <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-white/60 text-sm">Checking access…</p>
         </div>
       </div>
     );
@@ -205,76 +226,86 @@ export default function ReportsPage() {
     >
       <BackToTopButton />
 
-      <div className="p-3 md:p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl md:rounded-2xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg md:text-xl">📊</span>
+      <div className="p-3 md:p-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-6">
+        <div className="max-w-5xl mx-auto space-y-4">
+          {/* Header + report type */}
+          <div className="console-in space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-[#FF6633]/15 border border-[#FF6633]/30 flex items-center justify-center">
+                <CommandLineIcon className="w-5 h-5 text-[#FF6633]" />
               </div>
               <div>
-                <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  Reports & Analytics
+                <h1 className="text-lg md:text-2xl font-bold text-white tracking-tight">
+                  Reports
                 </h1>
-                <p className="text-white/60 text-sm md:text-base">
-                  Generate detailed reports for bookings and lifeguards
+                <p className="text-white/45 text-xs md:text-sm">
+                  Payroll &amp; analytics by service date
                 </p>
               </div>
             </div>
-
-            {/* Report Type Selector */}
             <ReportTypeSelector
               reportType={reportType}
               onReportTypeChange={setReportType}
             />
           </div>
 
-          {/* Configuration Panel */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Date Range Picker */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">
-              <DateRangePicker
-                startDate={dateRange.startDate}
-                endDate={dateRange.endDate}
-                onDateRangeChange={(startDate, endDate) => setDateRange({ startDate, endDate })}
-              />
-            </div>
-
-            {/* Field Selector */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">
-              <FieldSelector
-                reportType={reportType}
-                bookingFields={bookingFields}
-                lifeguardFields={lifeguardFields}
-                onBookingFieldsChange={setBookingFields}
-                onLifeguardFieldsChange={setLifeguardFields}
-              />
-            </div>
+          {/* Date range */}
+          <div
+            className="console-in bg-white/[0.04] border border-white/10 rounded-2xl p-4"
+            style={{ animationDelay: "60ms" }}
+          >
+            <DateRangePicker
+              startDate={dateRange.startDate}
+              endDate={dateRange.endDate}
+              onDateRangeChange={(startDate, endDate) =>
+                setDateRange({ startDate, endDate })
+              }
+            />
           </div>
 
-          {/* Report Stats */}
-          {reportData && (
-            <ReportStats
+          {/* Filters + Columns */}
+          <div
+            className="console-in grid grid-cols-1 lg:grid-cols-2 gap-4"
+            style={{ animationDelay: "120ms" }}
+          >
+            <FilterPanel filters={filters} onChange={setFilters} />
+            <FieldSelector
               reportType={reportType}
-              summary={reportData.summary}
+              bookingFields={bookingFields}
+              lifeguardFields={lifeguardFields}
+              onBookingFieldsChange={setBookingFields}
+              onLifeguardFieldsChange={setLifeguardFields}
             />
+          </div>
+
+          {/* Summary */}
+          {reportData && (
+            <div className="console-in" style={{ animationDelay: "180ms" }}>
+              <ReportStats reportType={reportType} summary={reportData.summary} />
+            </div>
           )}
 
-          {/* Export Actions */}
-          <ExportActions
-            onExport={handleExport}
-            disabled={!reportData || loadingReport}
-            totalRecords={reportData?.totalCount || 0}
-          />
+          {/* Data preview */}
+          <div className="console-in" style={{ animationDelay: "240ms" }}>
+            <DataPreview
+              reportType={reportType}
+              data={reportData?.data || []}
+              loading={loadingReport}
+              fields={reportType === "bookings" ? bookingFields : lifeguardFields}
+            />
+          </div>
 
-          {/* Data Preview */}
-          <DataPreview
-            reportType={reportType}
-            data={reportData?.data || []}
-            loading={loadingReport}
-            fields={reportType === 'bookings' ? bookingFields : lifeguardFields}
-          />
+          {/* Export bar — fixed bottom on mobile, inline on desktop */}
+          <div
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-slate-900/95 backdrop-blur-lg px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:static md:inset-auto md:z-auto md:bg-white/[0.04] md:border md:border-white/10 md:rounded-2xl md:px-5 md:py-4 md:pb-4 md:backdrop-blur-none console-in"
+            style={{ animationDelay: "300ms" }}
+          >
+            <ExportActions
+              onExport={handleExport}
+              disabled={!reportData || loadingReport}
+              totalRecords={reportData?.totalCount || 0}
+            />
+          </div>
         </div>
       </div>
     </DashboardLayout>

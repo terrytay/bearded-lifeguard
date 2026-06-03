@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import ConditionalLayout from "@/components/ConditionalLayout";
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+});
+
+// Admin console uses JetBrains Mono throughout (scoped via src/app/admin/layout.tsx).
+// Exposed app-wide as a CSS variable; it only becomes the default font where the
+// `font-mono` utility is applied, so the public site keeps Inter.
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
 });
 
 export const metadata: Metadata = {
@@ -244,7 +253,7 @@ export default function RootLayout({
       <body
         className={
           "flex flex-col justify-between bg-gradient-to-br from-slate-50 to-blue-50 relative select-none " +
-          inter.className
+          `${inter.className} ${jetbrainsMono.variable}`
         }
       >
         <ConditionalLayout>{children}</ConditionalLayout>

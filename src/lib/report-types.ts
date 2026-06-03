@@ -448,10 +448,58 @@ export interface ReportFilters {
   fields: BookingReportFields | LifeguardReportFields;
 }
 
+// ---------------------------------------------------------------------------
+// Report query filters (status / payment status / service type)
+//
+// Multi-select: an empty (or omitted) array means "no constraint" so the
+// report shows everything — which keeps the cancelled-vs-non-cancelled payroll
+// breakdown intact. Non-empty arrays translate to a Supabase `.in(column, ...)`
+// clause on the bookings query (and the lifeguard assignment sub-query).
+// ---------------------------------------------------------------------------
+export interface ReportQueryFilters {
+  status?: string[]; // booking.status
+  paymentStatus?: string[]; // booking.payment_status
+  serviceType?: string[]; // booking.service_type
+}
+
+// UI option lists for the filter chips. Labels mirror how the rest of the app
+// formats these values (e.g. the `service_display_name` computed field).
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
+export const BOOKING_STATUS_OPTIONS: FilterOption[] = [
+  { value: "pending", label: "Pending" },
+  { value: "confirmed", label: "Confirmed" },
+  { value: "paid", label: "Paid" },
+  { value: "completed", label: "Completed" },
+  { value: "cancelled", label: "Cancelled" },
+];
+
+export const PAYMENT_STATUS_OPTIONS: FilterOption[] = [
+  { value: "pending", label: "Pending" },
+  { value: "paid", label: "Paid" },
+  { value: "refunded", label: "Refunded" },
+];
+
+// Service types from the booking flow (see ServiceType in pricing.ts).
+export const SERVICE_TYPE_OPTIONS: FilterOption[] = [
+  { value: "pools", label: "Pool Lifeguarding" },
+  { value: "pool-parties", label: "Pool Party" },
+  { value: "open-water", label: "Open Water" },
+  { value: "events", label: "Event Lifeguarding" },
+  { value: "others", label: "Others / Custom" },
+];
+
 export interface ExportRequest {
   type: ReportType;
   startDate: string;
   endDate: string;
   fields: string[];
   format: ExportFormat;
+  // Optional multi-select filters (empty/omitted = no constraint)
+  status?: string[];
+  paymentStatus?: string[];
+  serviceType?: string[];
 }

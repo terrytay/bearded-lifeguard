@@ -5,7 +5,25 @@ import {
   normalizeReportRange,
   computeProration,
   buildProrationNote,
+  ReportQueryFilters,
 } from "../../../../lib/report-types";
+
+// Parse a comma-separated filter param into a clean string[] (empty => no filter)
+function parseFilterParam(value: string | null): string[] {
+  return value?.split(",").map((s) => s.trim()).filter(Boolean) || [];
+}
+
+// Apply the multi-select filters to a bookings query. Non-empty arrays become
+// `.in()` constraints; empty arrays are skipped so the default shows everything.
+// Works regardless of which columns are in the SELECT (PostgREST filters by column).
+function applyBookingFilters(query: any, filters?: ReportQueryFilters) {
+  if (filters?.status?.length) query = query.in("status", filters.status);
+  if (filters?.paymentStatus?.length)
+    query = query.in("payment_status", filters.paymentStatus);
+  if (filters?.serviceType?.length)
+    query = query.in("service_type", filters.serviceType);
+  return query;
+}
 
 // Helper function to verify admin access
 async function verifyAdmin(request: Request): Promise<boolean> {
@@ -51,19 +69,24 @@ export async function GET(request: Request) {
     const startDate = url.searchParams.get('startDate');
     const endDate = url.searchParams.get('endDate');
     const fields = url.searchParams.get('fields')?.split(',') || [];
+    const filters: ReportQueryFilters = {
+      status: parseFilterParam(url.searchParams.get('status')),
+      paymentStatus: parseFilterParam(url.searchParams.get('paymentStatus')),
+      serviceType: parseFilterParam(url.searchParams.get('serviceType')),
+    };
 
     if (!type || !startDate || !endDate || fields.length === 0) {
-      return NextResponse.json({ 
-        error: 'Missing required parameters: type, startDate, endDate, fields' 
+      return NextResponse.json({
+        error: 'Missing required parameters: type, startDate, endDate, fields'
       }, { status: 400 });
     }
 
     const supabase = await createClient();
 
     if (type === 'bookings') {
-      return await generateBookingsReport(supabase, startDate, endDate, fields);
+      return await generateBookingsReport(supabase, startDate, endDate, fields, filters);
     } else if (type === 'lifeguards') {
-      return await generateLifeguardsReport(supabase, startDate, endDate, fields);
+      return await generateLifeguardsReport(supabase, startDate, endDate, fields, filters);
     } else {
       return NextResponse.json({ error: 'Invalid report type' }, { status: 400 });
     }
@@ -76,7 +99,7 @@ export async function GET(request: Request) {
   }
 }
 
-async function generateBookingsReport(supabase: any, startDate: string, endDate: string, fields: string[]) {
+async function generateBookingsReport(supabase: any, startDate: string, endDate: string, fields: string[], filters?: ReportQueryFilters) {
   try {
     // Normalize the requested range to naive Singapore-local, end-of-day inclusive
     const { rangeStart, rangeEnd } = normalizeReportRange(startDate, endDate);
@@ -100,6 +123,9 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
       .lte('start_datetime', rangeEnd)
       .gte('end_datetime', rangeStart)
       .order('start_datetime', { ascending: true });
+
+    // Optional multi-select filters (status / payment status / service type)
+    query = applyBookingFilters(query, filters);
 
     const { data: bookings, error, count } = await query;
 
@@ -283,7 +309,7 @@ async function generateBookingsReport(supabase: any, startDate: string, endDate:
   }
 }
 
-async function generateLifeguardsReport(supabase: any, startDate: string, endDate: string, fields: string[]) {
+async function generateLifeguardsReport(supabase: any, startDate: string, endDate: string, fields: string[], filters?: ReportQueryFilters) {
   try {
     const { rangeStart, rangeEnd } = normalizeReportRange(startDate, endDate);
 
@@ -310,11 +336,13 @@ async function generateLifeguardsReport(supabase: any, startDate: string, endDat
     const needsAssignmentData = fields.some(f => computedFields.includes(f));
     let periodBookings: any[] = [];
     if (needsAssignmentData) {
-      const { data: pb } = await supabase
+      let pbQuery = supabase
         .from('bookings')
         .select('id, amount, hours, status, lifeguards_assigned, start_datetime, end_datetime')
         .lte('start_datetime', rangeEnd)
         .gte('end_datetime', rangeStart);
+      pbQuery = applyBookingFilters(pbQuery, filters);
+      const { data: pb } = await pbQuery;
       periodBookings = pb || [];
     }
 
@@ -374,11 +402,13 @@ async function generateLifeguardsReport(supabase: any, startDate: string, endDat
     // Source for assignment/payroll totals: reuse the pre-fetched overlapping bookings
     let assignmentSource = periodBookings;
     if (!needsAssignmentData) {
-      const { data: pb } = await supabase
+      let asQuery = supabase
         .from('bookings')
         .select('lifeguards_assigned, status, hours, amount, start_datetime, end_datetime')
         .lte('start_datetime', rangeEnd)
         .gte('end_datetime', rangeStart);
+      asQuery = applyBookingFilters(asQuery, filters);
+      const { data: pb } = await asQuery;
       assignmentSource = pb || [];
     }
 

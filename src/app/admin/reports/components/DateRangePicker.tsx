@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+  CalendarDaysIcon,
+  AdjustmentsHorizontalIcon,
+} from "@heroicons/react/24/outline";
 import { getDateRangePresets } from "@/lib/report-types";
 
 interface DateRangePickerProps {
@@ -10,156 +13,147 @@ interface DateRangePickerProps {
   onDateRangeChange: (startDate: Date, endDate: Date) => void;
 }
 
+// Local (Singapore) calendar components — NOT toISOString(), which would shift
+// local midnight to the previous UTC day (the 1-day-behind bug).
+const formatDateForInput = (date: Date): string => {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}`;
+};
+
 export default function DateRangePicker({
   startDate,
   endDate,
   onDateRangeChange,
 }: DateRangePickerProps) {
-  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
-  const [customMode, setCustomMode] = useState(false);
-
+  const [customOpen, setCustomOpen] = useState(false);
   const presets = getDateRangePresets();
 
-  const handlePresetSelect = (preset: typeof presets[0]) => {
-    setSelectedPreset(preset.value);
-    setCustomMode(false);
-    onDateRangeChange(preset.startDate, preset.endDate);
-  };
+  // Best-effort active-preset detection by comparing the rendered day strings,
+  // so the matching chip highlights even on first load.
+  const activePreset = presets.find(
+    (p) =>
+      formatDateForInput(p.startDate) === formatDateForInput(startDate) &&
+      formatDateForInput(p.endDate) === formatDateForInput(endDate)
+  )?.value;
 
-  const handleCustomDateChange = (field: 'start' | 'end', value: string) => {
+  const handleCustomDateChange = (field: "start" | "end", value: string) => {
+    if (!value) return;
     const newDate = new Date(value);
-    if (field === 'start') {
+    if (field === "start") {
       onDateRangeChange(newDate, endDate);
     } else {
       onDateRangeChange(startDate, newDate);
     }
-    setSelectedPreset(null);
-    setCustomMode(true);
   };
 
-  const formatDateForInput = (date: Date): string => {
-    // Use local (Singapore) calendar components, not toISOString() — the latter
-    // converts local midnight to UTC and lands on the previous day (1-day-behind bug).
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-  };
+  const dayCount = Math.max(
+    1,
+    Math.ceil(
+      Math.abs(endDate.getTime() - startDate.getTime()) /
+        (1000 * 60 * 60 * 24)
+    )
+  );
 
-  const formatDateRange = () => {
-    const options: Intl.DateTimeFormatOptions = { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
-    };
-    return `${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
-  };
-
-  const getDaysDifference = () => {
-    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
+  const rangeLabel = `${startDate.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+  })} → ${endDate.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  })}`;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center space-x-3">
-        <div className="w-6 h-6 md:w-8 md:h-8 bg-blue-500/20 rounded-lg md:rounded-xl flex items-center justify-center">
-          <CalendarDaysIcon className="w-3 h-3 md:w-4 md:h-4 text-blue-400" />
+    <div className="space-y-3">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-400/30 flex items-center justify-center flex-shrink-0">
+            <CalendarDaysIcon className="w-3.5 h-3.5 text-sky-300" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-sm font-semibold text-white truncate">
+              {rangeLabel}
+            </div>
+            <div className="text-[11px] text-white/40 tabular-nums">
+              {dayCount} {dayCount === 1 ? "day" : "days"}
+              {activePreset
+                ? ` · ${presets.find((p) => p.value === activePreset)?.label}`
+                : " · custom"}
+            </div>
+          </div>
         </div>
-        <div>
-          <h3 className="font-bold text-white text-sm md:text-base">
-            Date Range
-          </h3>
-          <p className="text-white/60 text-xs md:text-sm">
-            {formatDateRange()} ({getDaysDifference()} days)
-          </p>
-        </div>
+        <button
+          type="button"
+          onClick={() => setCustomOpen((o) => !o)}
+          aria-pressed={customOpen}
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border transition-all min-h-[40px] flex-shrink-0 ${
+            customOpen
+              ? "bg-[#FF6633]/20 text-orange-200 border-[#FF6633]/40"
+              : "bg-white/[0.04] text-white/60 border-white/10 hover:text-white hover:border-white/25"
+          }`}
+        >
+          <AdjustmentsHorizontalIcon className="w-4 h-4" />
+          <span className="hidden sm:inline">Custom</span>
+        </button>
       </div>
 
-      {/* Preset Buttons */}
-      <div className="space-y-2">
-        <label className="text-white/70 text-sm font-medium">Quick Select:</label>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {presets.map((preset) => (
+      {/* Preset chips — horizontally scrollable on mobile */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 py-0.5 snap-x">
+        {presets.map((preset) => {
+          const active = activePreset === preset.value;
+          return (
             <button
               key={preset.value}
-              onClick={() => handlePresetSelect(preset)}
-              className={`px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
-                selectedPreset === preset.value
-                  ? 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg'
-                  : 'bg-white/10 text-white/80 hover:bg-white/20 border border-white/20'
+              type="button"
+              onClick={() => {
+                setCustomOpen(false);
+                onDateRangeChange(preset.startDate, preset.endDate);
+              }}
+              className={`whitespace-nowrap snap-start px-3.5 py-2 rounded-full text-xs font-medium border transition-all duration-150 min-h-[40px] flex-shrink-0 ${
+                active
+                  ? "bg-[#FF6633] text-white border-[#FF6633] shadow-lg shadow-[#FF6633]/20"
+                  : "bg-white/[0.04] text-white/60 border-white/10 hover:text-white hover:border-white/25"
               }`}
             >
               {preset.label}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      {/* Custom Date Inputs */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <label className="text-white/70 text-sm font-medium">Custom Range:</label>
-          {customMode && (
-            <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded border border-purple-500/30">
-              Custom
+      {/* Custom range inputs */}
+      {customOpen && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <label className="space-y-1.5">
+            <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+              Start date
             </span>
-          )}
+            <input
+              type="date"
+              value={formatDateForInput(startDate)}
+              onChange={(e) => handleCustomDateChange("start", e.target.value)}
+              max={formatDateForInput(endDate)}
+              className="w-full px-3 py-2.5 bg-black/20 border border-white/15 rounded-lg text-white text-sm focus:ring-2 focus:ring-[#FF6633]/40 focus:border-[#FF6633]/50 transition-all min-h-[44px] [color-scheme:dark]"
+            />
+          </label>
+          <label className="space-y-1.5">
+            <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+              End date
+            </span>
+            <input
+              type="date"
+              value={formatDateForInput(endDate)}
+              onChange={(e) => handleCustomDateChange("end", e.target.value)}
+              min={formatDateForInput(startDate)}
+              max={formatDateForInput(new Date())}
+              className="w-full px-3 py-2.5 bg-black/20 border border-white/15 rounded-lg text-white text-sm focus:ring-2 focus:ring-[#FF6633]/40 focus:border-[#FF6633]/50 transition-all min-h-[44px] [color-scheme:dark]"
+            />
+          </label>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <label className="text-white/60 text-xs">Start Date</label>
-            <div className="relative">
-              <input
-                type="date"
-                value={formatDateForInput(startDate)}
-                onChange={(e) => handleCustomDateChange('start', e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-200 backdrop-blur-sm"
-                max={formatDateForInput(endDate)}
-              />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <label className="text-white/60 text-xs">End Date</label>
-            <div className="relative">
-              <input
-                type="date"
-                value={formatDateForInput(endDate)}
-                onChange={(e) => handleCustomDateChange('end', e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-200 backdrop-blur-sm"
-                min={formatDateForInput(startDate)}
-                max={formatDateForInput(new Date())}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Date Range Summary */}
-      <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-        <div className="flex items-center justify-between text-sm">
-          <div className="text-white/70">
-            <span className="font-medium">Selected Range:</span>
-          </div>
-          <div className="text-white font-medium">
-            {getDaysDifference()} {getDaysDifference() === 1 ? 'day' : 'days'}
-          </div>
-        </div>
-        <div className="mt-2 text-xs text-white/60">
-          From {startDate.toLocaleDateString('en-US', { 
-            weekday: 'short', 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          })} to {endDate.toLocaleDateString('en-US', { 
-            weekday: 'short', 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          })}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

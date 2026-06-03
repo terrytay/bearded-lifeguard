@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { 
+import {
   CheckIcon,
-  XMarkIcon,
-  QuestionMarkCircleIcon,
   Squares2X2Icon,
   ChevronDownIcon,
-  ChevronUpIcon,
 } from "@heroicons/react/24/outline";
 import {
   ReportType,
@@ -26,6 +23,15 @@ interface FieldSelectorProps {
   onLifeguardFieldsChange: (fields: LifeguardReportFields) => void;
 }
 
+const GROUP_LABELS: Record<string, string> = {
+  basic: "Basic",
+  service: "Service",
+  financial: "Financial",
+  contact: "Contact",
+  timestamps: "Timestamps",
+  computed: "Computed",
+};
+
 export default function FieldSelector({
   reportType,
   bookingFields,
@@ -33,33 +39,35 @@ export default function FieldSelector({
   onBookingFieldsChange,
   onLifeguardFieldsChange,
 }: FieldSelectorProps) {
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    basic: true,
-    service: true,
-    financial: true,
-    contact: false,
-    timestamps: false,
-    computed: false,
-  });
-
-  const currentFields = reportType === 'bookings' ? bookingFields : lifeguardFields;
-  const fieldDefinitions = reportType === 'bookings' ? BOOKING_FIELD_DEFINITIONS : LIFEGUARD_FIELD_DEFINITIONS;
-  
-  // Group fields by category
-  const groupedFields = fieldDefinitions.reduce((acc, field) => {
-    if (!acc[field.group]) {
-      acc[field.group] = [];
+  const [open, setOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {
+      basic: true,
+      service: true,
+      financial: true,
+      contact: false,
+      timestamps: false,
+      computed: true,
     }
-    acc[field.group].push(field);
+  );
+
+  const currentFields =
+    reportType === "bookings" ? bookingFields : lifeguardFields;
+  const fieldDefinitions =
+    reportType === "bookings"
+      ? BOOKING_FIELD_DEFINITIONS
+      : LIFEGUARD_FIELD_DEFINITIONS;
+
+  const groupedFields = fieldDefinitions.reduce((acc, field) => {
+    (acc[field.group] = acc[field.group] || []).push(field);
     return acc;
   }, {} as Record<string, FieldDefinition[]>);
 
-  // Count selected fields
   const selectedCount = Object.values(currentFields).filter(Boolean).length;
   const totalCount = fieldDefinitions.length;
 
   const handleFieldToggle = (fieldKey: string) => {
-    if (reportType === 'bookings') {
+    if (reportType === "bookings") {
       onBookingFieldsChange({
         ...bookingFields,
         [fieldKey]: !bookingFields[fieldKey as keyof BookingReportFields],
@@ -72,206 +80,154 @@ export default function FieldSelector({
     }
   };
 
-  const handleSelectAll = () => {
-    const allSelected = Object.keys(currentFields).reduce((acc, key) => {
-      acc[key] = true;
+  const setAll = (value: boolean) => {
+    const next = Object.keys(currentFields).reduce((acc, key) => {
+      acc[key] = value;
       return acc;
     }, {} as any);
-
-    if (reportType === 'bookings') {
-      onBookingFieldsChange(allSelected);
-    } else {
-      onLifeguardFieldsChange(allSelected);
-    }
+    if (reportType === "bookings") onBookingFieldsChange(next);
+    else onLifeguardFieldsChange(next);
   };
 
-  const handleSelectNone = () => {
-    const noneSelected = Object.keys(currentFields).reduce((acc, key) => {
-      acc[key] = false;
-      return acc;
-    }, {} as any);
-
-    if (reportType === 'bookings') {
-      onBookingFieldsChange(noneSelected);
-    } else {
-      onLifeguardFieldsChange(noneSelected);
-    }
-  };
-
-  const toggleGroup = (groupName: string) => {
-    setExpandedGroups(prev => ({
-      ...prev,
-      [groupName]: !prev[groupName],
-    }));
-  };
-
-  const getGroupIcon = (groupName: string) => {
-    const icons = {
-      basic: "📝",
-      service: "🏊",
-      contact: "📞",
-      financial: "💰",
-      timestamps: "⏰",
-      computed: "📊",
-    };
-    return icons[groupName as keyof typeof icons] || "📋";
-  };
-
-  const getGroupColor = (groupName: string) => {
-    const colors = {
-      basic: "from-blue-500/20 to-cyan-500/20 border-blue-500/30",
-      service: "from-green-500/20 to-emerald-500/20 border-green-500/30",
-      contact: "from-purple-500/20 to-pink-500/20 border-purple-500/30",
-      financial: "from-yellow-500/20 to-orange-500/20 border-yellow-500/30",
-      timestamps: "from-gray-500/20 to-slate-500/20 border-gray-500/30",
-      computed: "from-indigo-500/20 to-violet-500/20 border-indigo-500/30",
-    };
-    return colors[groupName as keyof typeof colors] || "from-gray-500/20 to-slate-500/20 border-gray-500/30";
-  };
+  const toggleGroup = (g: string) =>
+    setExpandedGroups((prev) => ({ ...prev, [g]: !prev[g] }));
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-6 h-6 md:w-8 md:h-8 bg-green-500/20 rounded-lg md:rounded-xl flex items-center justify-center">
-            <Squares2X2Icon className="w-3 h-3 md:w-4 md:h-4 text-green-400" />
+    <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+      {/* Header / toggle */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-400/30 flex items-center justify-center flex-shrink-0">
+            <Squares2X2Icon className="w-3.5 h-3.5 text-sky-300" />
           </div>
-          <div>
-            <h3 className="font-bold text-white text-sm md:text-base">
-              Fields Selection
-            </h3>
-            <p className="text-white/60 text-xs md:text-sm">
-              {selectedCount} of {totalCount} fields selected
-            </p>
+          <span className="text-sm font-semibold text-white">Columns</span>
+          <span className="px-2 py-0.5 rounded-full text-[11px] tabular-nums bg-white/10 text-white/70">
+            {selectedCount}/{totalCount}
+          </span>
+        </div>
+        <ChevronDownIcon
+          className={`w-4 h-4 text-white/50 transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 pt-1 border-t border-white/10 space-y-3">
+          {/* Quick actions */}
+          <div className="flex gap-2 pt-3">
+            <button
+              onClick={() => setAll(true)}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-white/[0.04] text-white/70 border border-white/10 hover:border-white/25 hover:text-white transition-all min-h-[36px]"
+            >
+              Select all
+            </button>
+            <button
+              onClick={() => setAll(false)}
+              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-white/[0.04] text-white/70 border border-white/10 hover:border-white/25 hover:text-white transition-all min-h-[36px]"
+            >
+              Clear
+            </button>
           </div>
-        </div>
-        
-        {/* Quick Actions */}
-        <div className="flex space-x-2">
-          <button
-            onClick={handleSelectAll}
-            className="px-2 py-1 md:px-3 md:py-2 text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg hover:bg-green-500/30 transition-all duration-200"
-          >
-            All
-          </button>
-          <button
-            onClick={handleSelectNone}
-            className="px-2 py-1 md:px-3 md:py-2 text-xs font-medium bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-all duration-200"
-          >
-            None
-          </button>
-        </div>
-      </div>
 
-      {/* Field Groups */}
-      <div className="space-y-3 max-h-96 overflow-y-auto">
-        {Object.entries(groupedFields).map(([groupName, fields]) => {
-          const isExpanded = expandedGroups[groupName];
-          const groupSelectedCount = fields.filter(field => 
-            currentFields[field.key as keyof typeof currentFields]
-          ).length;
+          {/* Groups */}
+          <div className="space-y-2 max-h-80 overflow-y-auto no-scrollbar">
+            {Object.entries(groupedFields).map(([groupName, fields]) => {
+              const isExpanded = expandedGroups[groupName];
+              const groupSelected = fields.filter(
+                (f) => currentFields[f.key as keyof typeof currentFields]
+              ).length;
+              return (
+                <div
+                  key={groupName}
+                  className="border border-white/10 rounded-xl overflow-hidden bg-black/10"
+                >
+                  <button
+                    onClick={() => toggleGroup(groupName)}
+                    className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-white/[0.03] transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-white">
+                        {GROUP_LABELS[groupName] || groupName}
+                      </span>
+                      <span className="px-1.5 py-0.5 rounded text-[10px] tabular-nums bg-white/10 text-white/60">
+                        {groupSelected}/{fields.length}
+                      </span>
+                    </div>
+                    <ChevronDownIcon
+                      className={`w-4 h-4 text-white/50 transition-transform ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
 
-          return (
-            <div key={groupName} className={`border rounded-lg overflow-hidden ${getGroupColor(groupName)}`}>
-              {/* Group Header */}
-              <button
-                onClick={() => toggleGroup(groupName)}
-                className="w-full px-3 py-2 md:px-4 md:py-3 flex items-center justify-between bg-white/5 hover:bg-white/10 transition-all duration-200"
-              >
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm">{getGroupIcon(groupName)}</span>
-                  <span className="font-medium text-white capitalize text-sm">
-                    {groupName.replace('_', ' ')}
-                  </span>
-                  <span className="px-2 py-0.5 bg-white/10 text-white/70 text-xs rounded">
-                    {groupSelectedCount}/{fields.length}
-                  </span>
-                </div>
-                {isExpanded ? (
-                  <ChevronUpIcon className="w-4 h-4 text-white/60" />
-                ) : (
-                  <ChevronDownIcon className="w-4 h-4 text-white/60" />
-                )}
-              </button>
-
-              {/* Group Fields */}
-              {isExpanded && (
-                <div className="px-3 py-2 md:px-4 md:py-3 space-y-2 bg-white/2">
-                  {fields.map((field) => {
-                    const isSelected = currentFields[field.key as keyof typeof currentFields];
-                    
-                    return (
-                      <div
-                        key={field.key}
-                        className="flex items-start justify-between p-2 rounded hover:bg-white/5 transition-all duration-200 group"
-                      >
-                        <div className="flex items-start space-x-3 flex-1 min-w-0">
+                  {isExpanded && (
+                    <div className="px-2 pb-2 space-y-0.5">
+                      {fields.map((field) => {
+                        const isSelected =
+                          currentFields[field.key as keyof typeof currentFields];
+                        return (
                           <button
+                            key={field.key}
                             onClick={() => handleFieldToggle(field.key)}
-                            className={`w-4 h-4 md:w-5 md:h-5 rounded border-2 flex items-center justify-center transition-all duration-200 flex-shrink-0 mt-0.5 ${
-                              isSelected
-                                ? 'bg-gradient-to-r from-blue-500 to-cyan-600 border-blue-500 text-white'
-                                : 'border-white/30 hover:border-white/50'
-                            }`}
+                            className="w-full flex items-start gap-2.5 p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
                           >
-                            {isSelected && <CheckIcon className="w-3 h-3" />}
-                          </button>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2">
-                              <span className={`text-sm font-medium ${isSelected ? 'text-white' : 'text-white/80'}`}>
-                                {field.label}
+                            <span
+                              className={`w-4 h-4 mt-0.5 rounded border flex items-center justify-center flex-shrink-0 transition-all ${
+                                isSelected
+                                  ? "bg-[#FF6633] border-[#FF6633] text-white"
+                                  : "border-white/30"
+                              }`}
+                            >
+                              {isSelected && <CheckIcon className="w-3 h-3" />}
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                  className={`text-sm ${
+                                    isSelected ? "text-white" : "text-white/70"
+                                  }`}
+                                >
+                                  {field.label}
+                                </span>
+                                {field.required && (
+                                  <span className="px-1 py-0.5 rounded text-[10px] bg-rose-500/15 text-rose-200 border border-rose-400/30">
+                                    req
+                                  </span>
+                                )}
+                                {field.computed && (
+                                  <span className="px-1 py-0.5 rounded text-[10px] bg-[#FF6633]/15 text-orange-200 border border-[#FF6633]/30">
+                                    calc
+                                  </span>
+                                )}
                               </span>
-                              {field.required && (
-                                <span className="px-1.5 py-0.5 bg-red-500/20 text-red-300 text-xs rounded border border-red-500/30">
-                                  Required
+                              {field.description && (
+                                <span className="block text-[11px] text-white/40 mt-0.5 leading-relaxed">
+                                  {field.description}
                                 </span>
                               )}
-                              {field.computed && (
-                                <span className="px-1.5 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded border border-purple-500/30">
-                                  Computed
-                                </span>
-                              )}
-                            </div>
-                            {field.description && (
-                              <p className="text-xs text-white/60 mt-1">
-                                {field.description}
-                              </p>
-                            )}
-                          </div>
-                          
-                          {field.description && (
-                            <div className="flex-shrink-0">
-                              <QuestionMarkCircleIcon 
-                                className="w-4 h-4 text-white/40 opacity-0 group-hover:opacity-100 transition-opacity"
-                                title={field.description}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
 
-      {/* Selection Summary */}
-      <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-white/70 font-medium">Selected Fields:</span>
-          <span className="text-white font-bold">{selectedCount} fields</span>
+          {selectedCount === 0 && (
+            <p className="text-amber-300 text-xs">
+              Select at least one column to generate a report.
+            </p>
+          )}
         </div>
-        {selectedCount === 0 && (
-          <p className="text-yellow-300 text-xs mt-2 flex items-center">
-            <XMarkIcon className="w-3 h-3 mr-1" />
-            Please select at least one field to generate a report
-          </p>
-        )}
-      </div>
+      )}
     </div>
   );
 }

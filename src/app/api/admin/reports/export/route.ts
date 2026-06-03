@@ -7,10 +7,22 @@ import {
   BookingReportData,
   LifeguardReportData,
   ReportSummary,
+  ReportQueryFilters,
   normalizeReportRange,
   computeProration,
   buildProrationNote,
 } from "../../../../../lib/report-types";
+
+// Apply the multi-select filters to a bookings query (mirrors route.ts).
+// Non-empty arrays become `.in()` constraints; empty arrays are skipped.
+function applyBookingFilters(query: any, filters?: ReportQueryFilters) {
+  if (filters?.status?.length) query = query.in("status", filters.status);
+  if (filters?.paymentStatus?.length)
+    query = query.in("payment_status", filters.paymentStatus);
+  if (filters?.serviceType?.length)
+    query = query.in("service_type", filters.serviceType);
+  return query;
+}
 
 // Helper function to verify admin access
 async function verifyAdmin(request: Request): Promise<boolean> {
@@ -56,6 +68,11 @@ export async function POST(request: Request) {
 
     const body: ExportRequest = await request.json();
     const { type, startDate, endDate, fields, format } = body;
+    const filters: ReportQueryFilters = {
+      status: body.status || [],
+      paymentStatus: body.paymentStatus || [],
+      serviceType: body.serviceType || [],
+    };
 
     if (
       !type ||
@@ -91,8 +108,8 @@ export async function POST(request: Request) {
     // Get report data and summary
     const { data, summary } =
       type === "bookings"
-        ? await generateBookingsData(supabase, startDate, endDate, fields)
-        : await generateLifeguardsData(supabase, startDate, endDate, fields);
+        ? await generateBookingsData(supabase, startDate, endDate, fields, filters)
+        : await generateLifeguardsData(supabase, startDate, endDate, fields, filters);
 
     // Generate export file
     if (format === "csv") {
@@ -150,7 +167,8 @@ async function generateBookingsData(
   supabase: any,
   startDate: string,
   endDate: string,
-  fields: string[]
+  fields: string[],
+  filters?: ReportQueryFilters
 ) {
   try {
     // Normalize the requested range to naive Singapore-local, end-of-day inclusive
@@ -183,6 +201,9 @@ async function generateBookingsData(
       .lte("start_datetime", rangeEnd)
       .gte("end_datetime", rangeStart)
       .order("start_datetime", { ascending: true });
+
+    // Optional multi-select filters (status / payment status / service type)
+    query = applyBookingFilters(query, filters);
 
     const { data: bookings, error, count } = await query;
 
@@ -377,7 +398,8 @@ async function generateLifeguardsData(
   supabase: any,
   startDate: string,
   endDate: string,
-  fields: string[]
+  fields: string[],
+  filters?: ReportQueryFilters
 ) {
   try {
     const { rangeStart, rangeEnd } = normalizeReportRange(startDate, endDate);
@@ -412,11 +434,13 @@ async function generateLifeguardsData(
     const needsAssignmentData = fields.some((f) => computedFields.includes(f));
     let periodBookings: any[] = [];
     if (needsAssignmentData) {
-      const { data: pb } = await supabase
+      let pbQuery = supabase
         .from("bookings")
         .select("id, amount, hours, status, lifeguards_assigned, start_datetime, end_datetime")
         .lte("start_datetime", rangeEnd)
         .gte("end_datetime", rangeStart);
+      pbQuery = applyBookingFilters(pbQuery, filters);
+      const { data: pb } = await pbQuery;
       periodBookings = pb || [];
     }
 
@@ -483,11 +507,13 @@ async function generateLifeguardsData(
     // Source for assignment/payroll totals: reuse the pre-fetched overlapping bookings
     let assignmentSource = periodBookings;
     if (!needsAssignmentData) {
-      const { data: pb } = await supabase
+      let asQuery = supabase
         .from("bookings")
         .select("lifeguards_assigned, status, hours, amount, start_datetime, end_datetime")
         .lte("start_datetime", rangeEnd)
         .gte("end_datetime", rangeStart);
+      asQuery = applyBookingFilters(asQuery, filters);
+      const { data: pb } = await asQuery;
       assignmentSource = pb || [];
     }
 

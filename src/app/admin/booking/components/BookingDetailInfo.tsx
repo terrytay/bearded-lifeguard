@@ -1,9 +1,10 @@
-import { 
-  UserIcon, 
-  CalendarDaysIcon, 
+import {
+  UserIcon,
+  CalendarDaysIcon,
   MapPinIcon,
   ChatBubbleLeftRightIcon,
-  ClockIcon 
+  ClockIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { SingaporeTime } from "@/lib/singapore-time";
 import AssignedLifeguards from "./AssignedLifeguards";
@@ -51,187 +52,228 @@ const serviceNames: Record<string, string> = {
   others: "Custom Service",
 };
 
-export default function BookingDetailInfo({ booking, onRefresh }: BookingDetailInfoProps) {
-  const serviceName = serviceNames[booking.service_type] || booking.service_type;
-  const fullService = booking.service_type === "others" && booking.custom_service 
-    ? `${serviceName}: ${booking.custom_service}`
-    : serviceName;
+const cardClass =
+  "bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-6";
+const labelClass =
+  "text-[10px] uppercase tracking-[0.16em] text-white/40";
+
+function SectionHeader({
+  icon: Icon,
+  tint,
+  children,
+}: {
+  icon: typeof UserIcon;
+  tint: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <h3 className="font-semibold text-white mb-4 flex items-center gap-2.5 text-sm md:text-base">
+      <span
+        className={`w-7 h-7 rounded-lg flex items-center justify-center ${tint}`}
+      >
+        <Icon className="w-4 h-4" />
+      </span>
+      {children}
+    </h3>
+  );
+}
+
+export default function BookingDetailInfo({
+  booking,
+  onRefresh,
+}: BookingDetailInfoProps) {
+  const serviceName =
+    serviceNames[booking.service_type] || booking.service_type;
+  const fullService =
+    booking.service_type === "others" && booking.custom_service
+      ? `${serviceName}: ${booking.custom_service}`
+      : serviceName;
 
   return (
-    <div className="space-y-3 md:space-y-6">
-      {/* Customer Information */}
-      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6">
-        <h3 className="font-bold text-white mb-3 md:mb-6 flex items-center text-sm md:text-xl">
-          <div className="w-6 h-6 md:w-10 md:h-10 bg-blue-500/20 rounded-lg md:rounded-xl flex items-center justify-center mr-2 md:mr-4">
-            <UserIcon className="w-3 h-3 md:w-6 md:h-6 text-blue-400" />
+    <div className="space-y-3 md:space-y-4">
+      {/* Customer */}
+      <div className={cardClass}>
+        <SectionHeader
+          icon={UserIcon}
+          tint="bg-sky-500/15 border border-sky-400/30 text-sky-300"
+        >
+          Customer information
+        </SectionHeader>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <div className={labelClass}>Full name</div>
+            <p className="text-white font-semibold mt-1">
+              {booking.customer_name}
+            </p>
           </div>
-          Customer Information
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-          <div className="space-y-2 md:space-y-4">
-            <div>
-              <label className="text-white/70 text-xs md:text-sm font-medium">Full Name</label>
-              <p className="text-white font-semibold text-sm md:text-lg mt-0.5 md:mt-1">{booking.customer_name}</p>
-            </div>
-            <div>
-              <label className="text-white/70 text-xs md:text-sm font-medium">Email Address</label>
-              <a
-                href={`mailto:${booking.customer_email}`}
-                className="text-blue-300 hover:text-blue-200 font-semibold text-xs md:text-lg mt-0.5 md:mt-1 block transition-colors break-all"
-              >
-                {booking.customer_email}
-              </a>
-            </div>
+          <div>
+            <div className={labelClass}>Email</div>
+            <a
+              href={`mailto:${booking.customer_email}`}
+              className="text-sky-300 hover:text-sky-200 font-medium mt-1 block break-all transition-colors"
+            >
+              {booking.customer_email}
+            </a>
           </div>
-          
-          <div className="space-y-2 md:space-y-4">
-            <div>
-              <label className="text-white/70 text-xs md:text-sm font-medium">Phone Number</label>
-              <p className="text-white font-mono text-sm md:text-lg mt-0.5 md:mt-1">{booking.customer_phone}</p>
-            </div>
-            <div>
-              <label className="text-white/70 text-xs md:text-sm font-medium">Booking Created</label>
-              <p className="text-white font-semibold text-xs md:text-lg mt-0.5 md:mt-1">
-                {SingaporeTime.toLocaleString(booking.created_at + "Z")}
-              </p>
-            </div>
+          <div>
+            <div className={labelClass}>Phone</div>
+            <p className="text-white font-medium tabular-nums mt-1">
+              {booking.customer_phone}
+            </p>
+          </div>
+          <div>
+            <div className={labelClass}>Booking created</div>
+            <p className="text-white font-medium mt-1">
+              {SingaporeTime.toLocaleString(booking.created_at + "Z")}
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Service Details */}
-      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6">
-        <h3 className="font-bold text-white mb-3 md:mb-6 flex items-center text-sm md:text-xl">
-          <div className="w-6 h-6 md:w-10 md:h-10 bg-green-500/20 rounded-lg md:rounded-xl flex items-center justify-center mr-2 md:mr-4">
-            <CalendarDaysIcon className="w-3 h-3 md:w-6 md:h-6 text-green-400" />
-          </div>
-          Service Details
-        </h3>
-        
-        <div className="space-y-3 md:space-y-6">
+      {/* Service */}
+      <div className={cardClass}>
+        <SectionHeader
+          icon={CalendarDaysIcon}
+          tint="bg-emerald-500/15 border border-emerald-400/30 text-emerald-300"
+        >
+          Service details
+        </SectionHeader>
+        <div className="space-y-4">
           <div>
-            <label className="text-white/70 text-xs md:text-sm font-medium">Service Type</label>
-            <p className="text-white font-bold text-sm md:text-xl mt-0.5 md:mt-1">{fullService}</p>
+            <div className={labelClass}>Service type</div>
+            <p className="text-white font-bold text-base md:text-lg mt-1">
+              {fullService}
+            </p>
             {booking.venue_type && (
-              <p className="text-white/70 text-xs md:text-sm mt-0.5 md:mt-1">
-                Rate category: {booking.venue_type === "swimming-pool" ? "Swimming pool" : "Open water / beach"}
+              <p className="text-white/50 text-xs mt-0.5">
+                Rate category:{" "}
+                {booking.venue_type === "swimming-pool"
+                  ? "Swimming pool"
+                  : "Open water / beach"}
               </p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-white/70 text-xs md:text-sm font-medium flex items-center">
-                <MapPinIcon className="w-3 h-3 md:w-4 md:h-4 mr-1" />
+              <div className={`${labelClass} flex items-center gap-1`}>
+                <MapPinIcon className="w-3 h-3" />
                 Location
-              </label>
-              <p className="text-white font-semibold text-sm md:text-lg mt-0.5 md:mt-1">
+              </div>
+              <p className="text-white font-medium mt-1">
                 {booking.location || "Not specified"}
               </p>
             </div>
             <div>
-              <label className="text-white/70 text-xs md:text-sm font-medium">Number of Lifeguards</label>
-              <p className="text-white font-semibold text-sm md:text-lg mt-0.5 md:mt-1">{booking.lifeguards} lifeguards</p>
+              <div className={labelClass}>Lifeguards required</div>
+              <p className="text-white font-medium tabular-nums mt-1">
+                {booking.lifeguards}
+              </p>
             </div>
           </div>
 
-          {/* Schedule */}
-          <div className="bg-white/5 rounded-lg md:rounded-xl p-3 md:p-4">
-            <label className="text-white/70 text-xs md:text-sm font-medium flex items-center mb-2 md:mb-3">
-              <ClockIcon className="w-3 h-3 md:w-4 md:h-4 mr-1" />
-              Schedule & Duration
-            </label>
-            <div className="grid grid-cols-3 gap-2 md:gap-4">
+          <div className="bg-black/15 rounded-xl p-4">
+            <div className={`${labelClass} flex items-center gap-1 mb-3`}>
+              <ClockIcon className="w-3 h-3" />
+              Schedule &amp; duration
+            </div>
+            <div className="grid grid-cols-3 gap-3">
               <div>
-                <p className="text-white/60 text-xs uppercase tracking-wide mb-0.5 md:mb-1">Start</p>
-                <p className="text-white font-bold text-xs md:text-sm">
-                  {SingaporeTime.format(booking.start_datetime, "MMM dd")}
+                <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">
+                  Start
                 </p>
-                <p className="text-white font-bold text-sm md:text-lg">
+                <p className="text-white font-semibold text-sm">
+                  {SingaporeTime.format(booking.start_datetime, "dd MMM")}
+                </p>
+                <p className="text-white font-bold tabular-nums">
                   {SingaporeTime.format(booking.start_datetime, "HH:mm")}
                 </p>
               </div>
               <div>
-                <p className="text-white/60 text-xs uppercase tracking-wide mb-0.5 md:mb-1">End</p>
-                <p className="text-white font-bold text-xs md:text-sm">
-                  {SingaporeTime.format(booking.end_datetime, "MMM dd")}
+                <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">
+                  End
                 </p>
-                <p className="text-white font-bold text-sm md:text-lg">
+                <p className="text-white font-semibold text-sm">
+                  {SingaporeTime.format(booking.end_datetime, "dd MMM")}
+                </p>
+                <p className="text-white font-bold tabular-nums">
                   {SingaporeTime.format(booking.end_datetime, "HH:mm")}
                 </p>
               </div>
               <div>
-                <p className="text-white/60 text-xs uppercase tracking-wide mb-0.5 md:mb-1">Duration</p>
-                <p className="text-yellow-400 font-bold text-lg md:text-2xl">{booking.hours}h</p>
-                <p className="text-white/60 text-xs md:text-sm">{booking.hours === 1 ? "hour" : "hours"}</p>
+                <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">
+                  Duration
+                </p>
+                <p className="text-[#FF6633] font-bold text-xl md:text-2xl tabular-nums">
+                  {booking.hours}h
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Customer Remarks */}
+      {/* Remarks */}
       {booking.remarks && (
-        <div className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-xl md:rounded-2xl p-3 md:p-6">
-          <h3 className="font-bold text-white mb-2 md:mb-4 flex items-center text-sm md:text-xl">
-            <div className="w-6 h-6 md:w-10 md:h-10 bg-amber-500/20 rounded-lg md:rounded-xl flex items-center justify-center mr-2 md:mr-4">
-              <ChatBubbleLeftRightIcon className="w-3 h-3 md:w-6 md:h-6 text-amber-400" />
-            </div>
-            Customer Notes
-          </h3>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg md:rounded-xl p-2 md:p-4">
-            <p className="text-white/90 italic text-sm md:text-lg leading-relaxed">
-              "{booking.remarks}"
-            </p>
-          </div>
+        <div className="bg-amber-500/[0.07] border border-amber-400/20 rounded-2xl p-4 md:p-6">
+          <SectionHeader
+            icon={ChatBubbleLeftRightIcon}
+            tint="bg-amber-500/15 border border-amber-400/30 text-amber-300"
+          >
+            Customer notes
+          </SectionHeader>
+          <p className="text-white/85 italic leading-relaxed">
+            “{booking.remarks}”
+          </p>
         </div>
       )}
 
-      {/* Lifeguard Assignment */}
-      <div className="space-y-3 md:space-y-6">
+      {/* Lifeguard assignment */}
+      <div className="space-y-3 md:space-y-4">
         <LifeguardAssignment
           bookingId={booking.id}
           requiredCount={booking.lifeguards}
           currentAssignments={booking.assigned_lifeguards || []}
           onAssignmentUpdate={() => onRefresh?.()}
         />
-        
         <AssignedLifeguards
           lifeguards={booking.assigned_lifeguards || []}
           requiredCount={booking.lifeguards}
         />
       </div>
 
-      {/* Technical Details */}
-      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6">
-        <h3 className="font-bold text-white mb-3 md:mb-6 flex items-center text-sm md:text-xl">
-          <div className="w-6 h-6 md:w-10 md:h-10 bg-gray-500/20 rounded-lg md:rounded-xl flex items-center justify-center mr-2 md:mr-4">
-            <svg className="w-3 h-3 md:w-6 md:h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          Technical Information
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+      {/* Technical */}
+      <div className={cardClass}>
+        <SectionHeader
+          icon={DocumentTextIcon}
+          tint="bg-white/10 border border-white/15 text-white/60"
+        >
+          Technical information
+        </SectionHeader>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-white/70 text-xs md:text-sm font-medium">Booking ID</label>
-            <p className="text-white font-mono text-xs md:text-sm mt-0.5 md:mt-1 bg-white/5 p-1 md:p-2 rounded break-all">
+            <div className={labelClass}>Booking ID</div>
+            <p className="text-white/80 text-xs mt-1 bg-black/20 px-2 py-1.5 rounded-lg break-all">
               {booking.id}
             </p>
           </div>
           <div>
-            <label className="text-white/70 text-xs md:text-sm font-medium">Order ID</label>
-            <p className="text-white font-mono text-sm md:text-lg mt-0.5 md:mt-1">#{booking.order_id}</p>
+            <div className={labelClass}>Order ID</div>
+            <p className="text-white font-medium tabular-nums mt-1">
+              #{booking.order_id}
+            </p>
           </div>
           <div>
-            <label className="text-white/70 text-xs md:text-sm font-medium">Current Status</label>
-            <p className="text-white font-semibold text-sm md:text-lg mt-0.5 md:mt-1 capitalize">{booking.status}</p>
+            <div className={labelClass}>Current status</div>
+            <p className="text-white font-medium capitalize mt-1">
+              {booking.status}
+            </p>
           </div>
           <div>
-            <label className="text-white/70 text-xs md:text-sm font-medium">Payment Status</label>
-            <p className="text-white font-semibold text-sm md:text-lg mt-0.5 md:mt-1 capitalize">{booking.payment_status}</p>
+            <div className={labelClass}>Payment status</div>
+            <p className="text-white font-medium capitalize mt-1">
+              {booking.payment_status}
+            </p>
           </div>
         </div>
       </div>

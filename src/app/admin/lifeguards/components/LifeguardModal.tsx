@@ -13,7 +13,11 @@ interface Lifeguard {
 interface LifeguardModalProps {
   lifeguard: Lifeguard | null;
   onClose: () => void;
-  onSubmit: (data: { name: string; contact_number: string; is_active: boolean }) => void;
+  onSubmit: (data: {
+    name: string;
+    contact_number: string;
+    is_active: boolean;
+  }) => void;
   overlayClassName?: string;
 }
 
@@ -43,39 +47,33 @@ export default function LifeguardModal({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
+    if (!name.trim()) newErrors.name = "Name is required";
     if (!contactNumber.trim()) {
       newErrors.contact_number = "Contact number is required";
     } else {
-      // Basic Singapore phone number validation
       const phoneRegex = /^(\+65\s?)?\d{4}\s?\d{4}$/;
-      const cleanNumber = contactNumber.replace(/\s/g, '');
+      const cleanNumber = contactNumber.replace(/\s/g, "");
       if (!phoneRegex.test(contactNumber) && !/^\d{8}$/.test(cleanNumber)) {
-        newErrors.contact_number = "Invalid phone number format. Use 8-digit format or +65 XXXX XXXX";
+        newErrors.contact_number =
+          "Use an 8-digit number or +65 XXXX XXXX format";
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (validateForm()) {
-      // Format phone number
       let formattedNumber = contactNumber.trim();
-      if (!formattedNumber.startsWith('+65')) {
-        const cleanNumber = formattedNumber.replace(/\s/g, '');
+      if (!formattedNumber.startsWith("+65")) {
+        const cleanNumber = formattedNumber.replace(/\s/g, "");
         if (cleanNumber.length === 8) {
-          formattedNumber = `+65 ${cleanNumber.slice(0, 4)} ${cleanNumber.slice(4)}`;
+          formattedNumber = `+65 ${cleanNumber.slice(0, 4)} ${cleanNumber.slice(
+            4
+          )}`;
         }
       }
-
       onSubmit({
         name: name.trim(),
         contact_number: formattedNumber,
@@ -84,133 +82,118 @@ export default function LifeguardModal({
     }
   };
 
+  const inputClass = (hasError: boolean) =>
+    `w-full pl-10 md:pl-11 pr-4 py-3 bg-black/20 border rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-[#FF6633]/40 transition-all min-h-[48px] ${
+      hasError
+        ? "border-rose-400/50 focus:border-rose-400/50"
+        : "border-white/15 focus:border-[#FF6633]/50"
+    }`;
+
   return (
-    <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 ${overlayClassName}`}>
-      <div className="bg-gradient-to-br from-slate-900 to-indigo-900 border border-white/20 rounded-2xl md:rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6 md:mb-8">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <UserIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
+    <div
+      className={`fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 font-mono ${overlayClassName}`}
+    >
+      <div className="bg-slate-900 border border-white/15 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl console-in">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#FF6633]/15 border border-[#FF6633]/30 flex items-center justify-center">
+              <UserIcon className="w-5 h-5 text-[#FF6633]" />
             </div>
-            <h2 className="text-xl md:text-2xl font-bold text-white">
-              {lifeguard ? "Edit Lifeguard" : "Add New Lifeguard"}
+            <h2 className="text-lg md:text-xl font-bold text-white">
+              {lifeguard ? "Edit lifeguard" : "Add lifeguard"}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
+            className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+            aria-label="Close"
           >
-            <XMarkIcon className="w-5 h-5 md:w-6 md:h-6" />
+            <XMarkIcon className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-          {/* Name Field */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-white/80 text-sm md:text-base font-medium mb-2">
-              Full Name *
+            <label className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2">
+              Full name
             </label>
             <div className="relative">
-              <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-white/50" />
+              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className={`w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 bg-white/10 border rounded-xl md:rounded-2xl focus:ring-2 focus:ring-blue-400/50 transition-all duration-200 text-white placeholder-white/50 backdrop-blur-sm text-sm md:text-base ${
-                  errors.name 
-                    ? "border-red-500/50 focus:border-red-400/50" 
-                    : "border-white/20 focus:border-blue-400/50"
-                }`}
-                placeholder="Enter lifeguard's full name"
+                className={inputClass(!!errors.name)}
+                placeholder="Lifeguard name"
               />
             </div>
             {errors.name && (
-              <p className="text-red-400 text-xs md:text-sm mt-1">{errors.name}</p>
+              <p className="text-rose-300 text-xs mt-1.5">{errors.name}</p>
             )}
           </div>
 
-          {/* Contact Number Field */}
           <div>
-            <label className="block text-white/80 text-sm md:text-base font-medium mb-2">
-              Contact Number *
+            <label className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2">
+              Contact number
             </label>
             <div className="relative">
-              <PhoneIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-white/50" />
+              <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
               <input
                 type="tel"
                 value={contactNumber}
                 onChange={(e) => setContactNumber(e.target.value)}
-                className={`w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 bg-white/10 border rounded-xl md:rounded-2xl focus:ring-2 focus:ring-blue-400/50 transition-all duration-200 text-white placeholder-white/50 backdrop-blur-sm text-sm md:text-base font-mono ${
-                  errors.contact_number 
-                    ? "border-red-500/50 focus:border-red-400/50" 
-                    : "border-white/20 focus:border-blue-400/50"
-                }`}
-                placeholder="+65 9123 4567 or 91234567"
+                className={inputClass(!!errors.contact_number)}
+                placeholder="+65 9123 4567"
               />
             </div>
             {errors.contact_number && (
-              <p className="text-red-400 text-xs md:text-sm mt-1">{errors.contact_number}</p>
+              <p className="text-rose-300 text-xs mt-1.5">
+                {errors.contact_number}
+              </p>
             )}
           </div>
 
-          {/* Active Status */}
           <div>
-            <label className="block text-white/80 text-sm md:text-base font-medium mb-3">
+            <label className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2">
               Status
             </label>
-            <div className="flex items-center space-x-3">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="status"
-                  checked={isActive}
-                  onChange={() => setIsActive(true)}
-                  className="sr-only"
-                />
-                <div className={`w-4 h-4 rounded-full border-2 mr-2 flex items-center justify-center ${
-                  isActive 
-                    ? "bg-emerald-500 border-emerald-500" 
-                    : "border-white/30"
-                }`}>
-                  {isActive && <div className="w-2 h-2 bg-white rounded-full"></div>}
-                </div>
-                <span className="text-white text-sm md:text-base">Active</span>
-              </label>
-              
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="status"
-                  checked={!isActive}
-                  onChange={() => setIsActive(false)}
-                  className="sr-only"
-                />
-                <div className={`w-4 h-4 rounded-full border-2 mr-2 flex items-center justify-center ${
-                  !isActive 
-                    ? "bg-red-500 border-red-500" 
-                    : "border-white/30"
-                }`}>
-                  {!isActive && <div className="w-2 h-2 bg-white rounded-full"></div>}
-                </div>
-                <span className="text-white text-sm md:text-base">Inactive</span>
-              </label>
+            <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-black/20 border border-white/10">
+              <button
+                type="button"
+                onClick={() => setIsActive(true)}
+                className={`py-2.5 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
+                  isActive
+                    ? "bg-emerald-500/80 text-white"
+                    : "text-white/55 hover:text-white"
+                }`}
+              >
+                Active
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsActive(false)}
+                className={`py-2.5 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
+                  !isActive
+                    ? "bg-rose-500/80 text-white"
+                    : "text-white/55 hover:text-white"
+                }`}
+              >
+                Inactive
+              </button>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex space-x-4 pt-4 md:pt-6">
+          <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 md:py-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl md:rounded-2xl transition-all duration-200 font-semibold text-sm md:text-base"
+              className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/15 rounded-xl transition-all font-semibold text-sm min-h-[48px]"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 md:py-4 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl md:rounded-2xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl text-sm md:text-base"
+              className="flex-1 px-6 py-3 bg-[#FF6633] hover:bg-[#e55a2b] text-white rounded-xl transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[48px]"
             >
               {lifeguard ? "Update" : "Create"}
             </button>

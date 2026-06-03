@@ -1,4 +1,4 @@
-import { UserIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { UserIcon, XMarkIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 interface Lifeguard {
   id: string;
@@ -14,107 +14,95 @@ interface AssignedLifeguardsProps {
   readOnly?: boolean;
 }
 
-export default function AssignedLifeguards({ 
-  lifeguards, 
-  requiredCount, 
+export default function AssignedLifeguards({
+  lifeguards,
+  requiredCount,
   onUnassign,
-  readOnly = false 
+  readOnly = false,
 }: AssignedLifeguardsProps) {
   const assignedCount = lifeguards.length;
   const isComplete = assignedCount >= requiredCount;
-  const isOverAssigned = assignedCount > requiredCount;
-  const overAssignedCount = Math.max(0, assignedCount - requiredCount);
-  
+
   return (
-    <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">
+    <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold text-white text-sm md:text-base flex items-center">
-          <div className={`w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl flex items-center justify-center mr-2 md:mr-3 ${
-            isComplete 
-              ? "bg-emerald-500/20" 
-              : "bg-yellow-500/20"
-          }`}>
-            <UserIcon className={`w-4 h-4 md:w-5 md:h-5 ${
-              isComplete 
-                ? "text-emerald-400" 
-                : "text-yellow-400"
-            }`} />
-          </div>
-          Assigned Lifeguards
+        <h3 className="font-semibold text-white text-sm md:text-base flex items-center gap-2.5">
+          <span
+            className={`w-7 h-7 rounded-lg flex items-center justify-center border ${
+              isComplete
+                ? "bg-emerald-500/15 border-emerald-400/30 text-emerald-300"
+                : "bg-amber-500/15 border-amber-400/30 text-amber-300"
+            }`}
+          >
+            <UserGroupIcon className="w-4 h-4" />
+          </span>
+          Assigned lifeguards
         </h3>
-        
-        <div className={`px-2 py-1 md:px-3 md:py-1 rounded-lg text-xs md:text-sm font-semibold ${
-          isComplete 
-            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-            : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
-        }`}>
+        <span
+          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border tabular-nums ${
+            isComplete
+              ? "bg-emerald-500/15 text-emerald-200 border-emerald-400/30"
+              : "bg-amber-500/15 text-amber-200 border-amber-400/30"
+          }`}
+        >
           {assignedCount} / {requiredCount}
-        </div>
+        </span>
       </div>
 
       {lifeguards.length === 0 ? (
-        <div className="text-center py-6 md:py-8">
-          <div className="w-12 h-12 md:w-16 md:h-16 bg-white/5 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
-            <UserIcon className="w-6 h-6 md:w-8 md:h-8 text-white/30" />
+        <div className="text-center py-8">
+          <div className="w-14 h-14 bg-white/[0.04] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <UserIcon className="w-7 h-7 text-white/30" />
           </div>
-          <p className="text-white/60 text-sm md:text-base">No lifeguards assigned</p>
-          <p className="text-white/40 text-xs md:text-sm mt-1">
-            {requiredCount} lifeguard{requiredCount !== 1 ? 's' : ''} required
+          <p className="text-white/55 text-sm">No lifeguards assigned</p>
+          <p className="text-white/35 text-xs mt-0.5 tabular-nums">
+            {requiredCount} required
           </p>
         </div>
       ) : (
-        <div className="space-y-2 md:space-y-3">
+        <div className="space-y-2">
           {lifeguards.map((lifeguard) => (
             <div
               key={lifeguard.id}
-              className="bg-white/5 rounded-lg md:rounded-xl p-3 md:p-4 flex items-center justify-between"
+              className="bg-black/15 rounded-xl p-3 flex items-center justify-between"
             >
-              <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center ${
-                  lifeguard.is_active 
-                    ? "bg-emerald-500/20" 
-                    : "bg-red-500/20"
-                }`}>
-                  <UserIcon className={`w-4 h-4 md:w-5 md:h-5 ${
-                    lifeguard.is_active 
-                      ? "text-emerald-400" 
-                      : "text-red-400"
-                  }`} />
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
+                    lifeguard.is_active ? "bg-emerald-500/80" : "bg-white/10"
+                  }`}
+                >
+                  {lifeguard.name.charAt(0).toUpperCase()}
                 </div>
-                
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold text-sm md:text-base truncate">
+                <div className="min-w-0">
+                  <p className="text-white font-semibold text-sm truncate">
                     {lifeguard.name}
                   </p>
-                  <p className="text-white/60 text-xs md:text-sm font-mono">
+                  <p className="text-white/50 text-xs tabular-nums truncate">
                     {lifeguard.contact_number}
                   </p>
-                  {!lifeguard.is_active && (
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-red-500/20 text-red-300 text-xs rounded-md border border-red-500/30">
-                      Inactive
-                    </span>
-                  )}
                 </div>
+                {!lifeguard.is_active && (
+                  <span className="px-2 py-0.5 bg-rose-500/15 text-rose-200 text-[11px] rounded-full border border-rose-400/30 flex-shrink-0">
+                    Inactive
+                  </span>
+                )}
               </div>
-              
               {!readOnly && onUnassign && (
                 <button
                   onClick={() => onUnassign(lifeguard.id)}
-                  className="p-1 md:p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
-                  title="Remove lifeguard"
+                  className="p-2 text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors flex-shrink-0"
+                  title="Remove"
                 >
-                  <XMarkIcon className="w-4 h-4 md:w-5 md:h-5" />
+                  <XMarkIcon className="w-5 h-5" />
                 </button>
               )}
             </div>
           ))}
-          
           {assignedCount < requiredCount && (
-            <div className="text-center py-2 md:py-3">
-              <p className="text-yellow-400 text-xs md:text-sm font-medium">
-                ⚠️ {requiredCount - assignedCount} more lifeguard{requiredCount - assignedCount !== 1 ? 's' : ''} needed
-              </p>
-            </div>
+            <p className="text-amber-300 text-xs text-center pt-1 tabular-nums">
+              {requiredCount - assignedCount} more needed
+            </p>
           )}
         </div>
       )}

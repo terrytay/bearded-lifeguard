@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
   BellIcon,
@@ -63,11 +64,14 @@ export default function DashboardLayout({
             {/* Brand + desktop nav */}
             <div className="flex items-center gap-3 md:gap-6 min-w-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-[#FF6633] flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#FF6633]/20">
-                  <span className="text-white font-bold text-xs md:text-sm tracking-tight">
-                    BL
-                  </span>
-                </div>
+                <Image
+                  src="/logo.png"
+                  alt="Bearded Lifeguard"
+                  width={40}
+                  height={40}
+                  className="h-9 w-9 md:h-10 md:w-10 object-contain flex-shrink-0"
+                  priority
+                />
                 <div className="min-w-0">
                   <h1 className="text-sm md:text-base font-bold text-white tracking-tight leading-tight">
                     Admin

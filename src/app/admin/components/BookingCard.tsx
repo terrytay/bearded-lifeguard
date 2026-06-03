@@ -4,9 +4,11 @@ import {
   CurrencyDollarIcon,
   EyeIcon,
   TrashIcon,
+  CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
 import { SingaporeTime } from "@/lib/singapore-time";
 import { useRouter } from "next/navigation";
+import StatusBadge from "./StatusBadge";
 
 interface Booking {
   id: string;
@@ -40,38 +42,6 @@ const serviceNames: Record<string, string> = {
   others: "Custom Service",
 };
 
-const getStatusColor = (status: string): string => {
-  if (status === "confirmed")
-    return "bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-300 border-emerald-500/30";
-  // if (status === "pending")
-  //   return "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border-red-500/30";
-  if (status === "pending")
-    return "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border-yellow-500/30";
-  return "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border-gray-500/30";
-};
-
-const getStatusText = (status: string): string => {
-  if (status === "completed") return "Completed";
-  if (status === "confirmed") return "Confirmed";
-  if (status === "cancelled") return "Cancelled";
-  return "Unconfirmed";
-};
-
-const getPaymentStatusColor = (status: string): string => {
-  if (status === "paid")
-    return "bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-300 border-emerald-500/30";
-  // if (status === "pending")
-  //   return "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border-red-500/30";
-  if (status === "pending")
-    return "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border-yellow-500/30";
-  return "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border-gray-500/30";
-};
-
-const getPaymentStatusText = (status: string): string => {
-  if (status === "pending") return "Unpaid";
-  return "Paid";
-};
-
 export default function BookingCard({
   booking,
   onMarkViewed,
@@ -85,138 +55,126 @@ export default function BookingCard({
       ? `${serviceName}: ${booking.custom_service}`
       : serviceName;
 
+  const fullyStaffed =
+    (booking.lifeguards_assigned?.length || 0) >= booking.lifeguards;
+
   return (
     <div
-      className={`relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4 md:p-6 cursor-pointer hover:bg-white/15 transition-all duration-300 group hover:scale-[1.02] hover:shadow-2xl ${
+      className={`relative bg-white/[0.04] border rounded-2xl p-4 cursor-pointer hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200 group ${
         !booking.viewed_by_admin
-          ? "ring-2 ring-red-400/50 shadow-red-500/20"
-          : ""
+          ? "ring-1 ring-rose-400/40 border-rose-400/20"
+          : "border-white/10"
       }`}
       onClick={() => router.push(`/admin/booking/${booking.id}`)}
     >
-      {/* New Badge */}
       {!booking.viewed_by_admin && (
-        <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-pulse">
+        <div className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg">
           NEW
         </div>
       )}
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-3">
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-3 min-w-0">
           <div
-            className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center text-white font-bold text-sm md:text-lg shadow-lg ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
               booking.payment_status === "paid"
-                ? "bg-gradient-to-br from-emerald-500 to-green-600"
-                : "bg-gradient-to-br from-blue-500 to-purple-600"
+                ? "bg-emerald-500/80"
+                : "bg-[#FF6633]/80"
             }`}
           >
             {booking.customer_name.charAt(0).toUpperCase()}
           </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-white group-hover:text-blue-300 transition-colors text-sm md:text-lg truncate">
+          <div className="min-w-0">
+            <h3 className="font-bold text-white text-sm truncate group-hover:text-[#FF6633] transition-colors">
               {booking.customer_name}
             </h3>
-            <p className="text-white/60 text-xs md:text-sm font-mono">
+            <p className="text-white/45 text-xs tabular-nums truncate">
               #{booking.order_id}
             </p>
           </div>
         </div>
-        <div className="flex space-x-2">
-          <span
-            className={`px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl text-xs font-semibold border shadow-lg ${getPaymentStatusColor(
-              booking.payment_status
-            )}`}
-          >
-            {getPaymentStatusText(booking.payment_status)}
-          </span>
-          <span
-            className={`px-2 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl text-xs font-semibold border shadow-lg ${getStatusColor(
-              booking.status
-            )}`}
-          >
-            {getStatusText(booking.status)}
-          </span>
+        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+          <StatusBadge value={booking.payment_status} kind="payment" />
+          <StatusBadge value={booking.status} kind="status" />
         </div>
       </div>
 
-      {/* Service Info */}
-      <div className="space-y-2 mb-3">
-        <div className="bg-white/5 rounded-lg p-2 md:p-3">
-          <p className="font-semibold text-white mb-1 text-sm md:text-base">
-            {fullService}
-          </p>
-          <p className="text-white/70 text-xs md:text-sm flex items-center">
-            📅 {SingaporeTime.format(booking.start_datetime, "MMM dd, HH:mm")}
-          </p>
-        </div>
+      {/* Service */}
+      <div className="bg-black/15 rounded-xl p-3 mb-3">
+        <p className="font-semibold text-white text-sm truncate">
+          {fullService}
+        </p>
+        <p className="text-white/50 text-xs flex items-center gap-1.5 mt-1">
+          <CalendarDaysIcon className="w-3.5 h-3.5 text-sky-300" />
+          {SingaporeTime.format(booking.start_datetime, "dd MMM, HH:mm")}
+        </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-3 gap-2 md:gap-4 mb-3">
-        <div className="bg-white/5 rounded-lg p-2 md:p-3 text-center">
-          <div className="flex items-center justify-center mb-1">
-            <ClockIcon className="w-3 h-3 md:w-4 md:h-4 text-blue-400 mr-1" />
-            <span className="text-white font-bold text-xs md:text-sm">
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        <div className="bg-black/15 rounded-xl p-2.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-0.5">
+            <ClockIcon className="w-3.5 h-3.5 text-sky-300" />
+            <span className="text-white font-bold text-sm tabular-nums">
               {booking.hours}h
             </span>
           </div>
-          <p className="text-white/60 text-xs">Duration</p>
+          <p className="text-white/40 text-[10px] uppercase tracking-wider">
+            Duration
+          </p>
         </div>
-        <div className="bg-white/5 rounded-lg p-2 md:p-3 text-center">
-          <div className="flex items-center justify-center mb-1">
-            <UserGroupIcon className={`w-3 h-3 md:w-4 md:h-4 mr-1 ${
-              (booking.lifeguards_assigned?.length || 0) >= booking.lifeguards 
-                ? 'text-green-400' 
-                : 'text-yellow-400'
-            }`} />
-            <span className="text-white font-bold text-xs md:text-sm">
+        <div className="bg-black/15 rounded-xl p-2.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-0.5">
+            <UserGroupIcon
+              className={`w-3.5 h-3.5 ${
+                fullyStaffed ? "text-emerald-300" : "text-amber-300"
+              }`}
+            />
+            <span className="text-white font-bold text-sm tabular-nums">
               {booking.lifeguards_assigned?.length || 0}/{booking.lifeguards}
             </span>
           </div>
-          <p className="text-white/60 text-xs">Assigned</p>
+          <p className="text-white/40 text-[10px] uppercase tracking-wider">
+            Guards
+          </p>
         </div>
-        <div className="bg-white/5 rounded-lg p-2 md:p-3 text-center">
-          <div className="flex items-center justify-center mb-1">
-            <CurrencyDollarIcon className="w-3 h-3 md:w-4 md:h-4 text-yellow-400 mr-1" />
-            <span className="text-white font-bold text-xs md:text-sm">
-              {booking.amount.toFixed(2)}
+        <div className="bg-black/15 rounded-xl p-2.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-0.5">
+            <CurrencyDollarIcon className="w-3.5 h-3.5 text-[#FF6633]" />
+            <span className="text-white font-bold text-sm tabular-nums">
+              {booking.amount.toFixed(0)}
             </span>
           </div>
-          <p className="text-white/60 text-xs">Amount</p>
+          <p className="text-white/40 text-[10px] uppercase tracking-wider">
+            Amount
+          </p>
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex space-x-2 md:space-x-3 opacity-70 group-hover:opacity-100 transition-opacity">
+      {/* Actions */}
+      <div className="flex gap-2">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onMarkViewed();
           }}
-          className="flex-1 py-2 px-2 md:py-2.5 md:px-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 border border-blue-500/30 rounded-lg md:rounded-xl hover:from-blue-500/30 hover:to-purple-500/30 transition-all font-medium text-xs md:text-sm flex items-center justify-center space-x-1 md:space-x-2 hover:scale-105"
+          className="flex-1 py-2.5 px-3 bg-white/[0.04] text-white/70 border border-white/10 rounded-xl hover:border-white/25 hover:text-white transition-all font-medium text-xs flex items-center justify-center gap-1.5 min-h-[44px]"
         >
-          <EyeIcon className="w-3 h-3 md:w-4 md:h-4" />
-          <span className="hidden sm:inline">
-            {booking.viewed_by_admin ? "Mark New" : "Mark Viewed"}
-          </span>
-          <span className="sm:hidden">
-            {booking.viewed_by_admin ? "New" : "View"}
-          </span>
+          <EyeIcon className="w-4 h-4" />
+          <span>{booking.viewed_by_admin ? "Mark new" : "Mark viewed"}</span>
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="py-2 px-2 md:py-2.5 md:px-4 bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border border-red-500/30 rounded-lg md:rounded-xl hover:from-red-500/30 hover:to-pink-500/30 transition-all font-medium text-xs md:text-sm hover:scale-105"
+          className="py-2.5 px-3.5 bg-rose-500/10 text-rose-300 border border-rose-400/30 rounded-xl hover:bg-rose-500/20 transition-all min-h-[44px] flex items-center justify-center"
+          aria-label="Delete booking"
         >
-          <TrashIcon className="w-3 h-3 md:w-4 md:h-4" />
+          <TrashIcon className="w-4 h-4" />
         </button>
       </div>
-
-      {/* Hover Glow Effect */}
-      <div className="absolute inset-0 rounded-xl md:rounded-2xl bg-gradient-to-r from-blue-600/0 via-purple-600/0 to-blue-600/0 group-hover:from-blue-600/5 group-hover:via-purple-600/5 group-hover:to-blue-600/5 transition-all duration-500 pointer-events-none"></div>
     </div>
   );
 }

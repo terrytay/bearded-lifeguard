@@ -1,10 +1,8 @@
-import { 
-  UserIcon, 
+import {
   PhoneIcon,
   PencilIcon,
   TrashIcon,
-  CheckCircleIcon,
-  XCircleIcon
+  ClockIcon,
 } from "@heroicons/react/24/outline";
 import { SingaporeTime } from "@/lib/singapore-time";
 
@@ -23,85 +21,74 @@ interface LifeguardCardProps {
   onDelete: () => void;
 }
 
-export default function LifeguardCard({ lifeguard, onEdit, onDelete }: LifeguardCardProps) {
-  const getStatusColor = (isActive: boolean) => {
-    return isActive 
-      ? "bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-300 border-emerald-500/30"
-      : "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-300 border-red-500/30";
-  };
+export default function LifeguardCard({
+  lifeguard,
+  onEdit,
+  onDelete,
+}: LifeguardCardProps) {
+  const active = lifeguard.is_active;
 
   return (
-    <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4 md:p-6 hover:bg-white/15 transition-all duration-300 group hover:scale-[1.02] hover:shadow-2xl">
-      {/* Status Badge */}
-      <div className="absolute top-3 md:top-4 right-3 md:right-4">
-        <span className={`inline-flex items-center px-2 py-1 md:px-3 md:py-1 rounded-lg text-xs md:text-sm font-semibold border ${getStatusColor(lifeguard.is_active)}`}>
-          {lifeguard.is_active ? (
-            <>
-              <CheckCircleIcon className="w-3 h-3 md:w-4 md:h-4 mr-1" />
-              Active
-            </>
-          ) : (
-            <>
-              <XCircleIcon className="w-3 h-3 md:w-4 md:h-4 mr-1" />
-              Inactive
-            </>
-          )}
+    <div className="relative bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-5 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200">
+      {/* Status pill */}
+      <span
+        className={`absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+          active
+            ? "bg-emerald-500/15 text-emerald-200 border-emerald-400/30"
+            : "bg-rose-500/15 text-rose-200 border-rose-400/30"
+        }`}
+      >
+        <span
+          className={`w-1.5 h-1.5 rounded-full ${
+            active ? "bg-emerald-400" : "bg-rose-400"
+          }`}
+        />
+        {active ? "Active" : "Inactive"}
+      </span>
+
+      <div className="flex items-start gap-3 pr-20 mb-4">
+        <div
+          className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0 ${
+            active ? "bg-emerald-500/80" : "bg-white/10"
+          }`}
+        >
+          {lifeguard.name.charAt(0).toUpperCase()}
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-base font-bold text-white truncate">
+            {lifeguard.name}
+          </h3>
+          <div className="flex items-center gap-1.5 text-white/55 mt-0.5">
+            <PhoneIcon className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="text-xs tabular-nums truncate">
+              {lifeguard.contact_number}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-black/15 rounded-xl p-3 mb-4 flex items-center gap-2 text-white/55">
+        <ClockIcon className="w-4 h-4 text-sky-300 flex-shrink-0" />
+        <span className="text-xs">
+          Added {SingaporeTime.format(lifeguard.created_at, "dd MMM yyyy")}
         </span>
       </div>
 
-      {/* Main Content */}
-      <div className="space-y-3 md:space-y-4">
-        {/* Header */}
-        <div className="flex items-start space-x-3 md:space-x-4 pr-16 md:pr-20">
-          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg ${
-            lifeguard.is_active 
-              ? "bg-gradient-to-br from-emerald-500 to-green-600" 
-              : "bg-gradient-to-br from-gray-500 to-gray-600"
-          }`}>
-            <UserIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <h3 className="text-base md:text-lg font-bold text-white mb-1 md:mb-2 truncate">
-              {lifeguard.name}
-            </h3>
-            <div className="flex items-center space-x-2 text-white/70">
-              <PhoneIcon className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
-              <span className="text-xs md:text-sm font-mono truncate">{lifeguard.contact_number}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Details */}
-        <div className="bg-white/5 rounded-lg md:rounded-xl p-3 md:p-4 space-y-2 md:space-y-3">
-          <div className="grid grid-cols-1 gap-2 md:gap-3">
-            <div>
-              <label className="text-white/60 text-xs md:text-sm font-medium">Created</label>
-              <p className="text-white text-xs md:text-sm">
-                {SingaporeTime.toLocaleString(lifeguard.created_at + "Z")}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex space-x-2 md:space-x-3 pt-2 md:pt-3 border-t border-white/10">
-          <button
-            onClick={onEdit}
-            className="flex-1 px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg md:rounded-xl hover:from-blue-600 hover:to-cyan-700 transition-all duration-200 font-semibold text-xs md:text-sm flex items-center justify-center space-x-1 md:space-x-2 shadow-lg hover:shadow-xl"
-          >
-            <PencilIcon className="w-3 h-3 md:w-4 md:h-4" />
-            <span>Edit</span>
-          </button>
-          
-          <button
-            onClick={onDelete}
-            className="flex-1 px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg md:rounded-xl hover:from-red-600 hover:to-pink-700 transition-all duration-200 font-semibold text-xs md:text-sm flex items-center justify-center space-x-1 md:space-x-2 shadow-lg hover:shadow-xl"
-          >
-            <TrashIcon className="w-3 h-3 md:w-4 md:h-4" />
-            <span>Delete</span>
-          </button>
-        </div>
+      <div className="flex gap-2">
+        <button
+          onClick={onEdit}
+          className="flex-1 px-3 py-2.5 bg-white/[0.04] text-white/80 border border-white/10 rounded-xl hover:border-white/25 hover:text-white transition-all font-medium text-sm flex items-center justify-center gap-1.5 min-h-[44px]"
+        >
+          <PencilIcon className="w-4 h-4" />
+          <span>Edit</span>
+        </button>
+        <button
+          onClick={onDelete}
+          className="px-3.5 py-2.5 bg-rose-500/10 text-rose-300 border border-rose-400/30 rounded-xl hover:bg-rose-500/20 transition-all min-h-[44px] flex items-center justify-center"
+          aria-label="Delete lifeguard"
+        >
+          <TrashIcon className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

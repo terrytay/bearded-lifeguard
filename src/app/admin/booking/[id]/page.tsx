@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { SingaporeTime } from "@/lib/singapore-time";
 
 import DashboardLayout from "../../components/DashboardLayout";
@@ -195,10 +195,10 @@ export default function BookingDetailPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center">
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 text-center border border-white/20">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/80">Checking access...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center font-mono">
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center">
+          <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60 text-sm">Checking access…</p>
         </div>
       </div>
     );
@@ -211,17 +211,16 @@ export default function BookingDetailPage() {
         onSignOut={signOut}
         processing={processing}
       >
-        <div className="p-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center py-20">
-              <div className="relative">
-                <div className="w-16 h-16 border-4 border-white/10 border-t-blue-400 rounded-full animate-spin mx-auto mb-6"></div>
-                <div className="w-10 h-10 border-4 border-white/20 border-t-purple-400 rounded-full animate-spin absolute top-3 left-1/2 transform -translate-x-1/2"></div>
-              </div>
-              <p className="text-white/80 font-medium text-lg">
-                Loading booking details...
-              </p>
-            </div>
+        <div className="p-3 md:p-6">
+          <div className="max-w-4xl mx-auto space-y-4">
+            <div className="h-40 rounded-2xl bg-white/[0.03] border border-white/10 animate-pulse" />
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-32 rounded-2xl bg-white/[0.03] border border-white/10 animate-pulse"
+                style={{ animationDelay: `${i * 90}ms` }}
+              />
+            ))}
           </div>
         </div>
       </DashboardLayout>
@@ -236,19 +235,21 @@ export default function BookingDetailPage() {
         processing={processing}
       >
         <div className="p-6">
-          <div className="max-w-4xl mx-auto text-center py-20">
-            <div className="text-6xl mb-6">❌</div>
-            <h2 className="text-2xl font-bold text-white mb-4">
-              Booking Not Found
+          <div className="max-w-4xl mx-auto text-center py-20 console-in">
+            <div className="w-16 h-16 bg-white/[0.04] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+              🔍
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">
+              Booking not found
             </h2>
-            <p className="text-white/70 mb-8">
-              The booking you're looking for doesn't exist or has been deleted.
+            <p className="text-white/50 mb-6 text-sm">
+              This booking doesn't exist or has been deleted.
             </p>
             <button
               onClick={() => router.push("/admin")}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl hover:scale-105"
+              className="px-5 py-2.5 bg-[#FF6633] text-white rounded-xl hover:bg-[#e55a2b] transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[44px]"
             >
-              Back to Dashboard
+              Back to dashboard
             </button>
           </div>
         </div>
@@ -265,48 +266,28 @@ export default function BookingDetailPage() {
       <div className="p-3 md:p-6">
         <div className="relative max-w-4xl mx-auto">
           {/* Breadcrumb */}
-          <div className="mb-4 md:mb-6">
-            <button
-              onClick={() => router.push("/admin")}
-              className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors group text-sm md:text-base"
-            >
-              <ArrowLeftIcon className="w-4 h-4 md:w-5 md:h-5 group-hover:-translate-x-1 transition-transform" />
-              <span>Back to Dashboard</span>
-            </button>
-          </div>
+          <button
+            onClick={() => router.push("/admin")}
+            className="flex items-center gap-2 text-white/55 hover:text-white transition-colors group text-sm mb-4"
+          >
+            <ArrowLeftIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span>Back to dashboard</span>
+          </button>
 
           {/* Header */}
           <BookingDetailHeader booking={booking} />
 
           {/* Single Column Layout - Mobile First */}
-          <div className="mt-5 space-y-3 md:space-y-6">
-            {/* Actions on mobile - moved to top */}
-            <div className="md:hidden bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-3">
-              <h3 className="font-bold text-white mb-2 flex items-center text-sm">
-                <div className="w-5 h-5 bg-purple-500/20 rounded-lg flex items-center justify-center mr-2">
-                  <svg
-                    className="w-3 h-3 text-purple-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                Quick Actions
+          <div className="mt-4 space-y-3 md:space-y-4">
+            {/* Actions on mobile - top */}
+            <div className="md:hidden bg-white/[0.04] border border-white/10 rounded-2xl p-4 console-in">
+              <h3 className="font-semibold text-white mb-3 flex items-center gap-2.5 text-sm">
+                <span className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 text-[#FF6633] flex items-center justify-center">
+                  <Cog6ToothIcon className="w-4 h-4" />
+                </span>
+                Quick actions
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <PaymentActions booking={booking} onUpdate={updateBooking} />
                 <StatusActions
                   booking={booking}
@@ -319,33 +300,15 @@ export default function BookingDetailPage() {
             {/* Main Info */}
             <BookingDetailInfo booking={booking} onRefresh={loadBooking} />
 
-            {/* Actions on desktop - moved to bottom */}
-            <div className="hidden md:block bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
-              <h3 className="font-bold text-white mb-4 flex items-center text-base">
-                <div className="w-8 h-8 bg-purple-500/20 rounded-xl flex items-center justify-center mr-3">
-                  <svg
-                    className="w-5 h-5 text-purple-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                Quick Actions
+            {/* Actions on desktop - bottom */}
+            <div className="hidden md:block bg-white/[0.04] border border-white/10 rounded-2xl p-6">
+              <h3 className="font-semibold text-white mb-4 flex items-center gap-2.5 text-base">
+                <span className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 text-[#FF6633] flex items-center justify-center">
+                  <Cog6ToothIcon className="w-4 h-4" />
+                </span>
+                Quick actions
               </h3>
-              <div className="flex gap-4">
+              <div className="space-y-4 max-w-md">
                 <PaymentActions booking={booking} onUpdate={updateBooking} />
                 <StatusActions
                   booking={booking}

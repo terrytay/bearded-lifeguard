@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { User, Lock, AlertCircle } from "lucide-react";
+import { Lock, Mail, AlertCircle } from "lucide-react";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -11,23 +12,17 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Check if already logged in
     const checkAuth = async () => {
       const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
       if (session) {
-        // Check if user has admin role
-        console.log('Checking profile for user:', session.user.id);
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
           .select("role")
           .eq("id", session.user.id)
           .single();
-
-        console.log("Profile data:", profile);
-        console.log("Profile error:", profileError);
 
         if (profile?.role === "admin") {
           window.location.href = "/admin";
@@ -54,16 +49,11 @@ export default function AdminLogin() {
       if (authError) throw authError;
 
       if (data.user) {
-        // Check if user has admin role
-        console.log('Login: Checking profile for user:', data.user.id);
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
           .select("role")
           .eq("id", data.user.id)
           .single();
-
-        console.log("Login: Profile data:", profile);
-        console.log("Login: Profile error:", profileError);
 
         if (profile?.role !== "admin") {
           await supabase.auth.signOut();
@@ -79,49 +69,56 @@ export default function AdminLogin() {
     }
   };
 
+  const inputClass =
+    "w-full pl-11 pr-4 py-3 bg-black/20 border border-white/15 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-[#FF6633]/40 focus:border-[#FF6633]/50 transition-all min-h-[48px]";
+
   return (
-    <div className="page-container min-h-screen flex items-center justify-center p-4">
-      <div className="modern-card w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-[#FF6633] rounded-full flex items-center justify-center mx-auto mb-4">
-            <User className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-modern-primary mb-2">
-            Admin Login
-          </h1>
-          <p className="text-modern-secondary">
-            Access the Bearded Lifeguard admin panel
+    <div className="font-mono min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 relative overflow-hidden">
+      {/* Atmospheric glow */}
+      <div className="pointer-events-none absolute -top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#FF6633]/10 rounded-full blur-[120px]" />
+
+      <div className="relative w-full max-w-md bg-white/[0.04] border border-white/10 rounded-2xl p-6 md:p-8 console-in">
+        <div className="text-center mb-7">
+          <Image
+            src="/logo.png"
+            alt="Bearded Lifeguard"
+            width={64}
+            height={64}
+            className="h-14 w-14 object-contain mx-auto mb-3"
+            priority
+          />
+          <h1 className="text-xl font-bold text-white">Admin access</h1>
+          <p className="text-white/45 text-xs uppercase tracking-[0.18em] mt-1">
+            Bearded Lifeguard
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <h4 className="font-semibold text-red-800 mb-1">Login Error</h4>
-                <p className="text-red-700 text-sm">{error}</p>
-              </div>
+          <div className="bg-rose-500/10 border border-rose-400/30 rounded-xl p-3.5 mb-5 flex items-start gap-2.5">
+            <AlertCircle className="w-5 h-5 text-rose-300 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-rose-200 text-sm">Login error</p>
+              <p className="text-rose-200/70 text-xs mt-0.5">{error}</p>
             </div>
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2"
             >
-              Email Address
+              Email address
             </label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6633] focus:border-transparent"
+                className={inputClass}
                 placeholder="admin@sglifeguardservices.com"
                 required
               />
@@ -131,18 +128,18 @@ export default function AdminLogin() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2"
             >
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF6633] focus:border-transparent"
+                className={inputClass}
                 placeholder="Enter your password"
                 required
               />
@@ -152,15 +149,15 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#FF6633] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#e55a2b] focus:ring-2 focus:ring-[#FF6633] focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#FF6633] text-white py-3 px-4 rounded-xl font-semibold hover:bg-[#e55a2b] transition-all shadow-lg shadow-[#FF6633]/20 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
           >
             {loading ? (
-              <div className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Signing In...
-              </div>
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Signing in…
+              </span>
             ) : (
-              "Sign In"
+              "Sign in"
             )}
           </button>
         </form>
@@ -168,9 +165,9 @@ export default function AdminLogin() {
         <div className="mt-6 text-center">
           <a
             href="/"
-            className="text-[#FF6633] hover:text-[#e55a2b] text-sm font-medium"
+            className="text-white/45 hover:text-white text-sm transition-colors"
           >
-            ← Back to Website
+            ← Back to website
           </a>
         </div>
       </div>

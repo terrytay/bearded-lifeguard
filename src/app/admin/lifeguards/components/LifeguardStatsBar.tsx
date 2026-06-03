@@ -1,8 +1,12 @@
+"use client";
+
 interface LifeguardStatsBarProps {
   total: number;
   active: number;
   inactive: number;
   assigned: number;
+  filterStatus?: string;
+  onFilterChange?: (status: string) => void;
 }
 
 export default function LifeguardStatsBar({
@@ -10,126 +14,69 @@ export default function LifeguardStatsBar({
   active,
   inactive,
   assigned,
+  filterStatus = "all",
+  onFilterChange,
 }: LifeguardStatsBarProps) {
+  const tiles = [
+    { key: "all", label: "Total", value: total, tone: "neutral" as const },
+    { key: "active", label: "Active", value: active, tone: "good" as const },
+    {
+      key: "inactive",
+      label: "Inactive",
+      value: inactive,
+      tone: "bad" as const,
+    },
+    {
+      key: null,
+      label: "Assigned",
+      value: assigned,
+      tone: "accent" as const,
+    },
+  ];
+
+  const toneText: Record<string, string> = {
+    neutral: "text-white",
+    good: "text-emerald-300",
+    bad: "text-rose-300",
+    accent: "text-[#FF6633]",
+  };
+
   return (
-    <div className="p-3 md:p-6 bg-gradient-to-r from-white/5 to-transparent">
+    <div className="px-3 md:px-6 pt-3 md:pt-5">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-4 gap-3 md:gap-6">
-          {/* Total Lifeguards */}
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6 hover:bg-white/15 transition-all duration-200 group">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/60 text-xs md:text-sm font-medium">
-                  Total
-                </p>
-                <p className="text-xl md:text-3xl font-bold text-white mt-1">
-                  {total}
-                </p>
-              </div>
-              <div className="hidden w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg md:rounded-xl sm:flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <svg
-                  className="w-4 h-4 md:w-6 md:h-6 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 md:gap-4">
+          {tiles.map((t) => {
+            const clickable = t.key !== null && !!onFilterChange;
+            const activeTile = t.key !== null && filterStatus === t.key;
+            const Comp: any = clickable ? "button" : "div";
+            return (
+              <Comp
+                key={t.label}
+                {...(clickable
+                  ? {
+                      onClick: () =>
+                        onFilterChange?.(activeTile ? "all" : (t.key as string)),
+                    }
+                  : {})}
+                className={`text-left rounded-2xl p-3 md:p-4 border transition-all duration-200 min-h-[64px] ${
+                  activeTile
+                    ? "bg-[#FF6633]/15 border-[#FF6633]/50 shadow-lg shadow-[#FF6633]/10"
+                    : "bg-white/[0.04] border-white/10"
+                } ${clickable ? "hover:border-white/25 hover:bg-white/[0.06]" : ""}`}
+              >
+                <div className="text-[10px] uppercase tracking-[0.16em] text-white/45 truncate">
+                  {t.label}
+                </div>
+                <div
+                  className={`text-2xl md:text-3xl font-bold tabular-nums mt-1 ${
+                    activeTile ? "text-[#FF6633]" : toneText[t.tone]
+                  }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Active */}
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6 hover:bg-white/15 transition-all duration-200 group">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/60 text-xs md:text-sm font-medium">
-                  Active
-                </p>
-                <p className="text-xl md:text-3xl font-bold text-emerald-400 mt-1">
-                  {active}
-                </p>
-              </div>
-              <div className="hidden w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-green-400 rounded-lg md:rounded-xl sm:flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <svg
-                  className="w-4 h-4 md:w-6 md:h-6 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Inactive */}
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6 hover:bg-white/15 transition-all duration-200 group">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/60 text-xs md:text-sm font-medium">
-                  Inactive
-                </p>
-                <p className="text-xl md:text-3xl font-bold text-red-400 mt-1">
-                  {inactive}
-                </p>
-              </div>
-              <div className="hidden w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-red-500 to-pink-400 rounded-lg md:rounded-xl sm:flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <svg
-                  className="w-4 h-4 md:w-6 md:h-6 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          {/* Assigned */}
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-3 md:p-6 hover:bg-white/15 transition-all duration-200 group">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white/60 text-xs md:text-sm font-medium">
-                  Assigned
-                </p>
-                <p className="text-xl md:text-3xl font-bold text-yellow-400 mt-1">
-                  {assigned}
-                </p>
-              </div>
-              <div className="hidden w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-yellow-500 to-orange-400 rounded-lg md:rounded-xl sm:flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <svg
-                  className="w-4 h-4 md:w-6 md:h-6 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
+                  {t.value}
+                </div>
+              </Comp>
+            );
+          })}
         </div>
       </div>
     </div>

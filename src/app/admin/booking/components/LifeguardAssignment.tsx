@@ -9,6 +9,7 @@ import {
   CheckIcon,
   ExclamationTriangleIcon,
   MagnifyingGlassIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import LifeguardModal from "@/app/admin/lifeguards/components/LifeguardModal";
@@ -52,7 +53,6 @@ export default function LifeguardAssignment({
     }
   }, [showModal, currentAssignments]);
 
-  // Filter lifeguards based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredLifeguards(availableLifeguards);
@@ -135,7 +135,7 @@ export default function LifeguardAssignment({
         return prev.filter((id) => id !== lifeguardId);
       } else {
         if (prev.length >= requiredCount) {
-          return [...prev.slice(1), lifeguardId]; // Replace oldest selection
+          return [...prev.slice(1), lifeguardId];
         }
         return [...prev, lifeguardId];
       }
@@ -208,57 +208,53 @@ export default function LifeguardAssignment({
 
   return (
     <>
-      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">
+      <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-white text-sm md:text-base flex items-center">
-            <div className="w-6 h-6 md:w-8 md:h-8 bg-purple-500/20 rounded-lg md:rounded-xl flex items-center justify-center mr-2 md:mr-3">
-              <UserIcon className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
-            </div>
-            Lifeguard Assignment
+          <h3 className="font-semibold text-white text-sm md:text-base flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 text-[#FF6633] flex items-center justify-center">
+              <UserGroupIcon className="w-4 h-4" />
+            </span>
+            Lifeguard assignment
           </h3>
-
           <button
             onClick={() => setShowModal(true)}
-            className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg md:rounded-xl hover:from-blue-600 hover:to-cyan-700 transition-all duration-200 font-semibold text-xs md:text-sm flex items-center space-x-1 md:space-x-2"
+            className="px-3.5 py-2 bg-[#FF6633] text-white rounded-xl hover:bg-[#e55a2b] transition-all font-semibold text-xs flex items-center gap-1.5 min-h-[40px] shadow-lg shadow-[#FF6633]/20"
           >
-            <PlusIcon className="w-3 h-3 md:w-4 md:h-4" />
+            <PlusIcon className="w-4 h-4" />
             <span>Manage</span>
           </button>
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm md:text-base">
-            <span className="text-white/70">Required:</span>
-            <span className="text-white font-semibold">
-              {requiredCount} lifeguards
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-white/50">Required</span>
+            <span className="text-white font-semibold tabular-nums">
+              {requiredCount}
             </span>
           </div>
-
-          <div className="flex items-center justify-between text-sm md:text-base">
-            <span className="text-white/70">Assigned:</span>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-white/50">Assigned</span>
             <span
-              className={`font-semibold ${
-                isComplete ? "text-emerald-400" : "text-yellow-400"
+              className={`font-semibold tabular-nums ${
+                isComplete ? "text-emerald-300" : "text-amber-300"
               }`}
             >
-              {assignedCount} lifeguards
+              {assignedCount}
             </span>
           </div>
 
-          {!isComplete && (
-            <div className="flex items-center space-x-2 p-2 md:p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-              <ExclamationTriangleIcon className="w-4 h-4 md:w-5 md:h-5 text-yellow-400 flex-shrink-0" />
-              <span className="text-yellow-200 text-xs md:text-sm">
+          {!isComplete ? (
+            <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-400/20 rounded-xl">
+              <ExclamationTriangleIcon className="w-5 h-5 text-amber-300 flex-shrink-0" />
+              <span className="text-amber-200 text-xs tabular-nums">
                 {requiredCount - assignedCount} more lifeguard
                 {requiredCount - assignedCount !== 1 ? "s" : ""} needed
               </span>
             </div>
-          )}
-
-          {isComplete && (
-            <div className="flex items-center space-x-2 p-2 md:p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-              <CheckIcon className="w-4 h-4 md:w-5 md:h-5 text-emerald-400 flex-shrink-0" />
-              <span className="text-emerald-200 text-xs md:text-sm">
+          ) : (
+            <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-400/20 rounded-xl">
+              <CheckIcon className="w-5 h-5 text-emerald-300 flex-shrink-0" />
+              <span className="text-emerald-200 text-xs">
                 All required lifeguards assigned
               </span>
             </div>
@@ -266,99 +262,97 @@ export default function LifeguardAssignment({
         </div>
       </div>
 
-      {/* Assignment Modal */}
+      {/* Assignment modal */}
       {showModal &&
         createPortal(
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-99">
-            <div className="bg-gradient-to-br from-slate-900 to-indigo-900 border border-white/20 rounded-2xl md:rounded-3xl w-full max-w-2xl max-h-[90vh] shadow-2xl flex flex-col">
-              {/* Header - Fixed */}
-              <div className="p-6 md:p-8 border-b border-white/10 flex-shrink-0">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-[99] font-mono">
+            <div className="bg-slate-900 border border-white/15 rounded-3xl w-full max-w-2xl max-h-[90vh] shadow-2xl flex flex-col console-in">
+              {/* Header */}
+              <div className="p-5 md:p-6 border-b border-white/10 flex-shrink-0">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl md:text-2xl font-bold text-white">
-                    Assign Lifeguards
+                  <h2 className="text-lg md:text-xl font-bold text-white">
+                    Assign lifeguards
                   </h2>
-          <button
-            onClick={closeAssignmentModal}
-            className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
-          >
-            <XMarkIcon className="w-5 h-5 md:w-6 md:h-6" />
-          </button>
+                  <button
+                    onClick={closeAssignmentModal}
+                    className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+                    aria-label="Close"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
                 </div>
 
-                {/* Search Input */}
-                <div className="relative mb-4">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
+                <div className="relative mb-3">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <input
                     type="text"
-                    placeholder="Search lifeguards by name or contact..."
+                    placeholder="Search by name or contact…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-200 text-white placeholder-white/50 backdrop-blur-sm text-sm"
+                    className="w-full pl-10 pr-9 py-2.5 bg-black/20 border border-white/15 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-[#FF6633]/40 focus:border-[#FF6633]/50 transition-all min-h-[44px]"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-white/40 hover:text-white"
                     >
                       <XMarkIcon className="w-4 h-4" />
                     </button>
                   )}
                 </div>
 
-                <div className="mb-4">
-                  <button
-                    onClick={() => setShowAddModal(true)}
-                    className="w-full px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl transition-all duration-200 font-semibold text-sm flex items-center justify-center space-x-2"
-                  >
-                    <PlusIcon className="w-4 h-4" />
-                    <span>Add New Lifeguard</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="w-full px-4 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/15 rounded-xl transition-all font-medium text-sm flex items-center justify-center gap-2 min-h-[44px] mb-3"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span>Add new lifeguard</span>
+                </button>
 
-                <div className="p-3 bg-white/5 rounded-xl">
-                  <div className="flex items-center justify-between text-sm md:text-base">
-                    <span className="text-white/70">Selection:</span>
+                <div className="p-3 bg-black/20 rounded-xl">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/50">Selection</span>
                     <span
-                      className={`font-semibold ${
+                      className={`font-semibold tabular-nums ${
                         selectedLifeguards.length === requiredCount
-                          ? "text-emerald-400"
+                          ? "text-emerald-300"
                           : selectedLifeguards.length > requiredCount
-                          ? "text-red-400"
-                          : "text-yellow-400"
-                  }`}
+                          ? "text-rose-300"
+                          : "text-amber-300"
+                      }`}
                     >
-                      {selectedLifeguards.length} / {requiredCount} selected
+                      {selectedLifeguards.length} / {requiredCount}
                     </span>
                   </div>
                   {searchQuery && (
-                    <p className="text-white/60 text-xs mt-1">
+                    <p className="text-white/40 text-xs mt-1 tabular-nums">
                       Showing {filteredLifeguards.length} of{" "}
-                      {availableLifeguards.length} lifeguards
+                      {availableLifeguards.length}
                     </p>
                   )}
                 </div>
               </div>
 
-              {/* Available Lifeguards - Scrollable */}
-              <div className="flex-1 overflow-y-auto p-6 md:p-8 pt-4">
+              {/* List */}
+              <div className="flex-1 overflow-y-auto p-5 md:p-6 pt-4">
                 {loading ? (
                   <div className="text-center py-8">
-                    <div className="w-8 h-8 border-4 border-white/10 border-t-blue-400 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-white/70">
-                      Loading available lifeguards...
+                    <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-3" />
+                    <p className="text-white/55 text-sm">
+                      Loading available lifeguards…
                     </p>
                   </div>
                 ) : filteredLifeguards.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-white/70">
+                    <p className="text-white/55 text-sm">
                       {searchQuery
-                        ? "No lifeguards found matching your search"
-                        : "No lifeguards available for this time slot"}
+                        ? "No lifeguards match your search"
+                        : "No lifeguards available for this slot"}
                     </p>
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery("")}
-                        className="mt-3 px-4 py-2 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-lg hover:bg-blue-500/30 transition-colors text-sm"
+                        className="mt-3 px-4 py-2 bg-white/[0.04] text-white/70 border border-white/15 rounded-lg hover:text-white transition-colors text-sm"
                       >
                         Clear search
                       </button>
@@ -373,77 +367,68 @@ export default function LifeguardAssignment({
                       const isCurrentlyAssigned = currentAssignments.some(
                         (lg) => lg.id === lifeguard.id
                       );
-
                       return (
-                        <div
+                        <button
                           key={lifeguard.id}
-                          className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                            isSelected
-                              ? "bg-blue-500/20 border-blue-400/50"
-                              : "bg-white/5 border-white/10 hover:bg-white/10"
-                          }`}
                           onClick={() => toggleLifeguardSelection(lifeguard.id)}
+                          className={`w-full text-left p-3 rounded-xl border cursor-pointer transition-all ${
+                            isSelected
+                              ? "bg-[#FF6633]/15 border-[#FF6633]/50"
+                              : "bg-white/[0.03] border-white/10 hover:bg-white/[0.06]"
+                          }`}
                         >
-                          <div className="flex items-center space-x-3">
+                          <div className="flex items-center gap-3">
                             <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                              className={`w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
                                 lifeguard.is_active
-                                  ? "bg-emerald-500/20"
-                                  : "bg-red-500/20"
+                                  ? "bg-emerald-500/80"
+                                  : "bg-white/10"
                               }`}
                             >
-                              <UserIcon
-                                className={`w-4 h-4 ${
-                                  lifeguard.is_active
-                                    ? "text-emerald-400"
-                                    : "text-red-400"
-                                }`}
-                              />
+                              {lifeguard.name.charAt(0).toUpperCase()}
                             </div>
-
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-2">
-                                <p className="text-white font-semibold text-sm">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-white font-semibold text-sm truncate">
                                   {lifeguard.name}
                                 </p>
                                 {isCurrentlyAssigned && (
-                                  <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-300 text-xs rounded border border-yellow-500/30">
-                                    Currently Assigned
+                                  <span className="px-2 py-0.5 bg-amber-500/15 text-amber-200 text-[10px] rounded-full border border-amber-400/30 flex-shrink-0">
+                                    Assigned
                                   </span>
                                 )}
                               </div>
-                              <p className="text-white/60 text-xs font-mono">
+                              <p className="text-white/45 text-xs tabular-nums truncate">
                                 {lifeguard.contact_number}
                               </p>
                             </div>
-
                             {isSelected && (
-                              <CheckIcon className="w-5 h-5 text-blue-400" />
+                              <CheckIcon className="w-5 h-5 text-[#FF6633] flex-shrink-0" />
                             )}
                           </div>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
                 )}
               </div>
 
-              {/* Actions - Fixed Bottom */}
-              <div className="p-6 md:p-8 border-t border-white/10 flex-shrink-0">
-                <div className="flex space-x-4">
+              {/* Footer */}
+              <div className="p-5 md:p-6 border-t border-white/10 flex-shrink-0">
+                <div className="flex gap-3">
                   <button
                     onClick={closeAssignmentModal}
-                    className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl transition-all duration-200 font-semibold text-sm md:text-base"
                     disabled={processing}
+                    className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/15 rounded-xl transition-all font-semibold text-sm min-h-[48px]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveAssignments}
                     disabled={processing || !canSave}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-6 py-3 bg-[#FF6633] hover:bg-[#e55a2b] text-white rounded-xl transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {processing ? "Saving..." : "Save Assignment"}
+                    {processing ? "Saving…" : "Save assignment"}
                   </button>
                 </div>
               </div>

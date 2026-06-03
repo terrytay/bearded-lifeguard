@@ -1,7 +1,7 @@
 import {
   MagnifyingGlassIcon,
-  FunnelIcon,
   ArrowPathIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 interface SearchBarProps {
@@ -13,6 +13,17 @@ interface SearchBarProps {
   isLoading: boolean;
 }
 
+const FILTERS: { value: string; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "unviewed", label: "New" },
+  { value: "pending_payment", label: "Unpaid" },
+  { value: "paid", label: "Paid" },
+  { value: "pending", label: "Unconfirmed" },
+  { value: "confirmed", label: "Confirmed" },
+  { value: "completed", label: "Completed" },
+  { value: "cancelled", label: "Cancelled" },
+];
+
 export default function SearchBar({
   searchQuery,
   onSearchChange,
@@ -22,75 +33,59 @@ export default function SearchBar({
   isLoading,
 }: SearchBarProps) {
   return (
-    <div className="sticky top-0 z-[999] p-3 md:p-6 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg border-b border-white/10">
-      <div className="max-w-7xl mx-auto space-y-3 md:space-y-4">
-        <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-white/50" />
-          <input
-            type="text"
-            placeholder="Search bookings..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 md:pl-12 pr-4 py-3 md:py-4 bg-white/10 border border-white/20 rounded-xl md:rounded-2xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-200 text-white placeholder-white/50 backdrop-blur-sm text-sm md:text-base"
-          />
-        </div>
-
-        <div className="flex gap-2 md:gap-4">
+    <div className="px-3 md:px-6 pt-3 md:pt-6">
+      <div className="max-w-7xl mx-auto space-y-3">
+        {/* Search + refresh */}
+        <div className="flex gap-2">
           <div className="relative flex-1">
-            <FunnelIcon className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 md:h-4 md:w-4 text-white/50" />
-            <select
-              value={filterStatus}
-              onChange={(e) => onFilterChange(e.target.value)}
-              className="w-full pl-8 md:pl-10 pr-6 md:pr-8 py-2 md:py-3 bg-white/10 border border-white/20 rounded-lg md:rounded-xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 appearance-none text-white backdrop-blur-sm text-xs md:text-sm"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff50' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                backgroundPosition: "right 0.5rem center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "1.2em 1.2em",
-              }}
-            >
-              <option value="all" className="bg-slate-800 text-white">
-                All
-              </option>
-              <option value="unviewed" className="bg-slate-800 text-white">
-                🔴 New
-              </option>
-              <option
-                value="pending_payment"
-                className="bg-slate-800 text-white"
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-white/40" />
+            <input
+              type="text"
+              placeholder="Search name, order, email…"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="w-full pl-10 md:pl-11 pr-9 py-3 bg-black/20 border border-white/15 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-[#FF6633]/40 focus:border-[#FF6633]/50 transition-all min-h-[44px]"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => onSearchChange("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-white/40 hover:text-white"
+                aria-label="Clear search"
               >
-                💳 Pending Payment
-              </option>
-              <option value="paid" className="bg-slate-800 text-white">
-                ✅ Paid
-              </option>
-              <option value="pending" className="bg-slate-800 text-white">
-                ⏳ Unconfirmed
-              </option>
-              <option value="confirmed" className="bg-slate-800 text-white">
-                ✅ Confirmed
-              </option>
-              <option value="completed" className="bg-slate-800 text-white">
-                🎉 Completed
-              </option>
-              <option value="cancelled" className="bg-slate-800 text-white">
-                ❌ Cancelled
-              </option>
-            </select>
+                <XMarkIcon className="h-4 w-4" />
+              </button>
+            )}
           </div>
-
           <button
             onClick={onRefresh}
             disabled={isLoading}
-            className="px-3 py-2 md:px-6 md:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg md:rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-1 md:space-x-2 font-semibold text-xs md:text-sm"
+            className="px-3.5 bg-[#FF6633] text-white rounded-xl hover:bg-[#e55a2b] disabled:opacity-50 transition-all flex items-center justify-center min-h-[44px] min-w-[44px] shadow-lg shadow-[#FF6633]/20"
+            aria-label="Refresh"
           >
             <ArrowPathIcon
-              className={`h-3 w-3 md:h-4 md:w-4 ${
-                isLoading ? "animate-spin" : ""
-              }`}
+              className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`}
             />
-            <span className="hidden sm:inline">Refresh</span>
           </button>
+        </div>
+
+        {/* Filter chips — horizontally scrollable */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 py-0.5">
+          {FILTERS.map((f) => {
+            const active = filterStatus === f.value;
+            return (
+              <button
+                key={f.value}
+                onClick={() => onFilterChange(f.value)}
+                className={`whitespace-nowrap px-3.5 py-2 rounded-full text-xs font-medium border transition-all duration-150 min-h-[40px] flex-shrink-0 ${
+                  active
+                    ? "bg-[#FF6633] text-white border-[#FF6633] shadow-lg shadow-[#FF6633]/20"
+                    : "bg-white/[0.04] text-white/60 border-white/10 hover:text-white hover:border-white/25"
+                }`}
+              >
+                {f.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -227,10 +227,10 @@ export default function AdminDashboard() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div className="w-8 h-8 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking access...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center font-mono">
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center">
+          <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60 text-sm">Checking access…</p>
         </div>
       </div>
     );
@@ -265,33 +265,34 @@ export default function AdminDashboard() {
         isLoading={loading}
       />
       {/* Stats */}
-      <StatsBar {...stats} />
+      <StatsBar
+        {...stats}
+        filterStatus={filterStatus}
+        onFilterChange={setFilterStatus}
+      />
       {/* Content */}
       <div className="p-3 md:p-6">
         <div className="max-w-7xl mx-auto">
           {loading ? (
-            <div className="text-center py-12 md:py-20">
-              <div className="relative">
-                <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-white/10 border-t-blue-400 rounded-full animate-spin mx-auto mb-4 md:mb-6"></div>
-                <div className="w-6 h-6 md:w-10 md:h-10 border-4 border-white/20 border-t-purple-400 rounded-full animate-spin absolute top-3 left-1/2 transform -translate-x-1/2"></div>
-              </div>
-              <p className="text-white/80 font-medium text-sm md:text-lg">
-                Loading bookings...
-              </p>
-              <p className="text-white/50 text-xs md:text-sm mt-1 md:mt-2">
-                Fetching the latest data
-              </p>
+            <div className="space-y-2.5">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-20 rounded-2xl bg-white/[0.03] border border-white/10 animate-pulse"
+                  style={{ animationDelay: `${i * 70}ms` }}
+                />
+              ))}
             </div>
           ) : bookings.length === 0 ? (
-            <div className="text-center py-12 md:py-20">
-              <div className="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-lg rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto mb-4 md:mb-6 border border-white/20">
-                <div className="text-2xl md:text-4xl">📋</div>
+            <div className="text-center py-12 md:py-20 console-in">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white/[0.04] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+                🗓️
               </div>
-              <h3 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3">
+              <h3 className="text-lg md:text-xl font-bold text-white mb-2">
                 No bookings found
               </h3>
-              <p className="text-white/70 mb-4 md:mb-6 max-w-md mx-auto text-sm md:text-base">
-                Try adjusting your search or filter criteria.
+              <p className="text-white/50 mb-5 max-w-sm mx-auto text-sm">
+                Nothing matches this search or filter.
               </p>
               <button
                 onClick={() => {
@@ -299,22 +300,22 @@ export default function AdminDashboard() {
                   setFilterStatus("all");
                   loadBookings();
                 }}
-                className="px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg md:rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl hover:scale-105 text-sm md:text-base"
+                className="px-5 py-2.5 bg-[#FF6633] text-white rounded-xl hover:bg-[#e55a2b] transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[44px]"
               >
-                Reset All Filters
+                Reset filters
               </button>
             </div>
           ) : (
             <>
               {/* View Toggle */}
-              <div className="mb-4 md:mb-6 flex justify-end">
-                <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-1 flex">
+              <div className="mb-4 flex justify-end console-in">
+                <div className="bg-black/20 border border-white/10 rounded-xl p-1 flex gap-1">
                   <button
-                    onClick={() => setViewMode('list')}
-                    className={`px-3 py-2 md:px-4 md:py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
-                      viewMode === 'list'
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                        : 'text-white/70 hover:text-white hover:bg-white/10'
+                    onClick={() => setViewMode("list")}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 min-h-[40px] ${
+                      viewMode === "list"
+                        ? "bg-[#FF6633] text-white shadow-lg shadow-[#FF6633]/20"
+                        : "text-white/55 hover:text-white hover:bg-white/5"
                     }`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,11 +324,11 @@ export default function AdminDashboard() {
                     <span>List</span>
                   </button>
                   <button
-                    onClick={() => setViewMode('card')}
-                    className={`px-3 py-2 md:px-4 md:py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
-                      viewMode === 'card'
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                        : 'text-white/70 hover:text-white hover:bg-white/10'
+                    onClick={() => setViewMode("card")}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 min-h-[40px] ${
+                      viewMode === "card"
+                        ? "bg-[#FF6633] text-white shadow-lg shadow-[#FF6633]/20"
+                        : "text-white/55 hover:text-white hover:bg-white/5"
                     }`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -340,19 +341,21 @@ export default function AdminDashboard() {
 
               {/* Content based on view mode */}
               {viewMode === 'list' ? (
-                <BookingList
-                  bookings={bookings}
-                  onMarkViewed={(booking) =>
-                    updateBooking(booking.id, {
-                      action: booking.viewed_by_admin
-                        ? "mark_unviewed"
-                        : "mark_viewed",
-                    })
-                  }
-                  onDelete={deleteBooking}
-                />
+                <div className="console-in">
+                  <BookingList
+                    bookings={bookings}
+                    onMarkViewed={(booking) =>
+                      updateBooking(booking.id, {
+                        action: booking.viewed_by_admin
+                          ? "mark_unviewed"
+                          : "mark_viewed",
+                      })
+                    }
+                    onDelete={deleteBooking}
+                  />
+                </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 console-in">
                   {bookings.map((booking) => (
                     <BookingCard
                       key={booking.id}

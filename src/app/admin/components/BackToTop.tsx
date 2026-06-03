@@ -43,7 +43,7 @@ export default function BackToTopButton() {
       aria-label="Back to top"
       className={`fixed bottom-24 right-6 md:bottom-6 z-50 p-3 rounded-full shadow-lg transition-all duration-300 ${
         visible && show
-          ? "opacity-100 translate-y-0 bg-[#FF6633] hover:bg-[#e55a2b] text-white"
+          ? "opacity-100 translate-y-0 bg-ink hover:bg-signal text-paper"
           : "opacity-0 translate-y-10 pointer-events-none"
       }`}
     >

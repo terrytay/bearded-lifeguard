@@ -44,50 +44,45 @@ export default function BookingDetailHeader({
       : serviceName;
 
   const stats = [
-    { label: "Hours", value: `${booking.hours}` },
-    { label: "Guards", value: `${booking.lifeguards}` },
+    { label: "Hours", value: `${booking.hours}`, tone: "text-ink" },
+    { label: "Guards", value: `${booking.lifeguards}`, tone: "text-ink" },
     {
       label: "Status",
       value: booking.status === "completed" ? "✓" : "○",
-      tone: booking.status === "completed" ? "text-emerald-300" : "text-white/50",
+      tone: booking.status === "completed" ? "text-sea" : "text-ink-soft",
     },
     {
       label: "Payment",
       value: booking.payment_status === "paid" ? "✓" : "○",
-      tone:
-        booking.payment_status === "paid"
-          ? "text-emerald-300"
-          : "text-amber-300",
+      tone: booking.payment_status === "paid" ? "text-sea" : "text-ochre",
     },
   ];
 
   return (
-    <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-6 console-in">
+    <div className="bg-white border border-ink/12 rounded-2xl p-4 md:p-6 console-in">
       {!booking.viewed_by_admin && (
-        <span className="inline-block mb-4 bg-rose-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
-          NEW BOOKING
+        <span className="inline-block mb-4 bg-signal text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+          New booking
         </span>
       )}
 
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
         <div className="flex items-start gap-4 min-w-0">
           <div
-            className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-white font-bold text-xl flex-shrink-0 ${
-              booking.payment_status === "paid"
-                ? "bg-emerald-500/80"
-                : "bg-[#FF6633]/80"
+            className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-paper font-bold text-xl flex-shrink-0 ${
+              booking.payment_status === "paid" ? "bg-sea" : "bg-ink"
             }`}
           >
             {booking.customer_name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <h1 className="text-lg md:text-2xl font-bold text-white truncate">
+            <h1 className="font-display text-2xl md:text-3xl font-semibold text-ink leading-none truncate">
               {booking.customer_name}
             </h1>
-            <p className="text-white/45 text-sm tabular-nums">
+            <p className="text-ink-soft text-sm tabular-nums mt-1">
               #{booking.order_id}
             </p>
-            <p className="text-white/70 text-sm mt-0.5">{fullService}</p>
+            <p className="text-ink-soft text-sm mt-0.5">{fullService}</p>
           </div>
         </div>
 
@@ -97,30 +92,28 @@ export default function BookingDetailHeader({
             <StatusBadge value={booking.status} kind="status" />
           </div>
           <div className="lg:text-right">
-            <div className="text-2xl md:text-3xl font-bold text-[#FF6633] tabular-nums">
+            <div className="font-display text-3xl md:text-4xl font-semibold text-signal tabular-nums leading-none">
               ${booking.amount.toFixed(2)}
             </div>
-            <p className="text-white/40 text-[10px] uppercase tracking-[0.16em]">
+            <p className="text-ink-soft text-[10px] uppercase tracking-[0.16em] mt-1">
               Total amount
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 md:gap-3 mt-4 pt-4 border-t border-white/10">
+      <div className="grid grid-cols-4 gap-2 md:gap-3 mt-5 pt-4 border-t border-ink/12">
         {stats.map((s) => (
           <div
             key={s.label}
-            className="bg-black/15 rounded-xl p-2.5 md:p-3 text-center"
+            className="bg-sand/50 rounded-xl p-2.5 md:p-3 text-center"
           >
             <div
-              className={`text-lg md:text-2xl font-bold tabular-nums ${
-                s.tone || "text-white"
-              }`}
+              className={`font-display text-xl md:text-2xl font-semibold tabular-nums ${s.tone}`}
             >
               {s.value}
             </div>
-            <div className="text-white/40 text-[10px] uppercase tracking-wider mt-0.5">
+            <div className="text-ink-soft text-[10px] uppercase tracking-wider mt-0.5">
               {s.label}
             </div>
           </div>

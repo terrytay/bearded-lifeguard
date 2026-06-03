@@ -24,14 +24,14 @@ export default function AssignedLifeguards({
   const isComplete = assignedCount >= requiredCount;
 
   return (
-    <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-6">
+    <div className="bg-white border border-ink/12 rounded-2xl p-4 md:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-white text-sm md:text-base flex items-center gap-2.5">
+        <h3 className="font-display text-base md:text-lg font-semibold text-ink flex items-center gap-2.5">
           <span
             className={`w-7 h-7 rounded-lg flex items-center justify-center border ${
               isComplete
-                ? "bg-emerald-500/15 border-emerald-400/30 text-emerald-300"
-                : "bg-amber-500/15 border-amber-400/30 text-amber-300"
+                ? "bg-sea/10 border-sea/30 text-sea"
+                : "bg-ochre/10 border-ochre/30 text-ochre"
             }`}
           >
             <UserGroupIcon className="w-4 h-4" />
@@ -39,10 +39,10 @@ export default function AssignedLifeguards({
           Assigned lifeguards
         </h3>
         <span
-          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border tabular-nums ${
+          className={`px-2.5 py-0.5 rounded-md text-[11px] font-semibold border tabular-nums ${
             isComplete
-              ? "bg-emerald-500/15 text-emerald-200 border-emerald-400/30"
-              : "bg-amber-500/15 text-amber-200 border-amber-400/30"
+              ? "text-sea border-sea/40 bg-sea/10"
+              : "text-ochre border-ochre/40 bg-ochre/10"
           }`}
         >
           {assignedCount} / {requiredCount}
@@ -51,11 +51,11 @@ export default function AssignedLifeguards({
 
       {lifeguards.length === 0 ? (
         <div className="text-center py-8">
-          <div className="w-14 h-14 bg-white/[0.04] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
-            <UserIcon className="w-7 h-7 text-white/30" />
+          <div className="w-14 h-14 bg-sand border border-ink/12 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <UserIcon className="w-7 h-7 text-ink-soft/50" />
           </div>
-          <p className="text-white/55 text-sm">No lifeguards assigned</p>
-          <p className="text-white/35 text-xs mt-0.5 tabular-nums">
+          <p className="text-ink-soft text-sm">No lifeguards assigned</p>
+          <p className="text-ink-soft/70 text-xs mt-0.5 tabular-nums">
             {requiredCount} required
           </p>
         </div>
@@ -64,26 +64,26 @@ export default function AssignedLifeguards({
           {lifeguards.map((lifeguard) => (
             <div
               key={lifeguard.id}
-              className="bg-black/15 rounded-xl p-3 flex items-center justify-between"
+              className="bg-sand/50 rounded-xl p-3 flex items-center justify-between"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
-                    lifeguard.is_active ? "bg-emerald-500/80" : "bg-white/10"
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center text-paper font-bold text-sm flex-shrink-0 ${
+                    lifeguard.is_active ? "bg-sea" : "bg-ink/40"
                   }`}
                 >
                   {lifeguard.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-white font-semibold text-sm truncate">
+                  <p className="text-ink font-semibold text-sm truncate">
                     {lifeguard.name}
                   </p>
-                  <p className="text-white/50 text-xs tabular-nums truncate">
+                  <p className="text-ink-soft text-xs tabular-nums truncate">
                     {lifeguard.contact_number}
                   </p>
                 </div>
                 {!lifeguard.is_active && (
-                  <span className="px-2 py-0.5 bg-rose-500/15 text-rose-200 text-[11px] rounded-full border border-rose-400/30 flex-shrink-0">
+                  <span className="px-2 py-0.5 bg-signal/10 text-signal text-[10px] uppercase tracking-wider rounded-md border border-signal/30 flex-shrink-0">
                     Inactive
                   </span>
                 )}
@@ -91,7 +91,7 @@ export default function AssignedLifeguards({
               {!readOnly && onUnassign && (
                 <button
                   onClick={() => onUnassign(lifeguard.id)}
-                  className="p-2 text-rose-300 hover:bg-rose-500/10 rounded-lg transition-colors flex-shrink-0"
+                  className="p-2 text-signal hover:bg-signal/10 rounded-lg transition-colors flex-shrink-0"
                   title="Remove"
                 >
                   <XMarkIcon className="w-5 h-5" />
@@ -100,7 +100,7 @@ export default function AssignedLifeguards({
             </div>
           ))}
           {assignedCount < requiredCount && (
-            <p className="text-amber-300 text-xs text-center pt-1 tabular-nums">
+            <p className="text-ochre text-xs text-center pt-1 tabular-nums">
               {requiredCount - assignedCount} more needed
             </p>
           )}

@@ -60,23 +60,25 @@ export default function BookingList({
   const router = useRouter();
 
   return (
-    <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+    <div className="bg-white border border-ink/12 rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="px-4 md:px-6 py-3.5 border-b border-white/10 flex items-center gap-2.5">
-        <div className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 flex items-center justify-center">
-          <CalendarDaysIcon className="w-3.5 h-3.5 text-[#FF6633]" />
-        </div>
+      <div className="px-4 md:px-6 py-3.5 border-b border-ink/12 flex items-center justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-white text-sm">Bookings</h3>
-          <p className="text-white/40 text-[11px] tabular-nums">
-            {bookings.length} record{bookings.length !== 1 ? "s" : ""}
-          </p>
+          <div className="text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+            Directory
+          </div>
+          <h3 className="font-display text-lg font-semibold text-ink leading-none mt-0.5">
+            Bookings
+          </h3>
         </div>
+        <span className="text-ink-soft text-xs tabular-nums">
+          {bookings.length} record{bookings.length !== 1 ? "s" : ""}
+        </span>
       </div>
 
       {/* Desktop column header */}
-      <div className="hidden xl:block px-6 py-2.5 bg-black/20 border-b border-white/10">
-        <div className="grid grid-cols-12 gap-4 text-[10px] font-semibold text-white/40 uppercase tracking-[0.12em]">
+      <div className="hidden xl:block px-6 py-2.5 bg-sand/50 border-b border-ink/15">
+        <div className="grid grid-cols-12 gap-4 text-[10px] font-semibold text-ink-soft uppercase tracking-[0.14em]">
           <div className="col-span-1 text-center">State</div>
           <div className="col-span-2">Customer</div>
           <div className="col-span-2">Service</div>
@@ -90,7 +92,7 @@ export default function BookingList({
       </div>
 
       {/* Rows */}
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-ink/10">
         {bookings.map((booking) => {
           const serviceName =
             serviceNames[booking.service_type] || booking.service_type;
@@ -104,9 +106,9 @@ export default function BookingList({
           return (
             <div
               key={booking.id}
-              className={`group hover:bg-white/[0.03] transition-colors cursor-pointer ${
+              className={`group hover:bg-sand/40 transition-colors cursor-pointer ${
                 !booking.viewed_by_admin
-                  ? "bg-rose-500/[0.06] border-l-2 border-rose-400/50"
+                  ? "bg-signal/[0.05] border-l-2 border-signal"
                   : ""
               }`}
               onClick={() => router.push(`/admin/booking/${booking.id}`)}
@@ -116,76 +118,68 @@ export default function BookingList({
                 <div className="col-span-1 flex flex-col items-center gap-1.5">
                   <span
                     className={`w-2.5 h-2.5 rounded-full ${
-                      booking.viewed_by_admin
-                        ? "bg-white/30"
-                        : "bg-rose-400 animate-pulse"
+                      booking.viewed_by_admin ? "bg-ink/25" : "bg-signal"
                     }`}
                     title={booking.viewed_by_admin ? "Viewed" : "New"}
                   />
                   <span
                     className={`w-2.5 h-2.5 rounded-full ${
-                      booking.payment_status === "paid"
-                        ? "bg-emerald-400"
-                        : "bg-amber-400"
+                      booking.payment_status === "paid" ? "bg-sea" : "bg-ochre"
                     }`}
-                    title={
-                      booking.payment_status === "paid" ? "Paid" : "Unpaid"
-                    }
+                    title={booking.payment_status === "paid" ? "Paid" : "Unpaid"}
                   />
                 </div>
 
                 <div className="col-span-2 flex items-center gap-3 min-w-0">
                   <div
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
-                      booking.payment_status === "paid"
-                        ? "bg-emerald-500/80"
-                        : "bg-[#FF6633]/80"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-paper font-bold text-sm flex-shrink-0 ${
+                      booking.payment_status === "paid" ? "bg-sea" : "bg-ink"
                     }`}
                   >
                     {booking.customer_name.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-white text-sm truncate">
+                    <p className="font-semibold text-ink text-sm truncate">
                       {booking.customer_name}
                     </p>
-                    <p className="text-white/45 text-xs tabular-nums truncate">
+                    <p className="text-ink-soft text-xs tabular-nums truncate">
                       #{booking.order_id}
                     </p>
                   </div>
                 </div>
 
                 <div className="col-span-2 min-w-0">
-                  <p className="font-medium text-white text-sm truncate">
+                  <p className="font-medium text-ink text-sm truncate">
                     {fullService}
                   </p>
                   {booking.location && (
-                    <span className="flex items-center gap-1 mt-0.5 text-white/45 text-xs truncate">
-                      <MapPinIcon className="w-3 h-3 text-[#FF6633]" />
+                    <span className="flex items-center gap-1 mt-0.5 text-ink-soft text-xs truncate">
+                      <MapPinIcon className="w-3 h-3 text-signal" />
                       {booking.location}
                     </span>
                   )}
                 </div>
 
                 <div className="col-span-2">
-                  <p className="text-white/85 text-sm">
+                  <p className="text-ink text-sm">
                     {SingaporeTime.format(booking.start_datetime, "dd MMM yyyy")}
                   </p>
-                  <p className="text-white/45 text-xs tabular-nums">
+                  <p className="text-ink-soft text-xs tabular-nums">
                     {SingaporeTime.format(booking.start_datetime, "HH:mm")} –{" "}
                     {SingaporeTime.format(booking.end_datetime, "HH:mm")}
                   </p>
                 </div>
 
                 <div className="col-span-1 text-center">
-                  <span className="text-white font-bold text-sm tabular-nums">
+                  <span className="font-semibold text-ink text-sm tabular-nums">
                     {booking.hours}h
                   </span>
                 </div>
 
                 <div className="col-span-1 text-center">
                   <span
-                    className={`font-bold text-sm tabular-nums ${
-                      fullyStaffed ? "text-emerald-300" : "text-amber-300"
+                    className={`font-semibold text-sm tabular-nums ${
+                      fullyStaffed ? "text-sea" : "text-ochre"
                     }`}
                   >
                     {booking.lifeguards_assigned?.length || 0}/
@@ -194,16 +188,13 @@ export default function BookingList({
                 </div>
 
                 <div className="col-span-1 text-center">
-                  <span className="text-white font-bold text-sm tabular-nums">
+                  <span className="font-semibold text-ink text-sm tabular-nums">
                     ${booking.amount.toFixed(0)}
                   </span>
                 </div>
 
                 <div className="col-span-1 flex justify-center">
-                  <StatusBadge
-                    value={booking.payment_status}
-                    kind="payment"
-                  />
+                  <StatusBadge value={booking.payment_status} kind="payment" />
                 </div>
 
                 <div className="col-span-1 flex justify-center gap-1">
@@ -212,7 +203,7 @@ export default function BookingList({
                       e.stopPropagation();
                       onMarkViewed(booking);
                     }}
-                    className="p-2 text-white/50 hover:text-sky-300 hover:bg-sky-500/10 rounded-lg transition-all"
+                    className="p-2 text-ink-soft hover:text-sea hover:bg-sea/10 rounded-lg transition-all"
                     title={booking.viewed_by_admin ? "Mark new" : "Mark viewed"}
                   >
                     <EyeIcon className="w-4 h-4" />
@@ -222,7 +213,7 @@ export default function BookingList({
                       e.stopPropagation();
                       onDelete(booking.id);
                     }}
-                    className="p-2 text-white/50 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-all"
+                    className="p-2 text-ink-soft hover:text-signal hover:bg-signal/10 rounded-lg transition-all"
                     title="Delete"
                   >
                     <TrashIcon className="w-4 h-4" />
@@ -235,19 +226,17 @@ export default function BookingList({
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
-                        booking.payment_status === "paid"
-                          ? "bg-emerald-500/80"
-                          : "bg-[#FF6633]/80"
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center text-paper font-bold text-sm flex-shrink-0 ${
+                        booking.payment_status === "paid" ? "bg-sea" : "bg-ink"
                       }`}
                     >
                       {booking.customer_name.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-bold text-white text-sm truncate">
+                      <h4 className="font-semibold text-ink text-sm truncate">
                         {booking.customer_name}
                       </h4>
-                      <p className="text-white/45 text-xs tabular-nums">
+                      <p className="text-ink-soft text-xs tabular-nums">
                         #{booking.order_id}
                       </p>
                     </div>
@@ -258,7 +247,7 @@ export default function BookingList({
                         e.stopPropagation();
                         onMarkViewed(booking);
                       }}
-                      className="p-2 text-white/50 hover:text-sky-300 hover:bg-sky-500/10 rounded-lg transition-all"
+                      className="p-2 text-ink-soft hover:text-sea hover:bg-sea/10 rounded-lg transition-all"
                       title={booking.viewed_by_admin ? "Mark new" : "Mark viewed"}
                     >
                       <EyeIcon className="w-4 h-4" />
@@ -268,7 +257,7 @@ export default function BookingList({
                         e.stopPropagation();
                         onDelete(booking.id);
                       }}
-                      className="p-2 text-white/50 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition-all"
+                      className="p-2 text-ink-soft hover:text-signal hover:bg-signal/10 rounded-lg transition-all"
                       title="Delete"
                     >
                       <TrashIcon className="w-4 h-4" />
@@ -278,26 +267,24 @@ export default function BookingList({
 
                 <div className="flex flex-wrap gap-1.5">
                   {!booking.viewed_by_admin && (
-                    <span className="px-2 py-0.5 rounded-full text-[11px] bg-rose-500 text-white font-bold">
-                      NEW
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-signal text-white">
+                      New
                     </span>
                   )}
                   <StatusBadge value={booking.payment_status} kind="payment" />
                   <StatusBadge value={booking.status} kind="status" />
                 </div>
 
-                <div className="bg-black/15 rounded-xl p-3 space-y-2">
-                  <p className="font-semibold text-white text-sm">
-                    {fullService}
-                  </p>
+                <div className="bg-sand/50 rounded-xl p-3 space-y-2">
+                  <p className="font-medium text-ink text-sm">{fullService}</p>
                   {booking.location && (
-                    <div className="flex items-center gap-2 text-white/60 text-sm">
-                      <MapPinIcon className="w-4 h-4 text-[#FF6633] flex-shrink-0" />
+                    <div className="flex items-center gap-2 text-ink-soft text-sm">
+                      <MapPinIcon className="w-4 h-4 text-signal flex-shrink-0" />
                       <span className="truncate">{booking.location}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-2 text-white/60 text-sm">
-                    <CalendarDaysIcon className="w-4 h-4 text-sky-300 flex-shrink-0" />
+                  <div className="flex items-center gap-2 text-ink-soft text-sm">
+                    <CalendarDaysIcon className="w-4 h-4 text-sea flex-shrink-0" />
                     <span className="tabular-nums">
                       {SingaporeTime.format(
                         booking.start_datetime,
@@ -309,61 +296,61 @@ export default function BookingList({
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="bg-black/15 rounded-xl p-2.5 text-center">
+                  <div className="bg-sand/50 rounded-xl p-2.5 text-center">
                     <div className="flex items-center justify-center gap-1 mb-0.5">
-                      <ClockIcon className="w-3.5 h-3.5 text-sky-300" />
-                      <span className="text-white font-bold text-sm tabular-nums">
+                      <ClockIcon className="w-3.5 h-3.5 text-sea" />
+                      <span className="font-display font-semibold text-ink text-base tabular-nums">
                         {booking.hours}h
                       </span>
                     </div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                    <p className="text-ink-soft text-[10px] uppercase tracking-wider">
                       Duration
                     </p>
                   </div>
-                  <div className="bg-black/15 rounded-xl p-2.5 text-center">
+                  <div className="bg-sand/50 rounded-xl p-2.5 text-center">
                     <div className="flex items-center justify-center gap-1 mb-0.5">
                       <UserGroupIcon
                         className={`w-3.5 h-3.5 ${
-                          fullyStaffed ? "text-emerald-300" : "text-amber-300"
+                          fullyStaffed ? "text-sea" : "text-ochre"
                         }`}
                       />
-                      <span className="text-white font-bold text-sm tabular-nums">
+                      <span className="font-display font-semibold text-ink text-base tabular-nums">
                         {booking.lifeguards_assigned?.length || 0}/
                         {booking.lifeguards}
                       </span>
                     </div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                    <p className="text-ink-soft text-[10px] uppercase tracking-wider">
                       Guards
                     </p>
                   </div>
-                  <div className="bg-black/15 rounded-xl p-2.5 text-center">
+                  <div className="bg-sand/50 rounded-xl p-2.5 text-center">
                     <div className="flex items-center justify-center gap-1 mb-0.5">
-                      <CurrencyDollarIcon className="w-3.5 h-3.5 text-[#FF6633]" />
-                      <span className="text-white font-bold text-sm tabular-nums">
+                      <CurrencyDollarIcon className="w-3.5 h-3.5 text-signal" />
+                      <span className="font-display font-semibold text-ink text-base tabular-nums">
                         {booking.amount.toFixed(0)}
                       </span>
                     </div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                    <p className="text-ink-soft text-[10px] uppercase tracking-wider">
                       Amount
                     </p>
                   </div>
                 </div>
 
                 <details className="md:hidden">
-                  <summary className="text-white/55 text-sm cursor-pointer hover:text-white transition-colors list-none flex items-center gap-1.5">
+                  <summary className="text-ink-soft text-sm cursor-pointer hover:text-ink transition-colors list-none flex items-center gap-1.5">
                     <ChatBubbleLeftEllipsisIcon className="w-4 h-4" />
                     Contact details
                   </summary>
                   <div className="mt-2 space-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      <PhoneIcon className="w-4 h-4 text-emerald-300 flex-shrink-0" />
-                      <span className="text-white/70 tabular-nums">
+                      <PhoneIcon className="w-4 h-4 text-sea flex-shrink-0" />
+                      <span className="text-ink tabular-nums">
                         {booking.customer_phone}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <EnvelopeIcon className="w-4 h-4 text-sky-300 flex-shrink-0" />
-                      <span className="text-white/70 truncate">
+                      <EnvelopeIcon className="w-4 h-4 text-sea flex-shrink-0" />
+                      <span className="text-ink truncate">
                         {booking.customer_email}
                       </span>
                     </div>
@@ -371,11 +358,11 @@ export default function BookingList({
                 </details>
 
                 {booking.remarks && (
-                  <div className="bg-amber-500/10 border border-amber-400/20 rounded-xl p-2.5">
-                    <p className="text-amber-200 text-xs font-medium mb-0.5">
+                  <div className="bg-ochre/10 border border-ochre/25 rounded-xl p-2.5">
+                    <p className="text-ochre text-[10px] font-semibold uppercase tracking-wider mb-0.5">
                       Remarks
                     </p>
-                    <p className="text-amber-100/80 text-xs">{booking.remarks}</p>
+                    <p className="text-ink text-xs">{booking.remarks}</p>
                   </div>
                 )}
               </div>

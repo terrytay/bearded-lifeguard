@@ -46,23 +46,26 @@ export default function DashboardLayout({
     },
   ];
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 font-mono">
+    <div className="relative min-h-screen w-full bg-paper text-ink">
+      {/* Paper grain texture */}
+      <div className="editorial-grain pointer-events-none fixed inset-0 z-0" />
+
       {/* Processing overlay */}
       {processing && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white/[0.06] backdrop-blur-lg border border-white/15 rounded-2xl p-6 flex items-center space-x-3">
-            <div className="w-5 h-5 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin"></div>
-            <span className="text-white font-medium text-sm">Processing…</span>
+        <div className="fixed inset-0 bg-ink/25 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-paper border-2 border-ink rounded-2xl px-6 py-5 flex items-center gap-3 shadow-[6px_6px_0_0_var(--color-ink)]">
+            <div className="w-5 h-5 border-2 border-ink/20 border-t-signal rounded-full animate-spin" />
+            <span className="text-ink font-medium text-sm">Working…</span>
           </div>
         </div>
       )}
 
-      {/* Header */}
-      <header className="bg-slate-900/80 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
-        <div className="px-3 py-3 md:px-6 md:py-3.5">
+      {/* Masthead */}
+      <header className="sticky top-0 z-40 bg-paper/95 backdrop-blur border-b-2 border-ink">
+        <div className="px-3 py-2.5 md:px-6 md:py-3 relative z-10">
           <div className="flex items-center justify-between gap-3">
             {/* Brand + desktop nav */}
-            <div className="flex items-center gap-3 md:gap-6 min-w-0">
+            <div className="flex items-center gap-4 md:gap-8 min-w-0">
               <div className="flex items-center gap-2.5 min-w-0">
                 <Image
                   src="/logo.png"
@@ -72,18 +75,18 @@ export default function DashboardLayout({
                   className="h-9 w-9 md:h-10 md:w-10 object-contain flex-shrink-0"
                   priority
                 />
-                <div className="min-w-0">
-                  <h1 className="text-sm md:text-base font-bold text-white tracking-tight leading-tight">
-                    Admin
-                  </h1>
-                  <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-[0.18em] leading-tight">
+                <div className="min-w-0 leading-none">
+                  <div className="font-display text-base md:text-lg font-semibold text-ink leading-none truncate">
                     Bearded Lifeguard
-                  </p>
+                  </div>
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-ink-soft mt-1">
+                    Admin console
+                  </div>
                 </div>
               </div>
 
-              {/* Desktop navigation */}
-              <nav className="hidden md:flex items-center gap-1 p-1 rounded-xl bg-black/20 border border-white/10">
+              {/* Desktop navigation — underline tabs */}
+              <nav className="hidden md:flex items-stretch gap-6 self-stretch">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -91,16 +94,16 @@ export default function DashboardLayout({
                       key={item.name}
                       onClick={() => router.push(item.href)}
                       aria-current={item.current ? "page" : undefined}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      className={`relative flex items-center gap-2 text-sm font-medium transition-colors -mb-[2px] border-b-2 pb-1 ${
                         item.current
-                          ? "bg-[#FF6633] text-white shadow-lg shadow-[#FF6633]/20"
-                          : "text-white/60 hover:text-white hover:bg-white/5"
+                          ? "text-ink border-signal"
+                          : "text-ink-soft border-transparent hover:text-ink"
                       }`}
                     >
                       <Icon className="w-4 h-4" />
                       <span>{item.name}</span>
                       {item.name === "Bookings" && newBookingsCount > 0 && (
-                        <span className="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full tabular-nums">
+                        <span className="bg-signal text-white text-[10px] px-1.5 py-0.5 rounded-full tabular-nums leading-none">
                           {newBookingsCount}
                         </span>
                       )}
@@ -111,31 +114,27 @@ export default function DashboardLayout({
             </div>
 
             {/* Right: notifications + sign out */}
-            <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {newBookingsCount > 0 && (
-                <div className="relative">
-                  <div className="bg-rose-500/90 text-white px-2 py-1.5 md:px-3 md:py-2 rounded-lg flex items-center gap-1.5 shadow-lg">
-                    <BellIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                    <span className="text-xs md:text-sm font-semibold tabular-nums">
-                      {newBookingsCount}
-                    </span>
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full animate-ping"></div>
+                <div className="hidden sm:flex items-center gap-1.5 bg-signal text-white px-2.5 py-1.5 rounded-md">
+                  <BellIcon className="w-4 h-4" />
+                  <span className="text-xs font-semibold tabular-nums">
+                    {newBookingsCount} new
+                  </span>
                 </div>
               )}
-
               <button
                 onClick={onSignOut}
-                className="p-2 text-white/55 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 min-h-[40px] min-w-[40px] flex items-center justify-center"
-                title="Sign Out"
+                className="p-2 text-ink-soft hover:text-ink hover:bg-ink/5 rounded-lg transition-all min-h-[40px] min-w-[40px] flex items-center justify-center"
+                title="Sign out"
               >
                 <ArrowRightOnRectangleIcon className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          {/* Mobile navigation — full-width segmented row */}
-          <nav className="md:hidden grid grid-cols-3 gap-1 mt-3 p-1 rounded-xl bg-black/20 border border-white/10">
+          {/* Mobile navigation — segmented row */}
+          <nav className="md:hidden grid grid-cols-3 gap-1.5 mt-2.5">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
@@ -143,16 +142,20 @@ export default function DashboardLayout({
                   key={item.name}
                   onClick={() => router.push(item.href)}
                   aria-current={item.current ? "page" : undefined}
-                  className={`flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium min-h-[44px] transition-all duration-200 ${
+                  className={`flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-semibold min-h-[44px] border transition-all ${
                     item.current
-                      ? "bg-[#FF6633] text-white shadow-lg shadow-[#FF6633]/20"
-                      : "text-white/55 hover:text-white hover:bg-white/5"
+                      ? "bg-ink text-paper border-ink"
+                      : "text-ink-soft border-ink/15 hover:border-ink/40 hover:text-ink"
                   }`}
                 >
                   <Icon className="w-4 h-4 flex-shrink-0" />
                   <span className="truncate">{item.name}</span>
                   {item.name === "Bookings" && newBookingsCount > 0 && (
-                    <span className="bg-rose-500 text-white text-[10px] px-1 rounded-full tabular-nums">
+                    <span
+                      className={`text-[10px] px-1 rounded-full tabular-nums leading-none ${
+                        item.current ? "bg-paper text-ink" : "bg-signal text-white"
+                      }`}
+                    >
                       {newBookingsCount}
                     </span>
                   )}
@@ -164,7 +167,7 @@ export default function DashboardLayout({
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">{children}</main>
+      <main className="relative z-10 flex-1">{children}</main>
     </div>
   );
 }

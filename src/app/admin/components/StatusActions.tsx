@@ -49,10 +49,9 @@ export default function StatusActions({
 
   return (
     <div className="space-y-4">
-      {/* View toggle */}
       <button
         onClick={handleViewedToggle}
-        className="w-full py-3 px-6 bg-white/[0.04] text-white/80 border border-white/15 rounded-xl hover:border-white/30 hover:text-white transition-all font-medium flex items-center justify-center gap-2 min-h-[48px]"
+        className="w-full py-3 px-6 border border-ink/25 text-ink rounded-xl hover:bg-ink hover:text-paper transition-all font-medium flex items-center justify-center gap-2 min-h-[48px]"
       >
         {booking.viewed_by_admin ? (
           <>
@@ -67,9 +66,8 @@ export default function StatusActions({
         )}
       </button>
 
-      {/* Status chips */}
       <div>
-        <div className="text-[10px] uppercase tracking-[0.16em] text-white/40 mb-2">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-ink-soft mb-2">
           Set booking status
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -81,8 +79,8 @@ export default function StatusActions({
                 onClick={() => onUpdate(booking.id, { status: s.value })}
                 className={`py-2.5 px-3 rounded-xl text-sm font-medium border transition-all min-h-[44px] ${
                   active
-                    ? "bg-[#FF6633] text-white border-[#FF6633] shadow-lg shadow-[#FF6633]/20"
-                    : "bg-white/[0.04] text-white/70 border-white/10 hover:border-white/25 hover:text-white"
+                    ? "bg-ink text-paper border-ink"
+                    : "text-ink-soft border-ink/20 hover:border-ink/50 hover:text-ink"
                 }`}
               >
                 {s.label}
@@ -92,14 +90,13 @@ export default function StatusActions({
         </div>
       </div>
 
-      {/* Copy actions */}
       <div className="grid grid-cols-2 gap-2">
         <button
           onClick={() => copyToClipboard(booking.customer_email, "email")}
-          className="py-2.5 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-white/80 border border-white/15 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-1.5 min-h-[44px]"
+          className="py-2.5 px-3 border border-ink/20 text-ink rounded-xl hover:border-ink/50 font-medium text-sm transition-all flex items-center justify-center gap-1.5 min-h-[44px]"
         >
           {copied === "email" ? (
-            <CheckIcon className="w-4 h-4 text-emerald-300" />
+            <CheckIcon className="w-4 h-4 text-sea" />
           ) : (
             <ClipboardDocumentIcon className="w-4 h-4" />
           )}
@@ -107,10 +104,10 @@ export default function StatusActions({
         </button>
         <button
           onClick={() => copyToClipboard(booking.order_id, "order")}
-          className="py-2.5 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-white/80 border border-white/15 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-1.5 min-h-[44px]"
+          className="py-2.5 px-3 border border-ink/20 text-ink rounded-xl hover:border-ink/50 font-medium text-sm transition-all flex items-center justify-center gap-1.5 min-h-[44px]"
         >
           {copied === "order" ? (
-            <CheckIcon className="w-4 h-4 text-emerald-300" />
+            <CheckIcon className="w-4 h-4 text-sea" />
           ) : (
             <ClipboardDocumentIcon className="w-4 h-4" />
           )}
@@ -118,16 +115,15 @@ export default function StatusActions({
         </button>
       </div>
 
-      {/* Danger zone */}
-      <div className="pt-4 border-t border-white/10">
+      <div className="pt-4 border-t border-ink/12">
         <button
           onClick={() => onDelete(booking.id)}
-          className="w-full py-3 px-6 bg-rose-500/10 text-rose-300 border border-rose-400/30 hover:bg-rose-500/20 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all min-h-[48px]"
+          className="w-full py-3 px-6 border border-signal/40 text-signal hover:bg-signal hover:text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all min-h-[48px]"
         >
           <TrashIcon className="w-5 h-5" />
           <span>Delete booking</span>
         </button>
-        <p className="text-white/35 text-xs text-center mt-2">
+        <p className="text-ink-soft text-xs text-center mt-2">
           This cannot be undone
         </p>
       </div>

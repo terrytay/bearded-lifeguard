@@ -20,25 +20,15 @@ export default function LifeguardStatsBar({
   const tiles = [
     { key: "all", label: "Total", value: total, tone: "neutral" as const },
     { key: "active", label: "Active", value: active, tone: "good" as const },
-    {
-      key: "inactive",
-      label: "Inactive",
-      value: inactive,
-      tone: "bad" as const,
-    },
-    {
-      key: null,
-      label: "Assigned",
-      value: assigned,
-      tone: "accent" as const,
-    },
+    { key: "inactive", label: "Inactive", value: inactive, tone: "bad" as const },
+    { key: null, label: "Assigned", value: assigned, tone: "accent" as const },
   ];
 
   const toneText: Record<string, string> = {
-    neutral: "text-white",
-    good: "text-emerald-300",
-    bad: "text-rose-300",
-    accent: "text-[#FF6633]",
+    neutral: "text-ink",
+    good: "text-sea",
+    bad: "text-signal",
+    accent: "text-signal",
   };
 
   return (
@@ -58,18 +48,22 @@ export default function LifeguardStatsBar({
                         onFilterChange?.(activeTile ? "all" : (t.key as string)),
                     }
                   : {})}
-                className={`text-left rounded-2xl p-3 md:p-4 border transition-all duration-200 min-h-[64px] ${
+                className={`text-left rounded-2xl p-3 md:p-4 border transition-all min-h-[72px] ${
                   activeTile
-                    ? "bg-[#FF6633]/15 border-[#FF6633]/50 shadow-lg shadow-[#FF6633]/10"
-                    : "bg-white/[0.04] border-white/10"
-                } ${clickable ? "hover:border-white/25 hover:bg-white/[0.06]" : ""}`}
+                    ? "bg-ink text-paper border-ink"
+                    : "bg-white border-ink/12"
+                } ${clickable ? "hover:border-ink/40" : ""}`}
               >
-                <div className="text-[10px] uppercase tracking-[0.16em] text-white/45 truncate">
+                <div
+                  className={`text-[10px] uppercase tracking-[0.16em] truncate ${
+                    activeTile ? "text-paper/60" : "text-ink-soft"
+                  }`}
+                >
                   {t.label}
                 </div>
                 <div
-                  className={`text-2xl md:text-3xl font-bold tabular-nums mt-1 ${
-                    activeTile ? "text-[#FF6633]" : toneText[t.tone]
+                  className={`font-display text-3xl md:text-4xl font-semibold tabular-nums leading-none mt-1.5 ${
+                    activeTile ? "text-paper" : toneText[t.tone]
                   }`}
                 >
                   {t.value}

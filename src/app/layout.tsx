@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, Fraunces, Hanken_Grotesk } from "next/font/google";
 import ConditionalLayout from "@/components/ConditionalLayout";
 
 const inter = Inter({
@@ -10,13 +10,20 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-// Admin console uses JetBrains Mono throughout (scoped via src/app/admin/layout.tsx).
-// Exposed app-wide as a CSS variable; it only becomes the default font where the
-// `font-mono` utility is applied, so the public site keeps Inter.
-const jetbrainsMono = JetBrains_Mono({
+// Admin console ("Editorial Coast" theme): Fraunces is the expressive display
+// serif used for headings and oversized numerals; Hanken Grotesk is the body
+// face. Exposed app-wide as CSS variables but only applied under /admin (see
+// src/app/admin/layout.tsx), so the public site keeps Inter.
+const fraunces = Fraunces({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-jetbrains-mono",
+  variable: "--font-fraunces",
+});
+
+const hankenGrotesk = Hanken_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-hanken",
 });
 
 export const metadata: Metadata = {
@@ -253,7 +260,7 @@ export default function RootLayout({
       <body
         className={
           "flex flex-col justify-between bg-gradient-to-br from-slate-50 to-blue-50 relative select-none " +
-          `${inter.className} ${jetbrainsMono.variable}`
+          `${inter.className} ${fraunces.variable} ${hankenGrotesk.variable}`
         }
       >
         <ConditionalLayout>{children}</ConditionalLayout>

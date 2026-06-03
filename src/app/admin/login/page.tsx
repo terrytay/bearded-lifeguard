@@ -70,14 +70,16 @@ export default function AdminLogin() {
   };
 
   const inputClass =
-    "w-full pl-11 pr-4 py-3 bg-black/20 border border-white/15 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-[#FF6633]/40 focus:border-[#FF6633]/50 transition-all min-h-[48px]";
+    "w-full pl-11 pr-4 py-3 bg-white border border-ink/20 rounded-xl text-ink placeholder-ink-soft/60 text-sm focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all min-h-[48px]";
 
   return (
-    <div className="font-mono min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 relative overflow-hidden">
-      {/* Atmospheric glow */}
-      <div className="pointer-events-none absolute -top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#FF6633]/10 rounded-full blur-[120px]" />
+    <div className="font-sans text-ink min-h-screen flex items-center justify-center p-4 bg-paper relative overflow-hidden">
+      <div className="editorial-grain pointer-events-none absolute inset-0" />
+      {/* Decorative editorial rules */}
+      <div className="pointer-events-none absolute top-0 inset-x-0 h-1.5 bg-ink" />
+      <div className="pointer-events-none absolute bottom-0 inset-x-0 h-1.5 bg-signal" />
 
-      <div className="relative w-full max-w-md bg-white/[0.04] border border-white/10 rounded-2xl p-6 md:p-8 console-in">
+      <div className="relative w-full max-w-md bg-white border-2 border-ink rounded-3xl p-6 md:p-8 shadow-[10px_10px_0_0_var(--color-ink)] console-in">
         <div className="text-center mb-7">
           <Image
             src="/logo.png"
@@ -87,18 +89,20 @@ export default function AdminLogin() {
             className="h-14 w-14 object-contain mx-auto mb-3"
             priority
           />
-          <h1 className="text-xl font-bold text-white">Admin access</h1>
-          <p className="text-white/45 text-xs uppercase tracking-[0.18em] mt-1">
+          <div className="text-[10px] uppercase tracking-[0.24em] text-ink-soft">
             Bearded Lifeguard
-          </p>
+          </div>
+          <h1 className="font-display text-3xl font-semibold text-ink mt-1">
+            Admin access
+          </h1>
         </div>
 
         {error && (
-          <div className="bg-rose-500/10 border border-rose-400/30 rounded-xl p-3.5 mb-5 flex items-start gap-2.5">
-            <AlertCircle className="w-5 h-5 text-rose-300 mt-0.5 flex-shrink-0" />
+          <div className="bg-signal/10 border border-signal/30 rounded-xl p-3.5 mb-5 flex items-start gap-2.5">
+            <AlertCircle className="w-5 h-5 text-signal mt-0.5 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-rose-200 text-sm">Login error</p>
-              <p className="text-rose-200/70 text-xs mt-0.5">{error}</p>
+              <p className="font-semibold text-signal text-sm">Login error</p>
+              <p className="text-ink-soft text-xs mt-0.5">{error}</p>
             </div>
           </div>
         )}
@@ -107,12 +111,12 @@ export default function AdminLogin() {
           <div>
             <label
               htmlFor="email"
-              className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2"
+              className="block text-[10px] uppercase tracking-[0.16em] text-ink-soft mb-2"
             >
               Email address
             </label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft w-4 h-4" />
               <input
                 id="email"
                 type="email"
@@ -128,12 +132,12 @@ export default function AdminLogin() {
           <div>
             <label
               htmlFor="password"
-              className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2"
+              className="block text-[10px] uppercase tracking-[0.16em] text-ink-soft mb-2"
             >
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft w-4 h-4" />
               <input
                 id="password"
                 type="password"
@@ -149,11 +153,11 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#FF6633] text-white py-3 px-4 rounded-xl font-semibold hover:bg-[#e55a2b] transition-all shadow-lg shadow-[#FF6633]/20 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
+            className="w-full bg-ink text-paper py-3 px-4 rounded-xl font-semibold hover:bg-signal transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-5 h-5 border-2 border-paper/40 border-t-paper rounded-full animate-spin" />
                 Signing in…
               </span>
             ) : (
@@ -165,7 +169,7 @@ export default function AdminLogin() {
         <div className="mt-6 text-center">
           <a
             href="/"
-            className="text-white/45 hover:text-white text-sm transition-colors"
+            className="text-ink-soft hover:text-ink text-sm transition-colors ink-underline"
           >
             ← Back to website
           </a>

@@ -16,7 +16,13 @@ const fmtHours = (n: number | undefined) => `${(n || 0).toFixed(1)}h`;
 const fmtNum = (n: number | undefined) => (n || 0).toLocaleString();
 const fmtPct = (n: number | undefined) => `${(n || 0).toFixed(1)}%`;
 
-// Small labelled metric tile
+const toneText: Record<string, string> = {
+  neutral: "text-ink",
+  good: "text-sea",
+  warn: "text-ochre",
+  bad: "text-signal",
+};
+
 function Metric({
   label,
   value,
@@ -28,31 +34,17 @@ function Metric({
   sub?: string;
   tone?: "neutral" | "good" | "warn" | "bad";
 }) {
-  const toneRing =
-    tone === "good"
-      ? "border-emerald-400/20"
-      : tone === "warn"
-      ? "border-amber-400/20"
-      : tone === "bad"
-      ? "border-rose-400/20"
-      : "border-white/10";
-  const toneText =
-    tone === "good"
-      ? "text-emerald-200"
-      : tone === "warn"
-      ? "text-amber-200"
-      : tone === "bad"
-      ? "text-rose-200"
-      : "text-white";
   return (
-    <div className={`bg-white/[0.03] border ${toneRing} rounded-xl p-3`}>
-      <div className="text-[10px] uppercase tracking-[0.16em] text-white/40 mb-1">
+    <div className="bg-white border border-ink/12 rounded-xl p-3">
+      <div className="text-[10px] uppercase tracking-[0.16em] text-ink-soft mb-1">
         {label}
       </div>
-      <div className={`text-base md:text-lg font-bold tabular-nums ${toneText}`}>
+      <div
+        className={`font-display text-xl md:text-2xl font-semibold tabular-nums leading-none ${toneText[tone]}`}
+      >
         {value}
       </div>
-      {sub && <div className="text-[11px] text-white/35 mt-0.5">{sub}</div>}
+      {sub && <div className="text-[11px] text-ink-soft mt-1">{sub}</div>}
     </div>
   );
 }
@@ -72,7 +64,6 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
     }
   })();
 
-  // Hero metrics differ by report type
   const hero =
     reportType === "bookings"
       ? [
@@ -87,44 +78,44 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
         ];
 
   return (
-    <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
-      {/* Hero */}
-      <div className="px-4 md:px-6 pt-4 md:pt-5 pb-4 bg-gradient-to-b from-[#FF6633]/[0.08] to-transparent">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6633] animate-pulse" />
-          <span className="text-[10px] uppercase tracking-[0.22em] text-[#FF6633]">
+    <div className="space-y-3">
+      {/* Inverted masthead hero */}
+      <div className="bg-ink text-paper rounded-2xl p-5 md:p-7 overflow-hidden">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="w-2 h-2 rounded-full bg-signal" />
+          <span className="text-[10px] uppercase tracking-[0.28em] text-paper/60">
             Payroll · {periodLabel}
           </span>
         </div>
-        <div className="grid grid-cols-3 gap-2 md:gap-4">
+        <div className="grid grid-cols-3 divide-x divide-paper/15">
           {hero.map((h, i) => (
-            <div key={i} className="min-w-0">
-              <div className="text-xl sm:text-3xl md:text-4xl font-bold tabular-nums tracking-tight text-white truncate">
+            <div key={i} className={`min-w-0 ${i === 0 ? "pr-3" : "px-3"}`}>
+              <div className="font-display text-3xl sm:text-5xl md:text-6xl font-semibold tabular-nums leading-[0.95] text-paper truncate">
                 {h.value}
               </div>
-              <div className="text-[10px] md:text-xs uppercase tracking-[0.14em] text-white/45 mt-1">
+              <div className="text-[10px] md:text-xs uppercase tracking-[0.16em] text-paper/55 mt-2">
                 {h.label}
               </div>
             </div>
           ))}
         </div>
         {reportType === "bookings" && (
-          <div className="text-[11px] text-white/35 mt-3 leading-relaxed">
+          <p className="text-[11px] text-paper/45 mt-4 leading-relaxed max-w-2xl">
             Hours &amp; amounts are prorated to the portion of each booking inside
-            the selected range. Cancelled bookings are shown below but excluded
+            the selected range. Cancelled bookings appear below but are excluded
             from payable totals.
-          </div>
+          </p>
         )}
       </div>
 
-      {/* Bookings: cancelled vs non-cancelled + revenue */}
+      {/* Bookings detail */}
       {reportType === "bookings" && (
-        <div className="px-4 md:px-6 py-4 border-t border-white/10 space-y-4">
+        <div className="space-y-3">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.16em] text-white/40 mb-2">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-ink-soft mb-2">
               Prorated breakdown
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
               <Metric
                 label="Payable"
                 value={fmtHours(summary.nonCancelledProratedHours)}
@@ -152,28 +143,28 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <div className="text-[10px] uppercase tracking-[0.16em] text-white/40">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-ink-soft">
                 Revenue
               </div>
               {summary.revenueHealthStatus && (
                 <span
-                  className={`px-2 py-0.5 rounded-full text-[11px] border ${
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider border ${
                     summary.revenueHealthStatus === "healthy"
-                      ? "bg-emerald-500/15 text-emerald-200 border-emerald-400/30"
+                      ? "text-sea border-sea/40 bg-sea/10"
                       : summary.revenueHealthStatus === "attention"
-                      ? "bg-amber-500/15 text-amber-200 border-amber-400/30"
-                      : "bg-rose-500/15 text-rose-200 border-rose-400/30"
+                      ? "text-ochre border-ochre/40 bg-ochre/10"
+                      : "text-signal border-signal/40 bg-signal/10"
                   }`}
                 >
                   {summary.revenueHealthStatus === "healthy"
                     ? "Healthy"
                     : summary.revenueHealthStatus === "attention"
-                    ? "Needs attention"
+                    ? "Attention"
                     : "Concern"}
                 </span>
               )}
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
               <Metric label="Actual" value={fmtCurrency(summary.actualRevenue)} tone="good" />
               <Metric label="Potential" value={fmtCurrency(summary.potentialRevenue)} tone="warn" />
               <Metric label="Lost" value={fmtCurrency(summary.lostRevenue)} tone="bad" />
@@ -197,18 +188,16 @@ export default function ReportStats({ reportType, summary }: ReportStatsProps) {
         </div>
       )}
 
-      {/* Lifeguards: secondary metrics */}
+      {/* Lifeguards detail */}
       {reportType === "lifeguards" && (
-        <div className="px-4 md:px-6 py-4 border-t border-white/10">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3">
-            <Metric label="Records" value={fmtNum(summary.totalRecords)} />
-            <Metric label="Active guards" value={fmtNum(summary.totalActiveLifeguards)} tone="good" />
-            <Metric label="Assignments" value={fmtNum(summary.totalAssignments)} />
-            <Metric
-              label="Avg / guard"
-              value={(summary.averageAssignmentsPerLifeguard || 0).toFixed(1)}
-            />
-          </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <Metric label="Records" value={fmtNum(summary.totalRecords)} />
+          <Metric label="Active guards" value={fmtNum(summary.totalActiveLifeguards)} tone="good" />
+          <Metric label="Assignments" value={fmtNum(summary.totalAssignments)} />
+          <Metric
+            label="Avg / guard"
+            value={(summary.averageAssignmentsPerLifeguard || 0).toFixed(1)}
+          />
         </div>
       )}
     </div>

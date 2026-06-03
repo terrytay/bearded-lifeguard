@@ -230,10 +230,10 @@ export default function LifeguardsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center font-mono">
-        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center">
-          <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/60 text-sm">Checking access…</p>
+      <div className="min-h-screen bg-paper text-ink flex items-center justify-center">
+        <div className="bg-white border border-ink/12 rounded-2xl p-8 text-center">
+          <div className="w-8 h-8 border-2 border-ink/15 border-t-signal rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-ink-soft text-sm">Checking access…</p>
         </div>
       </div>
     );
@@ -273,20 +273,20 @@ export default function LifeguardsPage() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-16 rounded-2xl bg-white/[0.03] border border-white/10 animate-pulse"
+                  className="h-16 rounded-2xl bg-sand/60 border border-ink/8 animate-pulse"
                   style={{ animationDelay: `${i * 70}ms` }}
                 />
               ))}
             </div>
           ) : lifeguards.length === 0 ? (
             <div className="text-center py-12 md:py-20 console-in">
-              <div className="w-16 h-16 md:w-20 md:h-20 bg-white/[0.04] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white border border-ink/12 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
                 🛟
               </div>
-              <h3 className="text-lg md:text-xl font-bold text-white mb-2">
+              <h3 className="font-display text-xl md:text-2xl font-semibold text-ink mb-2">
                 No lifeguards found
               </h3>
-              <p className="text-white/50 mb-5 max-w-sm mx-auto text-sm">
+              <p className="text-ink-soft mb-5 max-w-sm mx-auto text-sm">
                 {searchQuery || filterStatus !== "all"
                   ? "Try adjusting your search or filter."
                   : "Add your first lifeguard to get started."}
@@ -298,14 +298,14 @@ export default function LifeguardsPage() {
                       setSearchQuery("");
                       setFilterStatus("all");
                     }}
-                    className="px-5 py-2.5 bg-white/[0.04] text-white/80 border border-white/15 rounded-xl hover:border-white/30 hover:text-white transition-all font-semibold text-sm min-h-[44px]"
+                    className="px-5 py-2.5 border border-ink/25 text-ink rounded-xl hover:bg-ink hover:text-paper transition-all font-semibold text-sm min-h-[44px]"
                   >
                     Reset filters
                   </button>
                 )}
                 <button
                   onClick={handleAddNew}
-                  className="px-5 py-2.5 bg-[#FF6633] text-white rounded-xl hover:bg-[#e55a2b] transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[44px]"
+                  className="px-5 py-2.5 bg-ink text-paper rounded-xl hover:bg-signal transition-all font-semibold text-sm min-h-[44px]"
                 >
                   Add lifeguard
                 </button>
@@ -315,13 +315,13 @@ export default function LifeguardsPage() {
             <>
               {/* View Toggle */}
               <div className="mb-4 flex justify-end console-in">
-                <div className="bg-black/20 border border-white/10 rounded-xl p-1 flex gap-1">
+                <div className="bg-sand/60 border border-ink/12 rounded-xl p-1 flex gap-1">
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 min-h-[40px] ${
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 min-h-[40px] ${
                       viewMode === "list"
-                        ? "bg-[#FF6633] text-white shadow-lg shadow-[#FF6633]/20"
-                        : "text-white/55 hover:text-white hover:bg-white/5"
+                        ? "bg-ink text-paper"
+                        : "text-ink-soft hover:text-ink hover:bg-ink/5"
                     }`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -331,10 +331,10 @@ export default function LifeguardsPage() {
                   </button>
                   <button
                     onClick={() => setViewMode("card")}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 min-h-[40px] ${
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 min-h-[40px] ${
                       viewMode === "card"
-                        ? "bg-[#FF6633] text-white shadow-lg shadow-[#FF6633]/20"
-                        : "text-white/55 hover:text-white hover:bg-white/5"
+                        ? "bg-ink text-paper"
+                        : "text-ink-soft hover:text-ink hover:bg-ink/5"
                     }`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

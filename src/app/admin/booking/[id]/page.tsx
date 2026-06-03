@@ -195,10 +195,10 @@ export default function BookingDetailPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center font-mono">
-        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center">
-          <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/60 text-sm">Checking access…</p>
+      <div className="min-h-screen bg-paper text-ink flex items-center justify-center">
+        <div className="bg-white border border-ink/12 rounded-2xl p-8 text-center">
+          <div className="w-8 h-8 border-2 border-ink/15 border-t-signal rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-ink-soft text-sm">Checking access…</p>
         </div>
       </div>
     );
@@ -213,11 +213,11 @@ export default function BookingDetailPage() {
       >
         <div className="p-3 md:p-6">
           <div className="max-w-4xl mx-auto space-y-4">
-            <div className="h-40 rounded-2xl bg-white/[0.03] border border-white/10 animate-pulse" />
+            <div className="h-40 rounded-2xl bg-sand/60 border border-ink/8 animate-pulse" />
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="h-32 rounded-2xl bg-white/[0.03] border border-white/10 animate-pulse"
+                className="h-32 rounded-2xl bg-sand/60 border border-ink/8 animate-pulse"
                 style={{ animationDelay: `${i * 90}ms` }}
               />
             ))}
@@ -236,18 +236,18 @@ export default function BookingDetailPage() {
       >
         <div className="p-6">
           <div className="max-w-4xl mx-auto text-center py-20 console-in">
-            <div className="w-16 h-16 bg-white/[0.04] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+            <div className="w-16 h-16 bg-white border border-ink/12 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
               🔍
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">
+            <h2 className="font-display text-2xl font-semibold text-ink mb-2">
               Booking not found
             </h2>
-            <p className="text-white/50 mb-6 text-sm">
+            <p className="text-ink-soft mb-6 text-sm">
               This booking doesn't exist or has been deleted.
             </p>
             <button
               onClick={() => router.push("/admin")}
-              className="px-5 py-2.5 bg-[#FF6633] text-white rounded-xl hover:bg-[#e55a2b] transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[44px]"
+              className="px-5 py-2.5 bg-ink text-paper rounded-xl hover:bg-signal transition-all font-semibold text-sm min-h-[44px]"
             >
               Back to dashboard
             </button>
@@ -268,7 +268,7 @@ export default function BookingDetailPage() {
           {/* Breadcrumb */}
           <button
             onClick={() => router.push("/admin")}
-            className="flex items-center gap-2 text-white/55 hover:text-white transition-colors group text-sm mb-4"
+            className="flex items-center gap-2 text-ink-soft hover:text-ink transition-colors group text-sm mb-4"
           >
             <ArrowLeftIcon className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span>Back to dashboard</span>
@@ -280,9 +280,9 @@ export default function BookingDetailPage() {
           {/* Single Column Layout - Mobile First */}
           <div className="mt-4 space-y-3 md:space-y-4">
             {/* Actions on mobile - top */}
-            <div className="md:hidden bg-white/[0.04] border border-white/10 rounded-2xl p-4 console-in">
-              <h3 className="font-semibold text-white mb-3 flex items-center gap-2.5 text-sm">
-                <span className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 text-[#FF6633] flex items-center justify-center">
+            <div className="md:hidden bg-white border border-ink/12 rounded-2xl p-4 console-in">
+              <h3 className="font-display text-base font-semibold text-ink mb-3 flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded-lg bg-sand border border-ink/15 text-ink-soft flex items-center justify-center">
                   <Cog6ToothIcon className="w-4 h-4" />
                 </span>
                 Quick actions
@@ -301,9 +301,9 @@ export default function BookingDetailPage() {
             <BookingDetailInfo booking={booking} onRefresh={loadBooking} />
 
             {/* Actions on desktop - bottom */}
-            <div className="hidden md:block bg-white/[0.04] border border-white/10 rounded-2xl p-6">
-              <h3 className="font-semibold text-white mb-4 flex items-center gap-2.5 text-base">
-                <span className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 text-[#FF6633] flex items-center justify-center">
+            <div className="hidden md:block bg-white border border-ink/12 rounded-2xl p-6">
+              <h3 className="font-display text-lg font-semibold text-ink mb-4 flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded-lg bg-sand border border-ink/15 text-ink-soft flex items-center justify-center">
                   <Cog6ToothIcon className="w-4 h-4" />
                 </span>
                 Quick actions

@@ -1,27 +1,27 @@
 import type { ReactNode } from "react";
 
-// Shared status / payment pill for the admin console. One semantic colour per
-// value; labels adapt to context (a booking that is "pending" reads
+// Editorial status / payment tag for the admin console. One semantic colour
+// per value; labels adapt to context (a booking that is "pending" reads
 // "Unconfirmed"; a payment that is "pending" reads "Unpaid").
 
 export type BadgeKind = "status" | "payment";
 
 const COLORS: Record<string, string> = {
-  paid: "bg-emerald-500/15 text-emerald-200 border-emerald-400/30",
-  pending: "bg-amber-500/15 text-amber-200 border-amber-400/30",
-  confirmed: "bg-sky-500/15 text-sky-200 border-sky-400/30",
-  completed: "bg-violet-500/15 text-violet-200 border-violet-400/30",
-  cancelled: "bg-rose-500/15 text-rose-200 border-rose-400/30",
-  refunded: "bg-rose-500/15 text-rose-200 border-rose-400/30",
+  paid: "text-sea border-sea/40 bg-sea/10",
+  pending: "text-ochre border-ochre/40 bg-ochre/10",
+  confirmed: "text-sea border-sea/40 bg-sea/10",
+  completed: "text-paper bg-ink border-ink",
+  cancelled: "text-signal border-signal/40 bg-signal/10",
+  refunded: "text-signal border-signal/40 bg-signal/10",
 };
 
 const DOT_COLORS: Record<string, string> = {
-  paid: "bg-emerald-400",
-  pending: "bg-amber-400",
-  confirmed: "bg-sky-400",
-  completed: "bg-violet-400",
-  cancelled: "bg-rose-400",
-  refunded: "bg-rose-400",
+  paid: "bg-sea",
+  pending: "bg-ochre",
+  confirmed: "bg-sea",
+  completed: "bg-ink",
+  cancelled: "bg-signal",
+  refunded: "bg-signal",
 };
 
 const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -32,11 +32,11 @@ export function statusLabel(value: string, kind: BadgeKind = "status") {
 }
 
 export function statusColor(value: string) {
-  return COLORS[value] || "bg-white/10 text-white/70 border-white/15";
+  return COLORS[value] || "text-ink-soft border-ink/20 bg-ink/5";
 }
 
 export function statusDot(value: string) {
-  return DOT_COLORS[value] || "bg-white/40";
+  return DOT_COLORS[value] || "bg-ink-soft";
 }
 
 export default function StatusBadge({
@@ -52,7 +52,7 @@ export default function StatusBadge({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium whitespace-nowrap ${statusColor(
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap ${statusColor(
         value
       )} ${className}`}
     >

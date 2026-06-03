@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
-  UserIcon,
   PlusIcon,
   XMarkIcon,
   CheckIcon,
@@ -208,17 +207,17 @@ export default function LifeguardAssignment({
 
   return (
     <>
-      <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-6">
+      <div className="bg-white border border-ink/12 rounded-2xl p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-white text-sm md:text-base flex items-center gap-2.5">
-            <span className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 text-[#FF6633] flex items-center justify-center">
+          <h3 className="font-display text-base md:text-lg font-semibold text-ink flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded-lg bg-signal/10 border border-signal/30 text-signal flex items-center justify-center">
               <UserGroupIcon className="w-4 h-4" />
             </span>
             Lifeguard assignment
           </h3>
           <button
             onClick={() => setShowModal(true)}
-            className="px-3.5 py-2 bg-[#FF6633] text-white rounded-xl hover:bg-[#e55a2b] transition-all font-semibold text-xs flex items-center gap-1.5 min-h-[40px] shadow-lg shadow-[#FF6633]/20"
+            className="px-3.5 py-2 bg-ink text-paper rounded-xl hover:bg-signal transition-all font-semibold text-xs flex items-center gap-1.5 min-h-[40px]"
           >
             <PlusIcon className="w-4 h-4" />
             <span>Manage</span>
@@ -227,16 +226,16 @@ export default function LifeguardAssignment({
 
         <div className="space-y-3">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-white/50">Required</span>
-            <span className="text-white font-semibold tabular-nums">
+            <span className="text-ink-soft">Required</span>
+            <span className="text-ink font-semibold tabular-nums">
               {requiredCount}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-white/50">Assigned</span>
+            <span className="text-ink-soft">Assigned</span>
             <span
               className={`font-semibold tabular-nums ${
-                isComplete ? "text-emerald-300" : "text-amber-300"
+                isComplete ? "text-sea" : "text-ochre"
               }`}
             >
               {assignedCount}
@@ -244,17 +243,17 @@ export default function LifeguardAssignment({
           </div>
 
           {!isComplete ? (
-            <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-400/20 rounded-xl">
-              <ExclamationTriangleIcon className="w-5 h-5 text-amber-300 flex-shrink-0" />
-              <span className="text-amber-200 text-xs tabular-nums">
+            <div className="flex items-center gap-2 p-3 bg-ochre/10 border border-ochre/25 rounded-xl">
+              <ExclamationTriangleIcon className="w-5 h-5 text-ochre flex-shrink-0" />
+              <span className="text-ink text-xs tabular-nums">
                 {requiredCount - assignedCount} more lifeguard
                 {requiredCount - assignedCount !== 1 ? "s" : ""} needed
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-400/20 rounded-xl">
-              <CheckIcon className="w-5 h-5 text-emerald-300 flex-shrink-0" />
-              <span className="text-emerald-200 text-xs">
+            <div className="flex items-center gap-2 p-3 bg-sea/10 border border-sea/25 rounded-xl">
+              <CheckIcon className="w-5 h-5 text-sea flex-shrink-0" />
+              <span className="text-ink text-xs">
                 All required lifeguards assigned
               </span>
             </div>
@@ -265,17 +264,17 @@ export default function LifeguardAssignment({
       {/* Assignment modal */}
       {showModal &&
         createPortal(
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-[99] font-mono">
-            <div className="bg-slate-900 border border-white/15 rounded-3xl w-full max-w-2xl max-h-[90vh] shadow-2xl flex flex-col console-in">
+          <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4 z-[99] font-sans text-ink">
+            <div className="bg-paper border-2 border-ink rounded-3xl w-full max-w-2xl max-h-[90vh] shadow-[8px_8px_0_0_var(--color-ink)] flex flex-col console-in">
               {/* Header */}
-              <div className="p-5 md:p-6 border-b border-white/10 flex-shrink-0">
+              <div className="p-5 md:p-6 border-b border-ink/15 flex-shrink-0">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg md:text-xl font-bold text-white">
+                  <h2 className="font-display text-xl font-semibold text-ink">
                     Assign lifeguards
                   </h2>
                   <button
                     onClick={closeAssignmentModal}
-                    className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+                    className="p-2 text-ink-soft hover:text-ink hover:bg-ink/5 rounded-xl transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                     aria-label="Close"
                   >
                     <XMarkIcon className="w-5 h-5" />
@@ -283,18 +282,18 @@ export default function LifeguardAssignment({
                 </div>
 
                 <div className="relative mb-3">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-soft" />
                   <input
                     type="text"
                     placeholder="Search by name or contact…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-9 py-2.5 bg-black/20 border border-white/15 rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-[#FF6633]/40 focus:border-[#FF6633]/50 transition-all min-h-[44px]"
+                    className="w-full pl-10 pr-9 py-2.5 bg-white border border-ink/20 rounded-xl text-ink placeholder-ink-soft/60 text-sm focus:ring-2 focus:ring-signal/30 focus:border-signal transition-all min-h-[44px]"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-white/40 hover:text-white"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-ink-soft hover:text-ink"
                     >
                       <XMarkIcon className="w-4 h-4" />
                     </button>
@@ -303,29 +302,29 @@ export default function LifeguardAssignment({
 
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="w-full px-4 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/15 rounded-xl transition-all font-medium text-sm flex items-center justify-center gap-2 min-h-[44px] mb-3"
+                  className="w-full px-4 py-2.5 border border-ink/20 text-ink hover:border-ink/50 rounded-xl transition-all font-medium text-sm flex items-center justify-center gap-2 min-h-[44px] mb-3"
                 >
                   <PlusIcon className="w-4 h-4" />
                   <span>Add new lifeguard</span>
                 </button>
 
-                <div className="p-3 bg-black/20 rounded-xl">
+                <div className="p-3 bg-sand/60 rounded-xl">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-white/50">Selection</span>
+                    <span className="text-ink-soft">Selection</span>
                     <span
                       className={`font-semibold tabular-nums ${
                         selectedLifeguards.length === requiredCount
-                          ? "text-emerald-300"
+                          ? "text-sea"
                           : selectedLifeguards.length > requiredCount
-                          ? "text-rose-300"
-                          : "text-amber-300"
+                          ? "text-signal"
+                          : "text-ochre"
                       }`}
                     >
                       {selectedLifeguards.length} / {requiredCount}
                     </span>
                   </div>
                   {searchQuery && (
-                    <p className="text-white/40 text-xs mt-1 tabular-nums">
+                    <p className="text-ink-soft text-xs mt-1 tabular-nums">
                       Showing {filteredLifeguards.length} of{" "}
                       {availableLifeguards.length}
                     </p>
@@ -337,14 +336,14 @@ export default function LifeguardAssignment({
               <div className="flex-1 overflow-y-auto p-5 md:p-6 pt-4">
                 {loading ? (
                   <div className="text-center py-8">
-                    <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-3" />
-                    <p className="text-white/55 text-sm">
+                    <div className="w-8 h-8 border-2 border-ink/15 border-t-signal rounded-full animate-spin mx-auto mb-3" />
+                    <p className="text-ink-soft text-sm">
                       Loading available lifeguards…
                     </p>
                   </div>
                 ) : filteredLifeguards.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-white/55 text-sm">
+                    <p className="text-ink-soft text-sm">
                       {searchQuery
                         ? "No lifeguards match your search"
                         : "No lifeguards available for this slot"}
@@ -352,7 +351,7 @@ export default function LifeguardAssignment({
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery("")}
-                        className="mt-3 px-4 py-2 bg-white/[0.04] text-white/70 border border-white/15 rounded-lg hover:text-white transition-colors text-sm"
+                        className="mt-3 px-4 py-2 border border-ink/20 text-ink rounded-lg hover:border-ink/50 transition-colors text-sm"
                       >
                         Clear search
                       </button>
@@ -373,37 +372,35 @@ export default function LifeguardAssignment({
                           onClick={() => toggleLifeguardSelection(lifeguard.id)}
                           className={`w-full text-left p-3 rounded-xl border cursor-pointer transition-all ${
                             isSelected
-                              ? "bg-[#FF6633]/15 border-[#FF6633]/50"
-                              : "bg-white/[0.03] border-white/10 hover:bg-white/[0.06]"
+                              ? "bg-sea/10 border-sea/45"
+                              : "bg-white border-ink/12 hover:bg-sand/50"
                           }`}
                         >
                           <div className="flex items-center gap-3">
                             <div
-                              className={`w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${
-                                lifeguard.is_active
-                                  ? "bg-emerald-500/80"
-                                  : "bg-white/10"
+                              className={`w-9 h-9 rounded-lg flex items-center justify-center text-paper font-bold text-sm flex-shrink-0 ${
+                                lifeguard.is_active ? "bg-sea" : "bg-ink/40"
                               }`}
                             >
                               {lifeguard.name.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className="text-white font-semibold text-sm truncate">
+                                <p className="text-ink font-semibold text-sm truncate">
                                   {lifeguard.name}
                                 </p>
                                 {isCurrentlyAssigned && (
-                                  <span className="px-2 py-0.5 bg-amber-500/15 text-amber-200 text-[10px] rounded-full border border-amber-400/30 flex-shrink-0">
+                                  <span className="px-2 py-0.5 bg-ochre/10 text-ochre text-[10px] uppercase tracking-wider rounded-md border border-ochre/30 flex-shrink-0">
                                     Assigned
                                   </span>
                                 )}
                               </div>
-                              <p className="text-white/45 text-xs tabular-nums truncate">
+                              <p className="text-ink-soft text-xs tabular-nums truncate">
                                 {lifeguard.contact_number}
                               </p>
                             </div>
                             {isSelected && (
-                              <CheckIcon className="w-5 h-5 text-[#FF6633] flex-shrink-0" />
+                              <CheckIcon className="w-5 h-5 text-sea flex-shrink-0" />
                             )}
                           </div>
                         </button>
@@ -414,19 +411,19 @@ export default function LifeguardAssignment({
               </div>
 
               {/* Footer */}
-              <div className="p-5 md:p-6 border-t border-white/10 flex-shrink-0">
+              <div className="p-5 md:p-6 border-t border-ink/15 flex-shrink-0">
                 <div className="flex gap-3">
                   <button
                     onClick={closeAssignmentModal}
                     disabled={processing}
-                    className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/15 rounded-xl transition-all font-semibold text-sm min-h-[48px]"
+                    className="flex-1 px-6 py-3 border border-ink/25 text-ink hover:bg-ink hover:text-paper rounded-xl transition-all font-semibold text-sm min-h-[48px]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveAssignments}
                     disabled={processing || !canSave}
-                    className="flex-1 px-6 py-3 bg-[#FF6633] hover:bg-[#e55a2b] text-white rounded-xl transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-6 py-3 bg-ink text-paper hover:bg-signal rounded-xl transition-all font-semibold text-sm min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {processing ? "Saving…" : "Save assignment"}
                   </button>

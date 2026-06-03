@@ -1,11 +1,23 @@
 @import "tailwindcss";
 
-/* Map Tailwind's `font-mono` utility to JetBrains Mono (loaded in layout.tsx).
-   The admin console opts into this via a `font-mono` wrapper; existing
-   `font-mono` usages across admin upgrade to JetBrains Mono automatically. */
+/* ── "Editorial Coast" admin theme ──────────────────────────────────────
+   Warm print-editorial identity: sand-paper canvas, near-black ink, an
+   expressive serif (Fraunces) for display/numerals, Hanken Grotesk for body,
+   with sea-green and signal-orange accents. Tokens are exposed as Tailwind v4
+   theme colours/fonts so utilities like bg-paper, text-ink, border-ink/15,
+   text-sea, bg-signal, font-display all work. */
 @theme {
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
-    Consolas, monospace;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-paper: #faf4ea;
+  --color-sand: #f0e7d6;
+  --color-ink: #1b1714;
+  --color-ink-soft: #6c6055;
+  --color-sea: #1f7a5c;
+  --color-signal: #d8472b;
+  --color-ochre: #a9701a;
 }
 
 /* Admin "ops console" helpers: staggered entrance + hidden scrollbars for
@@ -34,6 +46,26 @@
   .console-in {
     animation: none !important;
   }
+}
+
+/* Subtle paper grain for the Editorial Coast canvas. Applied as a fixed,
+   non-interactive overlay so it textures the whole admin background. */
+.editorial-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+}
+
+/* Animated underline that grows from the left on hover (editorial link feel) */
+.ink-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ink-underline:hover {
+  background-size: 100% 2px;
 }
 
 /* Modern Design System */

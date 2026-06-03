@@ -83,29 +83,24 @@ export default function LifeguardModal({
   };
 
   const inputClass = (hasError: boolean) =>
-    `w-full pl-10 md:pl-11 pr-4 py-3 bg-black/20 border rounded-xl text-white placeholder-white/40 text-sm focus:ring-2 focus:ring-[#FF6633]/40 transition-all min-h-[48px] ${
+    `w-full pl-10 md:pl-11 pr-4 py-3 bg-white border rounded-xl text-ink placeholder-ink-soft/60 text-sm focus:ring-2 focus:ring-signal/30 transition-all min-h-[48px] ${
       hasError
-        ? "border-rose-400/50 focus:border-rose-400/50"
-        : "border-white/15 focus:border-[#FF6633]/50"
+        ? "border-signal/50 focus:border-signal/60"
+        : "border-ink/20 focus:border-signal"
     }`;
 
   return (
     <div
-      className={`fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 font-mono ${overlayClassName}`}
+      className={`fixed inset-0 bg-ink/40 backdrop-blur-sm flex items-center justify-center p-4 font-sans text-ink ${overlayClassName}`}
     >
-      <div className="bg-slate-900 border border-white/15 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl console-in">
+      <div className="bg-paper border-2 border-ink rounded-3xl p-6 md:p-8 w-full max-w-md shadow-[8px_8px_0_0_var(--color-ink)] console-in">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FF6633]/15 border border-[#FF6633]/30 flex items-center justify-center">
-              <UserIcon className="w-5 h-5 text-[#FF6633]" />
-            </div>
-            <h2 className="text-lg md:text-xl font-bold text-white">
-              {lifeguard ? "Edit lifeguard" : "Add lifeguard"}
-            </h2>
-          </div>
+          <h2 className="font-display text-xl font-semibold text-ink">
+            {lifeguard ? "Edit lifeguard" : "Add lifeguard"}
+          </h2>
           <button
             onClick={onClose}
-            className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+            className="p-2 text-ink-soft hover:text-ink hover:bg-ink/5 rounded-xl transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
             aria-label="Close"
           >
             <XMarkIcon className="w-5 h-5" />
@@ -114,11 +109,11 @@ export default function LifeguardModal({
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.16em] text-ink-soft mb-2">
               Full name
             </label>
             <div className="relative">
-              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-soft" />
               <input
                 type="text"
                 value={name}
@@ -128,16 +123,16 @@ export default function LifeguardModal({
               />
             </div>
             {errors.name && (
-              <p className="text-rose-300 text-xs mt-1.5">{errors.name}</p>
+              <p className="text-signal text-xs mt-1.5">{errors.name}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.16em] text-ink-soft mb-2">
               Contact number
             </label>
             <div className="relative">
-              <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+              <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-soft" />
               <input
                 type="tel"
                 value={contactNumber}
@@ -147,24 +142,22 @@ export default function LifeguardModal({
               />
             </div>
             {errors.contact_number && (
-              <p className="text-rose-300 text-xs mt-1.5">
+              <p className="text-signal text-xs mt-1.5">
                 {errors.contact_number}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.16em] text-white/45 mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.16em] text-ink-soft mb-2">
               Status
             </label>
-            <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-black/20 border border-white/10">
+            <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-sand/60 border border-ink/12">
               <button
                 type="button"
                 onClick={() => setIsActive(true)}
                 className={`py-2.5 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
-                  isActive
-                    ? "bg-emerald-500/80 text-white"
-                    : "text-white/55 hover:text-white"
+                  isActive ? "bg-sea text-white" : "text-ink-soft hover:text-ink"
                 }`}
               >
                 Active
@@ -174,8 +167,8 @@ export default function LifeguardModal({
                 onClick={() => setIsActive(false)}
                 className={`py-2.5 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
                   !isActive
-                    ? "bg-rose-500/80 text-white"
-                    : "text-white/55 hover:text-white"
+                    ? "bg-signal text-white"
+                    : "text-ink-soft hover:text-ink"
                 }`}
               >
                 Inactive
@@ -187,13 +180,13 @@ export default function LifeguardModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/15 rounded-xl transition-all font-semibold text-sm min-h-[48px]"
+              className="flex-1 px-6 py-3 border border-ink/25 text-ink hover:bg-ink hover:text-paper rounded-xl transition-all font-semibold text-sm min-h-[48px]"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 bg-[#FF6633] hover:bg-[#e55a2b] text-white rounded-xl transition-all font-semibold shadow-lg shadow-[#FF6633]/20 text-sm min-h-[48px]"
+              className="flex-1 px-6 py-3 bg-ink text-paper hover:bg-signal rounded-xl transition-all font-semibold text-sm min-h-[48px]"
             >
               {lifeguard ? "Update" : "Create"}
             </button>

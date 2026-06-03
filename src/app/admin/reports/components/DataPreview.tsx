@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  EyeIcon,
   TableCellsIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
@@ -17,33 +16,13 @@ import {
   FieldDefinition,
 } from "@/lib/report-types";
 import { SingaporeTime } from "@/lib/singapore-time";
+import StatusBadge from "../../components/StatusBadge";
 
 interface DataPreviewProps {
   reportType: ReportType;
   data: BookingReportData[] | LifeguardReportData[];
   loading: boolean;
   fields: BookingReportFields | LifeguardReportFields;
-}
-
-const STATUS_BADGE: Record<string, string> = {
-  paid: "bg-emerald-500/15 text-emerald-200 border-emerald-400/30",
-  pending: "bg-amber-500/15 text-amber-200 border-amber-400/30",
-  confirmed: "bg-sky-500/15 text-sky-200 border-sky-400/30",
-  completed: "bg-violet-500/15 text-violet-200 border-violet-400/30",
-  cancelled: "bg-rose-500/15 text-rose-200 border-rose-400/30",
-  refunded: "bg-rose-500/15 text-rose-200 border-rose-400/30",
-};
-
-function StatusBadge({ value }: { value: string }) {
-  const cls =
-    STATUS_BADGE[value] || "bg-white/10 text-white/70 border-white/15";
-  return (
-    <span
-      className={`px-2 py-0.5 rounded-full text-[11px] border ${cls} whitespace-nowrap`}
-    >
-      {value}
-    </span>
-  );
 }
 
 export default function DataPreview({
@@ -59,9 +38,6 @@ export default function DataPreview({
   const selectedFields = allFieldDefinitions.filter(
     (field) => fields[field.key as keyof typeof fields]
   );
-
-  const getFieldType = (key: string) =>
-    allFieldDefinitions.find((f) => f.key === key)?.type || "string";
 
   const formatCellValue = (value: any, type: string) => {
     if (value === null || value === undefined || value === "") return "—";
@@ -83,49 +59,53 @@ export default function DataPreview({
     }
   };
 
-  const isNumeric = (type: string) =>
-    type === "number" || type === "currency";
+  const isNumeric = (type: string) => type === "number" || type === "currency";
 
   const previewData = data.slice(0, 10);
   const titleKey = reportType === "bookings" ? "order_id" : "name";
 
-  // Renders one cell's content with special-casing for badges/flags
   const renderValue = (row: any, field: FieldDefinition) => {
     const v = row[field.key as keyof typeof row];
     if (field.key === "is_prorated") {
       return v ? (
-        <span className="px-2 py-0.5 rounded-full text-[11px] bg-amber-500/20 text-amber-200 border border-amber-400/30 whitespace-nowrap">
+        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider text-ochre border border-ochre/40 bg-ochre/10 whitespace-nowrap">
           Prorated
         </span>
       ) : (
-        <span className="text-white/35 text-xs">Full</span>
+        <span className="text-ink-soft/60 text-xs">Full</span>
       );
     }
     if (field.key === "status" || field.key === "payment_status") {
-      return v ? <StatusBadge value={String(v)} /> : "—";
+      return v ? (
+        <StatusBadge
+          value={String(v)}
+          kind={field.key === "payment_status" ? "payment" : "status"}
+        />
+      ) : (
+        "—"
+      );
     }
     return formatCellValue(v, field.type);
   };
 
   const headerNote = loading
     ? "Loading…"
-    : `Showing ${Math.min(previewData.length, 10)} of ${data.length} records`;
+    : `${Math.min(previewData.length, 10)} of ${data.length} records`;
 
   return (
-    <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+    <div className="bg-white border border-ink/12 rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="px-4 md:px-6 py-3.5 border-b border-white/10 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-lg bg-[#FF6633]/15 border border-[#FF6633]/30 flex items-center justify-center flex-shrink-0">
-            <EyeIcon className="w-3.5 h-3.5 text-[#FF6633]" />
+      <div className="px-4 md:px-6 py-3.5 border-b border-ink/12 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+            Preview
           </div>
-          <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-white">Preview</h3>
-            <p className="text-[11px] text-white/40 truncate">{headerNote}</p>
-          </div>
+          <p className="font-display text-lg font-semibold text-ink leading-none mt-0.5 tabular-nums">
+            {headerNote}
+          </p>
         </div>
         {selectedFields.length === 0 && (
-          <span className="flex items-center gap-1.5 text-amber-300 text-xs flex-shrink-0">
+          <span className="flex items-center gap-1.5 text-ochre text-xs flex-shrink-0">
             <ExclamationTriangleIcon className="w-4 h-4" />
             <span className="hidden sm:inline">No columns</span>
           </span>
@@ -138,7 +118,7 @@ export default function DataPreview({
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
-              className="h-12 rounded-xl bg-white/[0.03] border border-white/10 animate-pulse"
+              className="h-12 rounded-xl bg-sand/60 border border-ink/8 animate-pulse"
               style={{ animationDelay: `${i * 80}ms` }}
             />
           ))}
@@ -148,13 +128,15 @@ export default function DataPreview({
       {/* No columns */}
       {!loading && selectedFields.length === 0 && (
         <div className="p-8 md:p-12 text-center">
-          <div className="w-14 h-14 bg-amber-500/15 border border-amber-400/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
-            <TableCellsIcon className="w-7 h-7 text-amber-300" />
+          <div className="w-14 h-14 bg-ochre/10 border border-ochre/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <TableCellsIcon className="w-7 h-7 text-ochre" />
           </div>
-          <h4 className="text-white font-semibold mb-1">No columns selected</h4>
-          <p className="text-white/50 text-sm">
-            Open <span className="text-white/80">Columns</span> and pick at least
-            one field.
+          <h4 className="font-display text-lg font-semibold text-ink mb-1">
+            No columns selected
+          </h4>
+          <p className="text-ink-soft text-sm">
+            Open <span className="text-ink font-medium">Columns</span> and pick a
+            field.
           </p>
         </div>
       )}
@@ -162,11 +144,13 @@ export default function DataPreview({
       {/* No data */}
       {!loading && selectedFields.length > 0 && data.length === 0 && (
         <div className="p-8 md:p-12 text-center">
-          <div className="w-14 h-14 bg-sky-500/15 border border-sky-400/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
-            <InformationCircleIcon className="w-7 h-7 text-sky-300" />
+          <div className="w-14 h-14 bg-sand border border-ink/12 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <InformationCircleIcon className="w-7 h-7 text-ink-soft" />
           </div>
-          <h4 className="text-white font-semibold mb-1">No records found</h4>
-          <p className="text-white/50 text-sm">
+          <h4 className="font-display text-lg font-semibold text-ink mb-1">
+            No records found
+          </h4>
+          <p className="text-ink-soft text-sm">
             Nothing matches this date range and filters.
           </p>
         </div>
@@ -175,47 +159,47 @@ export default function DataPreview({
       {/* Data */}
       {!loading && selectedFields.length > 0 && data.length > 0 && (
         <>
-          {/* Desktop table */}
+          {/* Desktop ledger */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-black/20 sticky top-0">
+              <thead className="bg-sand/50 border-b border-ink/15">
                 <tr>
                   {selectedFields.map((field) => (
                     <th
                       key={field.key}
-                      className="px-4 py-3 text-left text-[10px] font-semibold text-white/45 uppercase tracking-[0.12em] whitespace-nowrap"
+                      className="px-4 py-2.5 text-left text-[10px] font-semibold text-ink-soft uppercase tracking-[0.14em] whitespace-nowrap"
                     >
                       {field.label}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-ink/10">
                 {previewData.map((row: any, index) => {
                   const prorated = Boolean(row.is_prorated);
                   const cancelled = row.status === "cancelled";
                   return (
                     <tr
                       key={index}
-                      className={`hover:bg-white/[0.03] transition-colors ${
+                      className={`hover:bg-sand/40 transition-colors ${
                         cancelled
-                          ? "bg-rose-500/[0.07]"
+                          ? "bg-signal/[0.05]"
                           : prorated
-                          ? "bg-amber-500/[0.06]"
+                          ? "bg-ochre/[0.06]"
                           : ""
                       }`}
                     >
                       {selectedFields.map((field) => (
                         <td
                           key={field.key}
-                          className={`px-4 py-2.5 text-white/85 ${
+                          className={`px-4 py-2.5 text-ink ${
                             isNumeric(field.type) ? "tabular-nums" : ""
                           }`}
                         >
                           <div
                             className={
                               field.key === "proration_note"
-                                ? "max-w-[340px] text-[11px] text-white/55 leading-relaxed whitespace-normal"
+                                ? "max-w-[340px] text-[11px] text-ink-soft leading-relaxed whitespace-normal"
                                 : "truncate max-w-[220px]"
                             }
                             title={String(row[field.key] ?? "")}
@@ -232,7 +216,7 @@ export default function DataPreview({
           </div>
 
           {/* Mobile cards */}
-          <div className="md:hidden divide-y divide-white/5">
+          <div className="md:hidden divide-y divide-ink/10">
             {previewData.map((row: any, index) => {
               const prorated = Boolean(row.is_prorated);
               const cancelled = row.status === "cancelled";
@@ -250,14 +234,14 @@ export default function DataPreview({
                   key={index}
                   className={`p-4 ${
                     cancelled
-                      ? "bg-rose-500/[0.07]"
+                      ? "bg-signal/[0.05]"
                       : prorated
-                      ? "bg-amber-500/[0.05]"
+                      ? "bg-ochre/[0.05]"
                       : ""
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2.5">
-                    <div className="text-sm font-bold text-white truncate">
+                    <div className="font-display text-base font-semibold text-ink truncate tabular-nums">
                       {title !== undefined && title !== null && title !== ""
                         ? reportType === "bookings"
                           ? `#${title}`
@@ -266,17 +250,14 @@ export default function DataPreview({
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 justify-end">
                       {fields["status" as keyof typeof fields] && row.status && (
-                        <StatusBadge value={String(row.status)} />
+                        <StatusBadge value={String(row.status)} kind="status" />
                       )}
                       {fields["payment_status" as keyof typeof fields] &&
                         row.payment_status && (
-                          <StatusBadge value={String(row.payment_status)} />
-                        )}
-                      {fields["is_prorated" as keyof typeof fields] &&
-                        prorated && (
-                          <span className="px-2 py-0.5 rounded-full text-[11px] bg-amber-500/20 text-amber-200 border border-amber-400/30">
-                            Prorated
-                          </span>
+                          <StatusBadge
+                            value={String(row.payment_status)}
+                            kind="payment"
+                          />
                         )}
                     </div>
                   </div>
@@ -284,11 +265,11 @@ export default function DataPreview({
                   <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                     {bodyFields.map((field) => (
                       <div key={field.key} className="min-w-0">
-                        <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">
+                        <div className="text-[10px] uppercase tracking-[0.12em] text-ink-soft">
                           {field.label}
                         </div>
                         <div
-                          className={`text-sm text-white/85 truncate ${
+                          className={`text-sm text-ink truncate ${
                             isNumeric(field.type) ? "tabular-nums" : ""
                           }`}
                           title={String(row[field.key] ?? "")}
@@ -301,7 +282,7 @@ export default function DataPreview({
 
                   {fields["proration_note" as keyof typeof fields] &&
                     row.proration_note && (
-                      <div className="mt-2.5 pt-2.5 border-t border-white/10 text-[11px] text-white/50 leading-relaxed">
+                      <div className="mt-2.5 pt-2.5 border-t border-ink/10 text-[11px] text-ink-soft leading-relaxed">
                         {row.proration_note}
                       </div>
                     )}
@@ -311,15 +292,13 @@ export default function DataPreview({
           </div>
 
           {/* Footer */}
-          <div className="px-4 md:px-6 py-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/40">
+          <div className="px-4 md:px-6 py-3 border-t border-ink/12 flex items-center justify-between text-[11px] text-ink-soft">
             <span className="tabular-nums">
               {previewData.length} of {data.length} · {selectedFields.length}{" "}
               columns
             </span>
             {data.length > 10 && (
-              <span className="tabular-nums">
-                +{data.length - 10} more in export
-              </span>
+              <span className="tabular-nums">+{data.length - 10} in export</span>
             )}
           </div>
         </>

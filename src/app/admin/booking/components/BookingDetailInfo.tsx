@@ -52,10 +52,8 @@ const serviceNames: Record<string, string> = {
   others: "Custom Service",
 };
 
-const cardClass =
-  "bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-6";
-const labelClass =
-  "text-[10px] uppercase tracking-[0.16em] text-white/40";
+const cardClass = "bg-white border border-ink/12 rounded-2xl p-4 md:p-6";
+const labelClass = "text-[10px] uppercase tracking-[0.16em] text-ink-soft";
 
 function SectionHeader({
   icon: Icon,
@@ -67,7 +65,7 @@ function SectionHeader({
   children: React.ReactNode;
 }) {
   return (
-    <h3 className="font-semibold text-white mb-4 flex items-center gap-2.5 text-sm md:text-base">
+    <h3 className="font-display text-base md:text-lg font-semibold text-ink mb-4 flex items-center gap-2.5">
       <span
         className={`w-7 h-7 rounded-lg flex items-center justify-center ${tint}`}
       >
@@ -95,14 +93,14 @@ export default function BookingDetailInfo({
       <div className={cardClass}>
         <SectionHeader
           icon={UserIcon}
-          tint="bg-sky-500/15 border border-sky-400/30 text-sky-300"
+          tint="bg-sea/10 border border-sea/30 text-sea"
         >
           Customer information
         </SectionHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <div className={labelClass}>Full name</div>
-            <p className="text-white font-semibold mt-1">
+            <p className="text-ink font-semibold mt-1">
               {booking.customer_name}
             </p>
           </div>
@@ -110,20 +108,20 @@ export default function BookingDetailInfo({
             <div className={labelClass}>Email</div>
             <a
               href={`mailto:${booking.customer_email}`}
-              className="text-sky-300 hover:text-sky-200 font-medium mt-1 block break-all transition-colors"
+              className="text-sea hover:underline font-medium mt-1 block break-all"
             >
               {booking.customer_email}
             </a>
           </div>
           <div>
             <div className={labelClass}>Phone</div>
-            <p className="text-white font-medium tabular-nums mt-1">
+            <p className="text-ink font-medium tabular-nums mt-1">
               {booking.customer_phone}
             </p>
           </div>
           <div>
             <div className={labelClass}>Booking created</div>
-            <p className="text-white font-medium mt-1">
+            <p className="text-ink font-medium mt-1">
               {SingaporeTime.toLocaleString(booking.created_at + "Z")}
             </p>
           </div>
@@ -134,18 +132,18 @@ export default function BookingDetailInfo({
       <div className={cardClass}>
         <SectionHeader
           icon={CalendarDaysIcon}
-          tint="bg-emerald-500/15 border border-emerald-400/30 text-emerald-300"
+          tint="bg-signal/10 border border-signal/30 text-signal"
         >
           Service details
         </SectionHeader>
         <div className="space-y-4">
           <div>
             <div className={labelClass}>Service type</div>
-            <p className="text-white font-bold text-base md:text-lg mt-1">
+            <p className="font-display text-lg font-semibold text-ink mt-1">
               {fullService}
             </p>
             {booking.venue_type && (
-              <p className="text-white/50 text-xs mt-0.5">
+              <p className="text-ink-soft text-xs mt-0.5">
                 Rate category:{" "}
                 {booking.venue_type === "swimming-pool"
                   ? "Swimming pool"
@@ -160,51 +158,51 @@ export default function BookingDetailInfo({
                 <MapPinIcon className="w-3 h-3" />
                 Location
               </div>
-              <p className="text-white font-medium mt-1">
+              <p className="text-ink font-medium mt-1">
                 {booking.location || "Not specified"}
               </p>
             </div>
             <div>
               <div className={labelClass}>Lifeguards required</div>
-              <p className="text-white font-medium tabular-nums mt-1">
+              <p className="text-ink font-medium tabular-nums mt-1">
                 {booking.lifeguards}
               </p>
             </div>
           </div>
 
-          <div className="bg-black/15 rounded-xl p-4">
+          <div className="bg-sand/50 rounded-xl p-4">
             <div className={`${labelClass} flex items-center gap-1 mb-3`}>
               <ClockIcon className="w-3 h-3" />
               Schedule &amp; duration
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">
+                <p className="text-ink-soft text-[10px] uppercase tracking-wider mb-1">
                   Start
                 </p>
-                <p className="text-white font-semibold text-sm">
+                <p className="text-ink font-semibold text-sm">
                   {SingaporeTime.format(booking.start_datetime, "dd MMM")}
                 </p>
-                <p className="text-white font-bold tabular-nums">
+                <p className="font-display text-ink font-semibold tabular-nums">
                   {SingaporeTime.format(booking.start_datetime, "HH:mm")}
                 </p>
               </div>
               <div>
-                <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">
+                <p className="text-ink-soft text-[10px] uppercase tracking-wider mb-1">
                   End
                 </p>
-                <p className="text-white font-semibold text-sm">
+                <p className="text-ink font-semibold text-sm">
                   {SingaporeTime.format(booking.end_datetime, "dd MMM")}
                 </p>
-                <p className="text-white font-bold tabular-nums">
+                <p className="font-display text-ink font-semibold tabular-nums">
                   {SingaporeTime.format(booking.end_datetime, "HH:mm")}
                 </p>
               </div>
               <div>
-                <p className="text-white/40 text-[10px] uppercase tracking-wider mb-1">
+                <p className="text-ink-soft text-[10px] uppercase tracking-wider mb-1">
                   Duration
                 </p>
-                <p className="text-[#FF6633] font-bold text-xl md:text-2xl tabular-nums">
+                <p className="font-display text-signal font-semibold text-2xl tabular-nums">
                   {booking.hours}h
                 </p>
               </div>
@@ -215,14 +213,14 @@ export default function BookingDetailInfo({
 
       {/* Remarks */}
       {booking.remarks && (
-        <div className="bg-amber-500/[0.07] border border-amber-400/20 rounded-2xl p-4 md:p-6">
+        <div className="bg-ochre/[0.08] border border-ochre/25 rounded-2xl p-4 md:p-6">
           <SectionHeader
             icon={ChatBubbleLeftRightIcon}
-            tint="bg-amber-500/15 border border-amber-400/30 text-amber-300"
+            tint="bg-ochre/15 border border-ochre/40 text-ochre"
           >
             Customer notes
           </SectionHeader>
-          <p className="text-white/85 italic leading-relaxed">
+          <p className="text-ink italic leading-relaxed">
             “{booking.remarks}”
           </p>
         </div>
@@ -246,32 +244,32 @@ export default function BookingDetailInfo({
       <div className={cardClass}>
         <SectionHeader
           icon={DocumentTextIcon}
-          tint="bg-white/10 border border-white/15 text-white/60"
+          tint="bg-sand border border-ink/15 text-ink-soft"
         >
           Technical information
         </SectionHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <div className={labelClass}>Booking ID</div>
-            <p className="text-white/80 text-xs mt-1 bg-black/20 px-2 py-1.5 rounded-lg break-all">
+            <p className="text-ink-soft text-xs mt-1 bg-sand/60 px-2 py-1.5 rounded-lg break-all">
               {booking.id}
             </p>
           </div>
           <div>
             <div className={labelClass}>Order ID</div>
-            <p className="text-white font-medium tabular-nums mt-1">
+            <p className="text-ink font-medium tabular-nums mt-1">
               #{booking.order_id}
             </p>
           </div>
           <div>
             <div className={labelClass}>Current status</div>
-            <p className="text-white font-medium capitalize mt-1">
+            <p className="text-ink font-medium capitalize mt-1">
               {booking.status}
             </p>
           </div>
           <div>
             <div className={labelClass}>Payment status</div>
-            <p className="text-white font-medium capitalize mt-1">
+            <p className="text-ink font-medium capitalize mt-1">
               {booking.payment_status}
             </p>
           </div>

@@ -93,48 +93,43 @@ export default function FieldSelector({
     setExpandedGroups((prev) => ({ ...prev, [g]: !prev[g] }));
 
   return (
-    <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
-      {/* Header / toggle */}
+    <div className="bg-white border border-ink/12 rounded-2xl overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors"
+        className="w-full flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-sand/40 transition-colors"
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-400/30 flex items-center justify-center flex-shrink-0">
-            <Squares2X2Icon className="w-3.5 h-3.5 text-sky-300" />
-          </div>
-          <span className="text-sm font-semibold text-white">Columns</span>
-          <span className="px-2 py-0.5 rounded-full text-[11px] tabular-nums bg-white/10 text-white/70">
+          <Squares2X2Icon className="w-4 h-4 text-ink-soft" />
+          <span className="text-sm font-semibold text-ink">Columns</span>
+          <span className="px-2 py-0.5 rounded-full text-[11px] tabular-nums bg-ink/8 text-ink-soft">
             {selectedCount}/{totalCount}
           </span>
         </div>
         <ChevronDownIcon
-          className={`w-4 h-4 text-white/50 transition-transform duration-200 ${
+          className={`w-4 h-4 text-ink-soft transition-transform ${
             open ? "rotate-180" : ""
           }`}
         />
       </button>
 
       {open && (
-        <div className="px-4 pb-4 pt-1 border-t border-white/10 space-y-3">
-          {/* Quick actions */}
+        <div className="px-4 pb-4 pt-1 border-t border-ink/12 space-y-3">
           <div className="flex gap-2 pt-3">
             <button
               onClick={() => setAll(true)}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-white/[0.04] text-white/70 border border-white/10 hover:border-white/25 hover:text-white transition-all min-h-[36px]"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg text-ink-soft border border-ink/20 hover:border-ink/50 hover:text-ink transition-all min-h-[36px]"
             >
               Select all
             </button>
             <button
               onClick={() => setAll(false)}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-white/[0.04] text-white/70 border border-white/10 hover:border-white/25 hover:text-white transition-all min-h-[36px]"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg text-ink-soft border border-ink/20 hover:border-ink/50 hover:text-ink transition-all min-h-[36px]"
             >
               Clear
             </button>
           </div>
 
-          {/* Groups */}
           <div className="space-y-2 max-h-80 overflow-y-auto no-scrollbar">
             {Object.entries(groupedFields).map(([groupName, fields]) => {
               const isExpanded = expandedGroups[groupName];
@@ -144,29 +139,29 @@ export default function FieldSelector({
               return (
                 <div
                   key={groupName}
-                  className="border border-white/10 rounded-xl overflow-hidden bg-black/10"
+                  className="border border-ink/12 rounded-xl overflow-hidden bg-sand/30"
                 >
                   <button
                     onClick={() => toggleGroup(groupName)}
-                    className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-white/[0.03] transition-colors"
+                    className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-sand/60 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-white">
+                      <span className="text-sm font-medium text-ink">
                         {GROUP_LABELS[groupName] || groupName}
                       </span>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] tabular-nums bg-white/10 text-white/60">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] tabular-nums bg-ink/8 text-ink-soft">
                         {groupSelected}/{fields.length}
                       </span>
                     </div>
                     <ChevronDownIcon
-                      className={`w-4 h-4 text-white/50 transition-transform ${
+                      className={`w-4 h-4 text-ink-soft transition-transform ${
                         isExpanded ? "rotate-180" : ""
                       }`}
                     />
                   </button>
 
                   {isExpanded && (
-                    <div className="px-2 pb-2 space-y-0.5">
+                    <div className="px-2 pb-2 space-y-0.5 bg-white">
                       {fields.map((field) => {
                         const isSelected =
                           currentFields[field.key as keyof typeof currentFields];
@@ -174,13 +169,13 @@ export default function FieldSelector({
                           <button
                             key={field.key}
                             onClick={() => handleFieldToggle(field.key)}
-                            className="w-full flex items-start gap-2.5 p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                            className="w-full flex items-start gap-2.5 p-2 rounded-lg hover:bg-sand/50 transition-colors text-left"
                           >
                             <span
                               className={`w-4 h-4 mt-0.5 rounded border flex items-center justify-center flex-shrink-0 transition-all ${
                                 isSelected
-                                  ? "bg-[#FF6633] border-[#FF6633] text-white"
-                                  : "border-white/30"
+                                  ? "bg-ink border-ink text-paper"
+                                  : "border-ink/30"
                               }`}
                             >
                               {isSelected && <CheckIcon className="w-3 h-3" />}
@@ -189,24 +184,24 @@ export default function FieldSelector({
                               <span className="flex items-center gap-1.5 flex-wrap">
                                 <span
                                   className={`text-sm ${
-                                    isSelected ? "text-white" : "text-white/70"
+                                    isSelected ? "text-ink" : "text-ink-soft"
                                   }`}
                                 >
                                   {field.label}
                                 </span>
                                 {field.required && (
-                                  <span className="px-1 py-0.5 rounded text-[10px] bg-rose-500/15 text-rose-200 border border-rose-400/30">
+                                  <span className="px-1 py-0.5 rounded text-[10px] uppercase tracking-wider bg-signal/10 text-signal border border-signal/30">
                                     req
                                   </span>
                                 )}
                                 {field.computed && (
-                                  <span className="px-1 py-0.5 rounded text-[10px] bg-[#FF6633]/15 text-orange-200 border border-[#FF6633]/30">
+                                  <span className="px-1 py-0.5 rounded text-[10px] uppercase tracking-wider bg-sea/10 text-sea border border-sea/30">
                                     calc
                                   </span>
                                 )}
                               </span>
                               {field.description && (
-                                <span className="block text-[11px] text-white/40 mt-0.5 leading-relaxed">
+                                <span className="block text-[11px] text-ink-soft mt-0.5 leading-relaxed">
                                   {field.description}
                                 </span>
                               )}
@@ -222,7 +217,7 @@ export default function FieldSelector({
           </div>
 
           {selectedCount === 0 && (
-            <p className="text-amber-300 text-xs">
+            <p className="text-ochre text-xs">
               Select at least one column to generate a report.
             </p>
           )}

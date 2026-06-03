@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CommandLineIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import DashboardLayout from "../components/DashboardLayout";
 import ReportTypeSelector from "./components/ReportTypeSelector";
@@ -209,10 +208,10 @@ export default function ReportsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 flex items-center justify-center font-mono">
-        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center">
-          <div className="w-8 h-8 border-2 border-[#FF6633]/30 border-t-[#FF6633] rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white/60 text-sm">Checking access…</p>
+      <div className="min-h-screen bg-paper text-ink flex items-center justify-center">
+        <div className="bg-white border border-ink/12 rounded-2xl p-8 text-center">
+          <div className="w-8 h-8 border-2 border-ink/15 border-t-signal rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-ink-soft text-sm">Checking access…</p>
         </div>
       </div>
     );
@@ -229,29 +228,26 @@ export default function ReportsPage() {
       <div className="p-3 md:p-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-6">
         <div className="max-w-5xl mx-auto space-y-4">
           {/* Header + report type */}
-          <div className="console-in space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-[#FF6633]/15 border border-[#FF6633]/30 flex items-center justify-center">
-                <CommandLineIcon className="w-5 h-5 text-[#FF6633]" />
+          <div className="console-in">
+            <div className="border-b-2 border-ink pb-3">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+                Payroll &amp; analytics · by service date
               </div>
-              <div>
-                <h1 className="text-lg md:text-2xl font-bold text-white tracking-tight">
-                  Reports
-                </h1>
-                <p className="text-white/45 text-xs md:text-sm">
-                  Payroll &amp; analytics by service date
-                </p>
-              </div>
+              <h1 className="font-display text-3xl md:text-4xl font-semibold text-ink leading-none mt-1">
+                Reports
+              </h1>
             </div>
-            <ReportTypeSelector
-              reportType={reportType}
-              onReportTypeChange={setReportType}
-            />
+            <div className="mt-4">
+              <ReportTypeSelector
+                reportType={reportType}
+                onReportTypeChange={setReportType}
+              />
+            </div>
           </div>
 
           {/* Date range */}
           <div
-            className="console-in bg-white/[0.04] border border-white/10 rounded-2xl p-4"
+            className="console-in bg-white border border-ink/12 rounded-2xl p-4"
             style={{ animationDelay: "60ms" }}
           >
             <DateRangePicker
@@ -297,7 +293,7 @@ export default function ReportsPage() {
 
           {/* Export bar — fixed bottom on mobile, inline on desktop */}
           <div
-            className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-slate-900/95 backdrop-blur-lg px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:static md:inset-auto md:z-auto md:bg-white/[0.04] md:border md:border-white/10 md:rounded-2xl md:px-5 md:py-4 md:pb-4 md:backdrop-blur-none console-in"
+            className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-paper/95 backdrop-blur px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:static md:inset-auto md:z-auto md:bg-white md:border md:border-ink/12 md:rounded-2xl md:px-5 md:py-4 md:pb-4 md:backdrop-blur-none console-in"
             style={{ animationDelay: "300ms" }}
           >
             <ExportActions

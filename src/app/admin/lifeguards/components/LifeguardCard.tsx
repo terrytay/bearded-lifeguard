@@ -29,18 +29,17 @@ export default function LifeguardCard({
   const active = lifeguard.is_active;
 
   return (
-    <div className="relative bg-white/[0.04] border border-white/10 rounded-2xl p-4 md:p-5 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200">
-      {/* Status pill */}
+    <div className="relative bg-white border border-ink/12 rounded-2xl p-4 md:p-5 hover:border-ink/30 transition-all duration-200">
       <span
-        className={`absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+        className={`absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider border ${
           active
-            ? "bg-emerald-500/15 text-emerald-200 border-emerald-400/30"
-            : "bg-rose-500/15 text-rose-200 border-rose-400/30"
+            ? "text-sea border-sea/40 bg-sea/10"
+            : "text-signal border-signal/40 bg-signal/10"
         }`}
       >
         <span
           className={`w-1.5 h-1.5 rounded-full ${
-            active ? "bg-emerald-400" : "bg-rose-400"
+            active ? "bg-sea" : "bg-signal"
           }`}
         />
         {active ? "Active" : "Inactive"}
@@ -48,17 +47,17 @@ export default function LifeguardCard({
 
       <div className="flex items-start gap-3 pr-20 mb-4">
         <div
-          className={`w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0 ${
-            active ? "bg-emerald-500/80" : "bg-white/10"
+          className={`w-11 h-11 rounded-xl flex items-center justify-center text-paper font-bold flex-shrink-0 ${
+            active ? "bg-sea" : "bg-ink/40"
           }`}
         >
           {lifeguard.name.charAt(0).toUpperCase()}
         </div>
         <div className="min-w-0">
-          <h3 className="text-base font-bold text-white truncate">
+          <h3 className="font-display text-base font-semibold text-ink truncate">
             {lifeguard.name}
           </h3>
-          <div className="flex items-center gap-1.5 text-white/55 mt-0.5">
+          <div className="flex items-center gap-1.5 text-ink-soft mt-0.5">
             <PhoneIcon className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="text-xs tabular-nums truncate">
               {lifeguard.contact_number}
@@ -67,8 +66,8 @@ export default function LifeguardCard({
         </div>
       </div>
 
-      <div className="bg-black/15 rounded-xl p-3 mb-4 flex items-center gap-2 text-white/55">
-        <ClockIcon className="w-4 h-4 text-sky-300 flex-shrink-0" />
+      <div className="bg-sand/50 rounded-xl p-3 mb-4 flex items-center gap-2 text-ink-soft">
+        <ClockIcon className="w-4 h-4 text-sea flex-shrink-0" />
         <span className="text-xs">
           Added {SingaporeTime.format(lifeguard.created_at, "dd MMM yyyy")}
         </span>
@@ -77,14 +76,14 @@ export default function LifeguardCard({
       <div className="flex gap-2">
         <button
           onClick={onEdit}
-          className="flex-1 px-3 py-2.5 bg-white/[0.04] text-white/80 border border-white/10 rounded-xl hover:border-white/25 hover:text-white transition-all font-medium text-sm flex items-center justify-center gap-1.5 min-h-[44px]"
+          className="flex-1 px-3 py-2.5 border border-ink/25 text-ink rounded-xl hover:bg-ink hover:text-paper transition-all font-medium text-sm flex items-center justify-center gap-1.5 min-h-[44px]"
         >
           <PencilIcon className="w-4 h-4" />
           <span>Edit</span>
         </button>
         <button
           onClick={onDelete}
-          className="px-3.5 py-2.5 bg-rose-500/10 text-rose-300 border border-rose-400/30 rounded-xl hover:bg-rose-500/20 transition-all min-h-[44px] flex items-center justify-center"
+          className="px-3.5 py-2.5 border border-signal/40 text-signal rounded-xl hover:bg-signal hover:text-white transition-all min-h-[44px] flex items-center justify-center"
           aria-label="Delete lifeguard"
         >
           <TrashIcon className="w-4 h-4" />
